@@ -10,6 +10,9 @@ runs:
   steps:
   - name: Install prek
     run: python -m pip install prek
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: 1
+      PIP_PROGRESS_BAR: 'off'
     shell: bash
   - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
     with:
