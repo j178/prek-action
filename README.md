@@ -42,11 +42,23 @@ steps:
       extra_args: '--all-files mypy flake8 ruff'
 ```
 
+### Specifying Prek Version
+
+```yaml
+steps:
+  - uses: actions/checkout@v5
+  - uses: j178/prek-action@v1
+    with:
+      prek-version: '0.2.1'
+      extra_args: '--all-files'
+```
+
 ## Inputs
 
-| Input        | Description                                | Required | Default       |
-| ------------ | ------------------------------------------ | -------- | ------------- |
-| `extra_args` | Additional arguments to pass to `prek run` | No       | `--all-files` |
+| Input          | Description                                | Required | Default       |
+| -------------- | ------------------------------------------ | -------- | ------------- |
+| `extra_args`   | Additional arguments to pass to `prek run` | No       | `--all-files` |
+| `prek-version` | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
 
 ## Requirements
 
