@@ -53,12 +53,24 @@ steps:
       extra_args: '--all-files'
 ```
 
+### `uv` Installation
+
+```yaml
+steps:
+  - uses: actions/checkout@v5
+  - uses: astral-sh/setup-uv@v6
+  - uses: j178/prek-action@v1
+    with:
+      prek-installer: uv pip
+```
+
 ## Inputs
 
 | Input          | Description                                | Required | Default       |
 | -------------- | ------------------------------------------ | -------- | ------------- |
 | `extra_args`   | Additional arguments to pass to `prek run` | No       | `--all-files` |
 | `prek-version` | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
+| `prek-installer` | Method to install prek (e.g. 'python -m pip', 'uv pip') | No | `python -m pip` |
 
 ## Requirements
 
