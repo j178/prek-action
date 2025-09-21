@@ -9,15 +9,19 @@ inputs:
     description: Version of prek to install (e.g., '0.2.1', 'latest')
     required: false
     default: 'latest'
+  prek-installer:
+    description: Method to install prek (e.g. 'python -m pip', 'uv pip')
+    required: false
+    default: 'python -m pip'
 runs:
   using: composite
   steps:
   - name: Install prek
     run: |
       if [ "${{ inputs.prek-version }}" = "latest" ]; then
-        python -m pip install prek
+        ${{ inputs.prek-installer }} install prek
       else
-        python -m pip install prek==${{ inputs.prek-version }}
+        ${{ inputs.prek-installer }} install prek==${{ inputs.prek-version }}
       fi
     env:
       PIP_DISABLE_PIP_VERSION_CHECK: 1
