@@ -13,5 +13,5 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v5
-    - name: test | ${{ matrix.os }}
+    - name: Test | ${{ matrix.os }}
       uses: ./
