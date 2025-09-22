@@ -34,12 +34,18 @@ runs:
     run: 'powershell -ExecutionPolicy Bypass -c "irm ${{ steps.resolve.outputs.base_url }}prek-installer.ps1 | iex"'
     shell: powershell
     if: runner.os == 'Windows'
+  - name: Set cache path (Windows)
+    id: set-cache-path
+    run: echo "CACHE_PATH=%LOCALAPPDATA%\prek" >> $GITHUB_ENV
+    shell: cmd
+    if: runner.os == 'Windows'
   - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
     with:
-      path: ${{ runner.os == 'Windows' && '%LOCALAPPDATA%\\prek' || '~/.cache/prek' }}
+      path: ${{ env.CACHE_PATH || '~/.cache/prek' }}
       key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles('**/.pre-commit-config.yaml') }}
   - run: prek run -vvv --show-diff-on-failure --color=always ${{ inputs.extra_args }}
     shell: bash
+
 branding:
   icon: 'git-commit'
   color: 'orange'
