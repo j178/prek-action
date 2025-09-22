@@ -53,11 +53,24 @@ steps:
       extra_args: '--all-files'
 ```
 
+### Install Only
+
+```yaml
+steps:
+  - uses: actions/checkout@v5
+  - uses: j178/prek-action@v1
+    with:
+      install-only: true
+```
+
+When `install-only` is set to `true`, the action will only install prek and skip running it. The `extra_args` input has no effect in this mode.
+
 ## Inputs
 
 | Input          | Description                                | Required | Default       |
 | -------------- | ------------------------------------------ | -------- | ------------- |
 | `extra_args`   | Additional arguments to pass to `prek run` | No       | `--all-files` |
+| `install-only` | Only install prek, do not run it           | No       | `false`       |
 | `prek-version` | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
 
 ## Requirements

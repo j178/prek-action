@@ -5,6 +5,10 @@ inputs:
     description: Options to pass to `prek run`
     required: false
     default: '--all-files'
+  install-only:
+    description: Only install prek, do not run it
+    required: false
+    default: 'false'
   prek-version:
     description: Version of prek to install (e.g., '0.2.1', 'latest')
     required: false
@@ -40,9 +44,10 @@ runs:
         ~/.cache/prek
         ~\AppData\Local\prek
       key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles('**/.pre-commit-config.yaml') }}
+    if: inputs.install-only == 'false'
   - run: prek run --show-diff-on-failure --color=always ${{ inputs.extra_args }}
     shell: bash
-
+    if: inputs.install-only == 'false'
 branding:
   icon: 'git-commit'
   color: 'orange'
