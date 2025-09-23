@@ -49,12 +49,11 @@ runs:
       key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles('**/.pre-commit-config.yaml') }}
     if: inputs.install-only == 'false'
   - run: |
-      EXTRA_ARGS="${{ inputs.extra-args }}"
-      if [ -z "$EXTRA_ARGS" ] && [ -n "${{ inputs.extra_args }}" ]; then
+      # Check if user provided extra_args (deprecated input)
+      if [ -n "${{ inputs.extra_args }}" ]; then
         EXTRA_ARGS="${{ inputs.extra_args }}"
-      fi
-      if [ -z "$EXTRA_ARGS" ]; then
-        EXTRA_ARGS="--all-files"
+      else
+        EXTRA_ARGS="${{ inputs.extra-args }}"
       fi
       prek run --show-diff-on-failure --color=always $EXTRA_ARGS
     shell: bash
