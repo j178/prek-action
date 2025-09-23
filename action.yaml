@@ -5,6 +5,9 @@ inputs:
     description: Options to pass to `prek run`
     required: false
     default: '--all-files'
+  extra_args:
+    description: Options to pass to `prek run` (deprecated, use extra-args)
+    required: false
   install-only:
     description: Only install prek, do not run it
     required: false
@@ -45,7 +48,15 @@ runs:
         ~\AppData\Local\prek
       key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles('**/.pre-commit-config.yaml') }}
     if: inputs.install-only == 'false'
-  - run: prek run --show-diff-on-failure --color=always ${{ inputs.extra-args }}
+  - run: |
+      EXTRA_ARGS="${{ inputs.extra-args }}"
+      if [ -z "$EXTRA_ARGS" ] && [ -n "${{ inputs.extra_args }}" ]; then
+        EXTRA_ARGS="${{ inputs.extra_args }}"
+      fi
+      if [ -z "$EXTRA_ARGS" ]; then
+        EXTRA_ARGS="--all-files"
+      fi
+      prek run --show-diff-on-failure --color=always $EXTRA_ARGS
     shell: bash
     if: inputs.install-only == 'false'
 branding:

@@ -65,11 +65,14 @@ steps:
 
 When `install-only` is set to `true`, the action will only install prek and skip running it. The `extra-args` input has no effect in this mode.
 
+**Note**: The `extra_args` input is deprecated in favor of `extra-args` for consistency with GitHub Actions naming conventions. Both inputs are supported for backward compatibility, but `extra-args` takes precedence if both are provided.
+
 ## Inputs
 
 | Input          | Description                                | Required | Default       |
 | -------------- | ------------------------------------------ | -------- | ------------- |
 | `extra-args`   | Additional arguments to pass to `prek run` | No       | `--all-files` |
+| `extra_args`   | Additional arguments to pass to `prek run` (deprecated, use `extra-args`) | No | `--all-files` |
 | `install-only` | Only install prek, do not run it           | No       | `false`       |
 | `prek-version` | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
 
