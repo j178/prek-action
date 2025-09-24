@@ -65,8 +65,6 @@ steps:
 
 When `install-only` is set to `true`, the action will only install prek and skip running it. The `extra-args` input has no effect in this mode.
 
-**Note**: The `extra_args` input is deprecated in favor of `extra-args` for consistency with GitHub Actions naming conventions. Both inputs are supported for backward compatibility, but `extra-args` takes precedence if both are provided.
-
 ## Inputs
 
 | Input          | Description                                | Required | Default       |
