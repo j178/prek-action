@@ -67,11 +67,12 @@ When `install-only` is set to `true`, the action will only install prek and skip
 
 ## Inputs
 
-| Input          | Description                                | Required | Default       |
-| -------------- | ------------------------------------------ | -------- | ------------- |
-| `extra-args`   | Additional arguments to pass to `prek run` | No       | `--all-files` |
-| `install-only` | Only install prek, do not run it           | No       | `false`       |
-| `prek-version` | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
+| Input              | Description                                | Required | Default       |
+| ------------------ | ------------------------------------------ | -------- | ------------- |
+| `extra-args`       | Additional arguments to pass to `prek run` | No       | `--all-files` |
+| `install-only`     | Only install prek, do not run it           | No       | `false`       |
+| `prek-version`     | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
+| `working-directory` | The working directory to run prek in      | No       | `.`           |
 
 ## Requirements
 

@@ -16,6 +16,10 @@ inputs:
     description: Version of prek to install (e.g., '0.2.1', 'latest')
     required: false
     default: 'latest'
+  working-directory:
+    description: The working directory to run prek in
+    required: false
+    default: '.'
 runs:
   using: composite
   steps:
@@ -46,10 +50,11 @@ runs:
       path: |
         ~/.cache/prek
         ~\AppData\Local\prek
-      key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles('**/.pre-commit-config.yaml') }}
+      key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
     if: inputs.install-only == 'false'
   - run: prek run --show-diff-on-failure --color=always ${{ inputs.extra_args || inputs.extra-args }}
     shell: bash
+    working-directory: ${{ inputs.working-directory }}
     if: inputs.install-only == 'false'
 branding:
   icon: 'git-commit'
