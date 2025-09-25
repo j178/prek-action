@@ -1,5 +1,5 @@
 name: prek-action
-description: Run pre-commit hooks using prek
+description: Run git hooks using prek
 inputs:
   extra-args:
     description: Options to pass to `prek run`

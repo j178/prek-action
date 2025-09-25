@@ -1,10 +1,10 @@
 # Prek Action
 
-A GitHub Action that runs pre-commit hooks using **prek** in your CI/CD pipeline.
+A GitHub Action that runs git hooks using **prek** in your CI/CD pipeline.
 
 ## What is prek?
 
-[**prek**](https://github.com/j178/prek) is a fast pre-commit hook runner that provides an alternative to the standard pre-commit framework. It offers better performance and caching capabilities for running code quality checks.
+[**prek**](https://github.com/j178/prek) is a fast git hooks runner that provides an alternative to the standard pre-commit framework. It offers better performance and caching capabilities for running code quality checks.
 
 ## Usage
 
@@ -76,7 +76,7 @@ When `install-only` is set to `true`, the action will only install prek and skip
 
 ## Requirements
 
-Your repository must have a `.pre-commit-config.yaml` file configured for use with pre-commit hooks.
+Your repository must have a `.pre-commit-config.yaml` file configured for use with git hooks.
 
 ## License
 
