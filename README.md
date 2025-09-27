@@ -80,23 +80,7 @@ When `install-only` is set to `true`, the action will only install prek and skip
 
 | Output         | Description                                           |
 | -------------- | ----------------------------------------------------- |
-| `prek-version` | The resolved version of prek that was installed      |
-
-When `prek-version` input is set to `latest`, this output will contain the actual version tag (e.g., `v0.2.3`) that was resolved and installed.
-
-### Using the Version Output
-
-```yaml
-steps:
-  - uses: actions/checkout@v5
-  - name: Install prek
-    id: prek
-    uses: j178/prek-action@v1
-    with:
-      prek-version: latest
-  - name: Print installed version
-    run: echo "Installed prek version: ${{ steps.prek.outputs.prek-version }}"
-```
+| `prek-version` | The resolved version of prek that was installed       |
 
 ## Requirements
 
