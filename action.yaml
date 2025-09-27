@@ -46,14 +46,16 @@ runs:
     run: 'powershell -ExecutionPolicy Bypass -c "irm ${{ steps.resolve.outputs.base_url }}prek-installer.ps1 | iex"'
     shell: powershell
     if: runner.os == 'Windows'
-  - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+  - name: Restore cache
+    uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
     with:
       path: |
         ~/.cache/prek
         ~\AppData\Local\prek
       key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
     if: inputs.install-only == 'false'
-  - run: |
+  - name: Run prek
+    run: |
       ARGS=(--show-diff-on-failure --color=always)
       # Only allow safe flags
       safe_pattern="^[a-zA-Z0-9._/\\ -]+$"
@@ -72,6 +74,7 @@ runs:
     if: inputs.install-only == 'false'
     env:
       EXTRA_ARGS: ${{ inputs.extra_args || inputs.extra-args }}
+
 branding:
   icon: 'git-commit'
   color: 'orange'
