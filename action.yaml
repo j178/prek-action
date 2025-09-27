@@ -20,6 +20,10 @@ inputs:
     description: The working directory to run prek in
     required: false
     default: '.'
+outputs:
+  prek-version:
+    description: The resolved version of prek that was installed
+    value: ${{ steps.resolve.outputs.resolved_version }}
 runs:
   using: composite
   steps:
@@ -27,17 +31,22 @@ runs:
     id: resolve
     run: |
       if [[ "${PREK_VERSION}" = "latest" ]]; then
+        # Use gh CLI to resolve latest version to actual release version
+        RESOLVED_VERSION=$(gh api repos/j178/prek/releases/latest --jq '.tag_name')
         echo "version=latest" >> $GITHUB_OUTPUT
+        echo "resolved_version=${RESOLVED_VERSION}" >> $GITHUB_OUTPUT
         echo "download_url=https://github.com/j178/prek/releases/latest/download/prek-installer.sh" >> $GITHUB_OUTPUT
       else
         VERSION="${PREK_VERSION#v}"
         VERSION="v${VERSION}"
         echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "resolved_version=${VERSION}" >> $GITHUB_OUTPUT
         echo "download_url=https://github.com/j178/prek/releases/download/${VERSION}/prek-installer.sh" >> $GITHUB_OUTPUT
       fi
     shell: bash
     env:
       PREK_VERSION: ${{ inputs.prek-version }}
+      GH_TOKEN: ${{ github.token }}
   - name: Install prek
     run: "curl --proto '=https' --tlsv1.2 -LsSf '${{ steps.resolve.outputs.download_url }}' | sh"
     shell: bash
