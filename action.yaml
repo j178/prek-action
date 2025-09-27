@@ -56,9 +56,10 @@ runs:
   - run: |
       ARGS=(--show-diff-on-failure --color=always)
       # Only allow safe flags
+      safe_pattern="^[a-zA-Z0-9._/\\ -]+$"
       if [[ -n "$EXTRA_ARGS" ]]; then
         for arg in $EXTRA_ARGS; do
-          if [[ ! "$arg" =~ ^[a-zA-Z0-9._/\\-[[:space:]]]+$ ]]; then
+          if [[ ! "$arg" =~ $safe_pattern ]]; then
             echo "Invalid argument: $arg" >&2
             exit 1
           fi
