@@ -58,14 +58,14 @@ runs:
       # Only allow safe flags
       if [[ -n "$EXTRA_ARGS" ]]; then
         for arg in $EXTRA_ARGS; do
-          if [[ ! "$arg" =~ ^[a-zA-Z0-9._/\\- ]+$ ]]; then
-            echo "❌ Invalid argument: $arg" >&2
+          if [[ ! "$arg" =~ ^[a-zA-Z0-9._/\\-[[:space:]]]+$ ]]; then
+            echo "Invalid argument: $arg" >&2
             exit 1
           fi
           ARGS+=("$arg")
         done
       fi
-      prek run "${ARGS}"
+      prek run "${ARGS[@]}"
     shell: bash
     working-directory: ${{ inputs.working-directory }}
     if: inputs.install-only == 'false'
