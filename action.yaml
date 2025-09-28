@@ -55,13 +55,13 @@ runs:
   - name: Run prek
     run: |
       cmd=(prek run --show-diff-on-failure --color=always)
-      
+
       # Parse extra args safely using bash's read array
       if [[ -n "${EXTRA_ARGS:-}" ]]; then
         read -ra extra_args_array <<< "$EXTRA_ARGS"
         cmd+=("${extra_args_array[@]}")
       fi
-      
+
       echo "Running: ${cmd[*]}"
       "${cmd[@]}"
     shell: bash
