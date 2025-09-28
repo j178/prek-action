@@ -54,19 +54,16 @@ runs:
     if: inputs.install-only == 'false'
   - name: Run prek
     run: |
-      ARGS=(--show-diff-on-failure --color=always)
-      # Only allow safe flags
-      safe_pattern="^[a-zA-Z0-9._/\\ -]+$"
-      if [[ -n "$EXTRA_ARGS" ]]; then
-        for arg in $EXTRA_ARGS; do
-          if [[ ! "$arg" =~ $safe_pattern ]]; then
-            echo "Invalid argument: $arg" >&2
-            exit 1
-          fi
-          ARGS+=("$arg")
-        done
+      cmd=(prek run --show-diff-on-failure --color=always)
+      
+      # Parse extra args safely using bash's read array
+      if [[ -n "${EXTRA_ARGS:-}" ]]; then
+        read -ra extra_args_array <<< "$EXTRA_ARGS"
+        cmd+=("${extra_args_array[@]}")
       fi
-      prek run "${ARGS[@]}"
+      
+      echo "Running: ${cmd[*]}"
+      "${cmd[@]}"
     shell: bash
     working-directory: ${{ inputs.working-directory }}
     if: inputs.install-only == 'false'
