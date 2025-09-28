@@ -15,3 +15,5 @@ jobs:
     - uses: actions/checkout@v5
     - name: Test | ${{ matrix.os }}
       uses: ./
+      with:
+        extra-args: '--files 中文'
