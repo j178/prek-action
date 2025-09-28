@@ -52,25 +52,32 @@ runs:
         ~\AppData\Local\prek
       key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
     if: inputs.install-only == 'false'
-  - name: Prepare extra-args
-    id: prepare-extra-args
-    run: |
-      import shlex, os
-      extra_args = shlex.split(os.environ['EXTRA_ARGS'])
-      with open(os.environ['GITHUB_OUTPUT'], 'wt', newline='') as output:
-        output.write('extra_args=' + '\0'.join(extra_args))
-    shell: python
-    env:
-      EXTRA_ARGS: ${{ inputs.extra_args || inputs.extra-args }}
   - name: Run prek
     run: |
-      cmd=(prek run --show-diff-on-failure --color=always)
-      readarray -d $'\0' -t extra_args <<< "${{ steps.prepare-extra-args.outputs.extra_args }}"
-      cmd+=("${extra_args[@]}")
-      
-      echo "Running: ${cmd[*]}"
-      "${cmd[@]}"
-    shell: bash
+      import shlex
+      import subprocess
+      import sys
+      import os
+
+      cmd = ['prek', 'run', '--show-diff-on-failure', '--color=always']
+
+      extra_args = os.environ.get('EXTRA_ARGS', '')
+      if extra_args:
+          try:
+              parsed_args = shlex.split(extra_args)
+              cmd.extend(parsed_args)
+          except ValueError as e:
+              print(f'Error parsing extra-args: {e}', file=sys.stderr)
+              sys.exit(1)
+
+      print(f"Running: {cmd}")
+
+      try:
+          subprocess.run(cmd, check=True)
+      except subprocess.CalledProcessError as e:
+          sys.exit(e.returncode)
+
+    shell: python
     working-directory: ${{ inputs.working-directory }}
     if: inputs.install-only == 'false'
     env:
