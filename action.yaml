@@ -93,7 +93,8 @@ runs:
   - name: Show verbose logs
     run: |
       echo "::group::Prek verbose logs"
-      log="$(prek cache dir --no-log-file)/prek.log"
+      cache_dir="$(prek cache dir --no-log-file 2>/dev/null || echo ~/.cache/prek)"
+      log="$cache_dir/prek.log"
       cat "$log" || echo "No prek log file found at $log"
       echo "::endgroup::"
     shell: bash
