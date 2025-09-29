@@ -72,9 +72,6 @@ runs:
       import sys
       import os
 
-      sys.stdout.reconfigure(encoding='utf-8')
-      sys.stderr.reconfigure(encoding='utf-8')
-
       cmd = ['prek', 'run', '--show-diff-on-failure', '--color=always']
 
       extra_args = os.environ['EXTRA_ARGS']
@@ -96,13 +93,11 @@ runs:
   - name: Show verbose logs
     run: |
       echo "::group::Prek verbose logs"
-      log="$(prek cache dir)/prek.log"
+      log="$(prek cache dir --no-log-file)/prek.log"
       cat "$log" || echo "No prek log file found at $log"
       echo "::endgroup::"
     shell: bash
     if: inputs.install-only == 'false' && always()
-  - name: Setup tmate session
-    uses: mxschmitt/action-tmate@v3
 branding:
   icon: 'git-commit'
   color: 'orange'
