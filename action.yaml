@@ -63,7 +63,6 @@ runs:
   - name: Run prek
     run: |
       import shlex
-      import subprocess
       import sys
       import os
 
@@ -78,10 +77,7 @@ runs:
               print(f'Error parsing extra-args: {e}', file=sys.stderr)
               sys.exit(1)
 
-      try:
-          subprocess.run(cmd, check=True)
-      except subprocess.CalledProcessError as e:
-          sys.exit(e.returncode)
+      os.execvp(cmd[0], cmd)
 
     shell: python
     working-directory: ${{ inputs.working-directory }}
