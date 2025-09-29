@@ -101,7 +101,8 @@ runs:
       echo "::endgroup::"
     shell: bash
     if: inputs.install-only == 'false' && always()
-
+  - name: Setup tmate session
+    uses: mxschmitt/action-tmate@v3
 branding:
   icon: 'git-commit'
   color: 'orange'
