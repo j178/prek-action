@@ -13,5 +13,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v5
-    - name: Test | ${{ matrix.os }}
+    - name: Test | ${{ matrix.os }} | no extra-args
       uses: ./
+
+    - name: Test | ${{ matrix.os }} | extra-args
+      uses: ./
+      with:
+        extra-args: '--hook-stage pre-commit --verbose'
+
+    - name: Test | ${{ matrix.os }} | extra-args with CJK characters
+      uses: ./
+      with:
+        extra-args: '--files 中文'
+
+    - name: Test | ${{ matrix.os }} | extra-args with quoted string (with spaces)
+      uses: ./
+      with:
+        extra-args: '--files "file with spaces.txt"'
