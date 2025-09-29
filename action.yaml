@@ -27,7 +27,7 @@ outputs:
 runs:
   using: composite
   steps:
-  - name: Resolve download URL
+  - name: Resolve version
     id: resolve
     run: |
       if [[ "${PREK_VERSION}" = "latest" ]]; then
@@ -36,14 +36,18 @@ runs:
       VERSION="${PREK_VERSION#v}"
       VERSION="v${VERSION}"
       echo "version=${VERSION}" >> $GITHUB_OUTPUT
-      echo "download_url=https://github.com/j178/prek/releases/download/${VERSION}/prek-installer.sh" >> $GITHUB_OUTPUT
     shell: bash
     env:
       PREK_VERSION: ${{ inputs.prek-version }}
       GH_TOKEN: ${{ github.token }}
   - name: Install prek
-    run: "curl --proto '=https' --tlsv1.2 -LsSf '${{ steps.resolve.outputs.download_url }}' | sh"
+    run: "curl --proto '=https' --tlsv1.2 -LsSf 'https://github.com/j178/prek/releases/download/${{ steps.resolve.outputs.version }}/prek-installer.sh' | sh"
     shell: bash
+    if: runner.os != 'Windows'
+  - name: Install prek (Windows)
+    run: "irm https://github.com/j178/prek/releases/download/${{ steps.resolve.outputs.version }}/prek-installer.ps1 | iex"
+    shell: powershell
+    if: runner.os == 'Windows'
   - name: Restore cache
     uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
     with:
