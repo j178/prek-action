@@ -41,18 +41,24 @@ runs:
       PREK_VERSION: ${{ inputs.prek-version }}
       GH_TOKEN: ${{ github.token }}
   - name: Install prek
-    run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/j178/prek/releases/download/${PREK_VERSION}/prek-installer.sh | sh"
+    run: |
+      echo "::group::Installing prek ${PREK_VERSION}"
+      curl --proto '=https' --tlsv1.2 -LsSf https://github.com/j178/prek/releases/download/${PREK_VERSION}/prek-installer.sh | sh
+      echo "::endgroup::"
     shell: bash
     if: runner.os != 'Windows'
     env:
       PREK_VERSION: ${{ steps.resolve.outputs.version }}
   - name: Install prek (Windows)
-    run: "irm https://github.com/j178/prek/releases/download/${env:PREK_VERSION}/prek-installer.ps1 | iex"
+    run: |
+      Write-Host "::group::Installing prek $env:PREK_VERSION"
+      irm https://github.com/j178/prek/releases/download/$env:PREK_VERSION/prek-installer.ps1 | iex
+      Write-Host "::endgroup::"
     shell: powershell
     if: runner.os == 'Windows'
     env:
       PREK_VERSION: ${{ steps.resolve.outputs.version }}
-  - name: Restore cache
+  - name: Setup cache
     uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
     with:
       path: |
@@ -65,6 +71,9 @@ runs:
       import shlex
       import sys
       import os
+
+      sys.stdout.reconfigure(encoding='utf-8')
+      sys.stderr.reconfigure(encoding='utf-8')
 
       cmd = ['prek', 'run', '--show-diff-on-failure', '--color=always']
 
@@ -84,6 +93,14 @@ runs:
     if: inputs.install-only == 'false'
     env:
       EXTRA_ARGS: ${{ inputs.extra_args || inputs.extra-args }}
+  - name: Show verbose logs
+    run: |
+      echo "::group::Prek verbose logs"
+      log="$(prek cache dir)/prek.log"
+      cat "$log" || echo "No prek log file found at $log"
+      echo "::endgroup::"
+    shell: bash
+    if: inputs.install-only == 'false' && always()
 
 branding:
   icon: 'git-commit'
