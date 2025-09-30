@@ -67,7 +67,7 @@ runs:
       Invoke-RestMethod https://github.com/j178/prek/releases/download/$env:PREK_VERSION/prek-installer.ps1 | Invoke-Expression
       Add-Content -Path $env:GITHUB_PATH -Value $env:PREK_INSTALL_DIR
       Write-Host "::endgroup::"
-    shell: powershell
+    shell: pwsh
     if: runner.os == 'Windows'
     env:
       PREK_VERSION: ${{ steps.resolve.outputs.version }}
