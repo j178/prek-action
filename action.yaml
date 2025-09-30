@@ -77,7 +77,7 @@ runs:
       path: |
         ~/.cache/prek
         ~\AppData\Local\prek
-      key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
+      key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ github.job }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
     if: inputs.install-only == 'false'
   - name: Run prek
     run: |
