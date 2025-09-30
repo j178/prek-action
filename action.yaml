@@ -77,7 +77,10 @@ runs:
       path: |
         ~/.cache/prek
         ~\AppData\Local\prek
-      key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ github.job }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
+      # `env.pythonLocation` is set by `actions/setup-python`, pointing to the directory where Python is installed.
+      # prek doesn't require Python, but the hooks it runs often do (e.g., pre-commit hooks), changing the Python version makes Python virtual environments invalid.
+      # So we include it in the cache key to avoid using invalid caches.
+      key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ env.pythonLocation }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
     if: inputs.install-only == 'false'
   - name: Run prek
     run: |
