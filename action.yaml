@@ -48,7 +48,11 @@ runs:
   - name: Install prek
     run: |
       echo "::group::Installing prek ${PREK_VERSION}"
+      export PREK_UNMANAGED_INSTALL=1
+      export PREK_INSTALL_DIR="$RUNNER_TOOL_CACHE/prek/${PREK_VERSION}/$RUNNER_ARCH"
+      mkdir -p "$PREK_INSTALL_DIR"
       curl --proto '=https' --tlsv1.2 -LsSf https://github.com/j178/prek/releases/download/${PREK_VERSION}/prek-installer.sh | sh
+      echo "$PREK_INSTALL_DIR" >> $GITHUB_PATH
       echo "::endgroup::"
     shell: bash
     if: runner.os != 'Windows'
@@ -57,7 +61,11 @@ runs:
   - name: Install prek (Windows)
     run: |
       Write-Host "::group::Installing prek $env:PREK_VERSION"
-      irm https://github.com/j178/prek/releases/download/$env:PREK_VERSION/prek-installer.ps1 | iex
+      $env:PREK_UNMANAGED_INSTALL = "1"
+      $env:PREK_INSTALL_DIR = "$env:RUNNER_TOOL_CACHE\prek\$env:PREK_VERSION\$env:RUNNER_ARCH"
+      New-Item -ItemType Directory -Force -Path $env:PREK_INSTALL_DIR
+      Invoke-RestMethod https://github.com/j178/prek/releases/download/$env:PREK_VERSION/prek-installer.ps1 | Invoke-Expression
+      Add-Content -Path $env:GITHUB_PATH -Value $env:PREK_INSTALL_DIR
       Write-Host "::endgroup::"
     shell: powershell
     if: runner.os == 'Windows'
