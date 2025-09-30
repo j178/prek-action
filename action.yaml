@@ -20,6 +20,11 @@ inputs:
     description: The working directory to run prek in
     required: false
     default: '.'
+  token:
+    description: GitHub token to avoid API rate limiting
+    required: false
+    default: ${{ github.token }}
+
 outputs:
   prek-version:
     description: The version of prek that was installed
@@ -39,7 +44,7 @@ runs:
     shell: bash
     env:
       PREK_VERSION: ${{ inputs.prek-version }}
-      GH_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ inputs.token }}
   - name: Install prek
     run: |
       echo "::group::Installing prek ${PREK_VERSION}"
