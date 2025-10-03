@@ -47,6 +47,8 @@ runs:
       GH_TOKEN: ${{ inputs.token }}
   - name: Install prek
     run: |
+      # Installing prek
+
       echo "::group::Installing prek ${PREK_VERSION}"
       export PREK_UNMANAGED_INSTALL=1
       export PREK_INSTALL_DIR="$RUNNER_TOOL_CACHE/prek/${PREK_VERSION}/$RUNNER_ARCH"
@@ -108,6 +110,8 @@ runs:
       EXTRA_ARGS: ${{ inputs.extra_args || inputs.extra-args }}
   - name: Show verbose logs
     run: |
+      # Prek verbose logs
+
       echo "::group::Prek verbose logs"
       cache_dir="$(prek cache dir --no-log-file 2>/dev/null || echo ~/.cache/prek)"
       log="$cache_dir/prek.log"
