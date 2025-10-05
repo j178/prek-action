@@ -21,7 +21,7 @@ inputs:
     required: false
     default: '.'
   token:
-    description: GitHub token for API access. Used to avoid rate limiting when fetching the latest release. Optional - the action will work without authentication.
+    description: GitHub token to avoid API rate limiting
     required: false
     default: ${{ github.token }}
 
@@ -37,25 +37,18 @@ runs:
     run: |
       if [[ "${PREK_VERSION}" = "latest" ]]; then
         # Try authenticated request first
-        if [[ -n "${GH_TOKEN}" ]]; then
-          response=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/j178/prek/releases/latest")
-          http_code=$(echo "$response" | tail -n1)
-          body=$(echo "$response" | sed '$d')
+        response=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${GH_TOKEN}" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/j178/prek/releases/latest")
+        http_code=$(echo "$response" | tail -n1)
+        body=$(echo "$response" | sed '$d')
 
-          # If authenticated request succeeds (2xx status code), use it
-          if [[ "$http_code" =~ ^2 ]]; then
-            PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
-          else
-            # Fall back to unauthenticated request
-            echo "Authenticated request failed with status ${http_code}, falling back to unauthenticated request"
-            body=$(curl -s -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/j178/prek/releases/latest")
-            PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
-          fi
+        # If authenticated request succeeds (2xx status code), use it
+        if [[ "$http_code" =~ ^2 ]]; then
+          PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
         else
-          # No token provided, use unauthenticated request
+          # Fall back to unauthenticated request
+          echo "Authenticated request failed with status ${http_code}, falling back to unauthenticated request"
           body=$(curl -s -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/j178/prek/releases/latest")
           PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
