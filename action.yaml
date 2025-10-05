@@ -35,29 +35,42 @@ runs:
   - name: Resolve version
     id: resolve
     run: |
-      if [[ "${PREK_VERSION}" = "latest" ]]; then
-        # Try authenticated request first
-        response=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${GH_TOKEN}" \
-          -H "Accept: application/vnd.github+json" \
-          "https://api.github.com/repos/j178/prek/releases/latest")
-        http_code=$(echo "$response" | tail -n1)
-        body=$(echo "$response" | sed '$d')
+      import os
+      import json
+      from urllib import request
 
-        # If authenticated request succeeds (2xx status code), use it
-        if [[ "$http_code" =~ ^2 ]]; then
-          PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
-        else
-          # Fall back to unauthenticated request
-          echo "Authenticated request failed with status ${http_code}, falling back to unauthenticated request"
-          body=$(curl -s -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/j178/prek/releases/latest")
-          PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
-        fi
-      fi
-      VERSION="${PREK_VERSION#v}"
-      VERSION="v${VERSION}"
-      echo "version=${VERSION}" >> $GITHUB_OUTPUT
-    shell: bash
+      prek_version = os.environ['PREK_VERSION']
+      gh_token = os.environ.get('GH_TOKEN', '')
+
+      if prek_version == 'latest':
+          url = 'https://api.github.com/repos/j178/prek/releases/latest'
+          headers = {'Accept': 'application/vnd.github+json'}
+          
+          if gh_token:
+              headers['Authorization'] = f'Bearer {gh_token}'
+          
+          try:
+              req = request.Request(url, headers=headers)
+              with request.urlopen(req) as response:
+                  data = json.loads(response.read())
+                  prek_version = data['tag_name']
+          except Exception as e:
+              if gh_token:
+                  print(f'Authenticated request failed: {e}, falling back to unauthenticated request')
+                  headers.pop('Authorization', None)
+                  req = request.Request(url, headers=headers)
+                  with request.urlopen(req) as response:
+                      data = json.loads(response.read())
+                      prek_version = data['tag_name']
+              else:
+                  raise
+
+      version = prek_version.lstrip('v')
+      version = f'v{version}'
+      
+      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          f.write(f'version={version}\n')
+    shell: python
     env:
       PREK_VERSION: ${{ inputs.prek-version }}
       GH_TOKEN: ${{ inputs.token }}
