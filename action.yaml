@@ -36,7 +36,42 @@ runs:
     id: resolve
     run: |
       if [[ "${PREK_VERSION}" = "latest" ]]; then
-        PREK_VERSION=$(gh api repos/j178/prek/releases/latest --jq '.tag_name')
+        # Try authenticated request first
+        if [[ -n "${GH_TOKEN}" ]]; then
+          response=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/j178/prek/releases/latest")
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          # If authenticated request succeeds (2xx status code), use it
+          if [[ "$http_code" =~ ^2 ]]; then
+            if command -v jq &> /dev/null; then
+              PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
+            else
+              PREK_VERSION=$(echo "$body" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)".*/\1/')
+            fi
+          else
+            # Fall back to unauthenticated request
+            echo "Authenticated request failed with status ${http_code}, falling back to unauthenticated request"
+            body=$(curl -s -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/j178/prek/releases/latest")
+            if command -v jq &> /dev/null; then
+              PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
+            else
+              PREK_VERSION=$(echo "$body" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)".*/\1/')
+            fi
+          fi
+        else
+          # No token provided, use unauthenticated request
+          body=$(curl -s -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/j178/prek/releases/latest")
+          if command -v jq &> /dev/null; then
+            PREK_VERSION=$(echo "$body" | jq -r '.tag_name')
+          else
+            PREK_VERSION=$(echo "$body" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)".*/\1/')
+          fi
+        fi
       fi
       VERSION="${PREK_VERSION#v}"
       VERSION="v${VERSION}"
