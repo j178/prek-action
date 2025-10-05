@@ -35,13 +35,44 @@ runs:
   - name: Resolve version
     id: resolve
     run: |
-      if [[ "${PREK_VERSION}" = "latest" ]]; then
-        PREK_VERSION=$(gh api repos/j178/prek/releases/latest --jq '.tag_name')
-      fi
-      VERSION="${PREK_VERSION#v}"
-      VERSION="v${VERSION}"
-      echo "version=${VERSION}" >> $GITHUB_OUTPUT
-    shell: bash
+      # Resolve prek version
+
+      import os
+      import json
+      from urllib import request
+
+      prek_version = os.environ['PREK_VERSION']
+      gh_token = os.environ.get('GH_TOKEN', '')
+
+      if prek_version == 'latest':
+          url = 'https://api.github.com/repos/j178/prek/releases/latest'
+          headers = {'Accept': 'application/vnd.github+json'}
+
+          if gh_token:
+              headers['Authorization'] = f'Bearer {gh_token}'
+
+          try:
+              req = request.Request(url, headers=headers)
+              with request.urlopen(req) as response:
+                  data = json.loads(response.read())
+                  prek_version = data['tag_name']
+          except Exception as e:
+              if gh_token:
+                  print(f'::warning::Authenticated request failed: {e}, falling back to unauthenticated request')
+                  headers.pop('Authorization', None)
+                  req = request.Request(url, headers=headers)
+                  with request.urlopen(req) as response:
+                      data = json.loads(response.read())
+                      prek_version = data['tag_name']
+              else:
+                  raise
+
+      version = prek_version.lstrip('v')
+      version = f'v{version}'
+
+      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          f.write(f'version={version}\n')
+    shell: python
     env:
       PREK_VERSION: ${{ inputs.prek-version }}
       GH_TOKEN: ${{ inputs.token }}
@@ -62,6 +93,8 @@ runs:
       PREK_VERSION: ${{ steps.resolve.outputs.version }}
   - name: Install prek (Windows)
     run: |
+      # Installing prek
+
       Write-Host "::group::Installing prek $env:PREK_VERSION"
       $env:PREK_UNMANAGED_INSTALL = "1"
       $env:PREK_INSTALL_DIR = "$env:RUNNER_TOOL_CACHE\prek\$env:PREK_VERSION\$env:RUNNER_ARCH"
@@ -86,6 +119,8 @@ runs:
     if: inputs.install-only == 'false'
   - name: Run prek
     run: |
+      # Running prek
+
       import shlex
       import sys
       import os
