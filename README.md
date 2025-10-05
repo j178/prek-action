@@ -75,7 +75,7 @@ When `install-only` is set to `true`, the action will only install prek and skip
 | `install-only`     | Only install prek, do not run it           | No       | `false`       |
 | `prek-version`     | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
 | `working-directory` | The working directory to run prek in      | No       | `.`           |
-| `token`            | GitHub token to avoid API rate limiting   | No       | `${{ github.token }}` |
+| `token`            | GitHub token for API access. Used to avoid rate limiting when fetching the latest release. Optional - the action will work without authentication. | No       | `${{ github.token }}` |
 
 ## Outputs
 

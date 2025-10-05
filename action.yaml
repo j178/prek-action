@@ -21,7 +21,7 @@ inputs:
     required: false
     default: '.'
   token:
-    description: GitHub token to avoid API rate limiting
+    description: GitHub token for API access. Used to avoid rate limiting when fetching the latest release. Optional - the action will work without authentication.
     required: false
     default: ${{ github.token }}
 
