@@ -1,5 +1,6 @@
 name: prek-action
 description: Run pre-commit hooks using prek
+
 inputs:
   extra-args:
     description: Options to pass to `prek run`
@@ -13,7 +14,7 @@ inputs:
     required: false
     default: 'false'
   prek-version:
-    description: Version of prek to install (e.g., '0.2.1', 'latest')
+    description: Version of prek to install (e.g., '0.2.12', 'latest')
     required: false
     default: 'latest'
   working-directory:
@@ -21,91 +22,69 @@ inputs:
     required: false
     default: '.'
   token:
-    description: GitHub token to avoid API rate limiting
+    description: (Deprecated) Unused. Kept for backward-compatibility.
     required: false
     default: ${{ github.token }}
 
 outputs:
   prek-version:
     description: The version of prek that was installed
-    value: ${{ steps.resolve.outputs.version }}
+    value: ${{ steps.detect-nix.outputs.version || steps.detect-win.outputs.version }}
+
 runs:
   using: composite
   steps:
-  - name: Resolve version
-    id: resolve
-    run: |
-      # Resolve prek version
-
-      import os
-      import json
-      from urllib import request
-
-      prek_version = os.environ['PREK_VERSION']
-      gh_token = os.environ.get('GH_TOKEN', '')
-
-      if prek_version == 'latest':
-          url = 'https://api.github.com/repos/j178/prek/releases/latest'
-          headers = {'Accept': 'application/vnd.github+json'}
-
-          if gh_token:
-              headers['Authorization'] = f'Bearer {gh_token}'
-
-          try:
-              req = request.Request(url, headers=headers)
-              with request.urlopen(req) as response:
-                  data = json.loads(response.read())
-                  prek_version = data['tag_name']
-          except Exception as e:
-              if gh_token:
-                  print(f'::warning::Authenticated request failed: {e}, falling back to unauthenticated request')
-                  headers.pop('Authorization', None)
-                  req = request.Request(url, headers=headers)
-                  with request.urlopen(req) as response:
-                      data = json.loads(response.read())
-                      prek_version = data['tag_name']
-              else:
-                  raise
-
-      version = prek_version.lstrip('v')
-      version = f'v{version}'
-
-      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-          f.write(f'version={version}\n')
-    shell: python
-    env:
-      PREK_VERSION: ${{ inputs.prek-version }}
-      GH_TOKEN: ${{ inputs.token }}
-  - name: Install prek
-    run: |
-      # Installing prek
-
-      echo "::group::Installing prek ${PREK_VERSION}"
-      export PREK_UNMANAGED_INSTALL=1
-      export PREK_INSTALL_DIR="$RUNNER_TOOL_CACHE/prek/${PREK_VERSION}/$RUNNER_ARCH"
-      mkdir -p "$PREK_INSTALL_DIR"
-      curl --proto '=https' --tlsv1.2 -LsSf https://github.com/j178/prek/releases/download/${PREK_VERSION}/prek-installer.sh | sh
-      echo "$PREK_INSTALL_DIR" >> $GITHUB_PATH
-      echo "::endgroup::"
-    shell: bash
+  - name: Install prek (Unix)
     if: runner.os != 'Windows'
-    env:
-      PREK_VERSION: ${{ steps.resolve.outputs.version }}
-  - name: Install prek (Windows)
+    shell: bash
     run: |
-      # Installing prek
+      set -euo pipefail
 
-      Write-Host "::group::Installing prek $env:PREK_VERSION"
-      $env:PREK_UNMANAGED_INSTALL = "1"
-      $env:PREK_INSTALL_DIR = "$env:RUNNER_TOOL_CACHE\prek\$env:PREK_VERSION\$env:RUNNER_ARCH"
-      New-Item -ItemType Directory -Force -Path $env:PREK_INSTALL_DIR
-      Invoke-RestMethod https://github.com/j178/prek/releases/download/$env:PREK_VERSION/prek-installer.ps1 | Invoke-Expression
+      req_version="${{ inputs.prek-version }}"
+      if [ "${req_version}" = "latest" ]; then
+        installer_url="https://github.com/j178/prek/releases/latest/download/prek-installer.sh"
+        version_label="latest"
+      else
+        version_label="v${req_version#v}"
+        installer_url="https://github.com/j178/prek/releases/download/${version_label}/prek-installer.sh"
+      fi
+
+      echo "::group::Installing prek ${version_label}"
+      export PREK_UNMANAGED_INSTALL=1
+      export PREK_INSTALL_DIR="$RUNNER_TOOL_CACHE/prek/${version_label}/$RUNNER_ARCH"
+      mkdir -p "$PREK_INSTALL_DIR"
+
+      curl --proto '=https' --tlsv1.2 -LsSf "$INSTALLER_URL" | sh
+
+      echo "$PREK_INSTALL_DIR" >> "$GITHUB_PATH"
+      echo "::endgroup::"
+
+  - name: Install prek (Windows)
+    if: runner.os == 'Windows'
+    shell: pwsh
+    run: |
+      Set-StrictMode -Version Latest
+      $ErrorActionPreference = 'Stop'
+
+      $ReqVersion="${{ inputs.prek-version }}"
+      if ($ReqVersion -eq 'latest') {
+        $VersionLabel = 'latest'
+        $InstallerUrl = 'https://github.com/j178/prek/releases/latest/download/prek-installer.ps1'
+      } else {
+        $VersionLabel = "v$($ReqVersion.TrimStart('v'))"
+        $InstallerUrl = "https://github.com/j178/prek/releases/download/$VersionLabel/prek-installer.ps1"
+      }
+
+      Write-Host "::group::Installing prek $VersionLabel"
+      $env:PREK_UNMANAGED_INSTALL = '1'
+      $env:PREK_INSTALL_DIR = "$env:RUNNER_TOOL_CACHE\prek\$VersionLabel\$env:RUNNER_ARCH"
+      New-Item -ItemType Directory -Force -Path $env:PREK_INSTALL_DIR | Out-Null
+
+      Invoke-RestMethod $installerUrl | Invoke-Expression
+
       Add-Content -Path $env:GITHUB_PATH -Value $env:PREK_INSTALL_DIR
       Write-Host "::endgroup::"
-    shell: pwsh
-    if: runner.os == 'Windows'
-    env:
-      PREK_VERSION: ${{ steps.resolve.outputs.version }}
+
   - name: Setup cache
     uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
     with:
@@ -116,44 +95,56 @@ runs:
       # prek doesn't require Python, but the hooks it runs often do (e.g., pre-commit hooks), changing the Python version makes Python virtual environments invalid.
       # So we include it in the cache key to avoid using invalid caches.
       key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ env.pythonLocation }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
-    if: inputs.install-only == 'false'
-  - name: Run prek
+
+  - name: Detect installed version (Unix)
+    id: detect-nix
+    if: runner.os != 'Windows'
+    shell: bash
     run: |
-      # Running prek
+      set -euo pipefail
+      raw="$(prek --version 2>/dev/null || true)"
+      ver="$(printf '%s' "$raw" | grep -Eo '[0-9]+(\.[0-9]+){1,3}' | head -n1 || true)"
+      if [ -z "${ver:-}" ]; then ver="unknown"; fi
+      echo "version=v${ver#v}" >> "$GITHUB_OUTPUT"
 
-      import shlex
-      import sys
-      import os
+  - name: Detect installed version (Windows)
+    id: detect-win
+    if: runner.os == 'Windows'
+    shell: pwsh
+    run: |
+      $raw = (& prek --version) 2>$null -join ' '
+      $m = [regex]::Match($raw, '\d+(\.\d+){1,3}')
+      $ver = if ($m.Success) { "v$($m.Value)" } else { 'vunknown' }
+      "version=$ver" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      cmd = ['prek', 'run', '--show-diff-on-failure', '--color=always']
-
-      extra_args = os.environ['EXTRA_ARGS']
-      if extra_args:
-          try:
-              parsed_args = shlex.split(extra_args)
-              cmd.extend(parsed_args)
-          except ValueError as e:
-              print(f'Error parsing extra-args: {e}', file=sys.stderr)
-              sys.exit(1)
-
-      os.execvp(cmd[0], cmd)
-
-    shell: python
+  - name: Run prek (Unix)
+    if: inputs.install-only == 'false' && runner.os != 'Windows'
+    shell: bash
     working-directory: ${{ inputs.working-directory }}
-    if: inputs.install-only == 'false'
     env:
       EXTRA_ARGS: ${{ inputs.extra_args || inputs.extra-args }}
-  - name: Show verbose logs
     run: |
-      # Prek verbose logs
+      prek run --show-diff-on-failure --color=always $EXTRA_ARGS
 
+  - name: Run prek (Windows)
+    if: inputs.install-only == 'false' && runner.os == 'Windows'
+    shell: pwsh
+    working-directory: ${{ inputs.working-directory }}
+    env:
+      EXTRA_ARGS: ${{ inputs.extra_args || inputs.extra-args }}
+    run: |
+      prek run --show-diff-on-failure --color=always $env:EXTRA_ARGS
+
+  - name: Show verbose logs
+    if: inputs.install-only == 'false' && always()
+    shell: bash
+    run: |
       echo "::group::Prek verbose logs"
       cache_dir="$(prek cache dir --no-log-file 2>/dev/null || echo ~/.cache/prek)"
       log="$cache_dir/prek.log"
       cat "$log" || echo "No prek log file found at $log"
       echo "::endgroup::"
-    shell: bash
-    if: inputs.install-only == 'false' && always()
+
 branding:
   icon: 'git-commit'
   color: 'orange'
