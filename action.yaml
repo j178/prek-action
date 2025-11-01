@@ -54,7 +54,7 @@ runs:
       export PREK_INSTALL_DIR="$RUNNER_TOOL_CACHE/prek/${version_label}/$RUNNER_ARCH"
       mkdir -p "$PREK_INSTALL_DIR"
 
-      curl --proto '=https' --tlsv1.2 -LsSf "$INSTALLER_URL" | sh
+      curl --proto '=https' --tlsv1.2 -LsSf "$installer_url" | sh
 
       echo "$PREK_INSTALL_DIR" >> "$GITHUB_PATH"
       echo "::endgroup::"
