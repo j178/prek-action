@@ -112,7 +112,7 @@ runs:
     if: runner.os == 'Windows'
     shell: pwsh
     run: |
-      $raw = (& prek --version) 2>$null -join ' '
+      $raw = -join (& prek --version 2>$null)
       $m = [regex]::Match($raw, '\d+(\.\d+){1,3}')
       $ver = if ($m.Success) { "v$($m.Value)" } else { 'vunknown' }
       "version=$ver" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
