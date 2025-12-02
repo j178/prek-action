@@ -71,8 +71,7 @@ steps:
 
 When `install-only` is set to `true`, the action will only install prek and skip running it. The `extra-args` input has no effect in this mode.
 
-You can then run `prek` in a separate step. This is useful for example when you need to customize the environment for prek.
-For example, wrapping it in [uv](https://docs.astral.sh/uv/): `uv run prek run ...`.
+Running `prek` in a separate step can be useful for example when you need to customize the environment.
 
 ## Inputs
 
