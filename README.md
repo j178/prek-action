@@ -63,9 +63,15 @@ steps:
   - uses: j178/prek-action@v1
     with:
       install-only: true
+  - run: |
+      prek run \
+        --show-diff-on-failure \
+        --color always
 ```
 
 When `install-only` is set to `true`, the action will only install prek and skip running it. The `extra-args` input has no effect in this mode.
+
+Running `prek` in a separate step can be useful for example when you need to customize the environment.
 
 ## Inputs
 
