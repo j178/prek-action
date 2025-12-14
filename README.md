@@ -20,7 +20,7 @@ jobs:
   prek:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: j178/prek-action@v1
 ```
 
@@ -28,7 +28,7 @@ jobs:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v5
+  - uses: actions/checkout@v6
   - uses: j178/prek-action@v1
     with:
       extra-args: '--all-files --directory packages/'
@@ -38,7 +38,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v5
+  - uses: actions/checkout@v6
   - uses: j178/prek-action@v1
     with:
       extra-args: '--all-files mypy flake8 ruff'
@@ -48,7 +48,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v5
+  - uses: actions/checkout@v6
   - uses: j178/prek-action@v1
     with:
       prek-version: '0.2.1'
@@ -59,7 +59,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v5
+  - uses: actions/checkout@v6
   - uses: j178/prek-action@v1
     with:
       install-only: true
