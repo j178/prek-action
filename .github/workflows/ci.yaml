@@ -12,21 +12,46 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v5
-    - name: Test | ${{ matrix.os }} | no extra-args
-      uses: ./
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - name: Test | ${{ matrix.os }} | no extra-args
+        uses: ./
 
-    - name: Test | ${{ matrix.os }} | extra-args
-      uses: ./
-      with:
-        extra-args: '--hook-stage pre-commit --verbose'
+      - name: Test | ${{ matrix.os }} | extra-args
+        uses: ./
+        with:
+          extra-args: '--hook-stage pre-commit --verbose'
 
-    - name: Test | ${{ matrix.os }} | extra-args with CJK characters
-      uses: ./
-      with:
-        extra-args: '--files 中文'
+      - name: Test | ${{ matrix.os }} | extra-args with CJK characters
+        uses: ./
+        with:
+          extra-args: '--files 中文'
 
-    - name: Test | ${{ matrix.os }} | extra-args with quoted string (with spaces)
-      uses: ./
-      with:
-        extra-args: '--files "file with spaces.txt"'
+      - name: Test | ${{ matrix.os }} | extra-args with quoted string (with spaces)
+        uses: ./
+        with:
+          extra-args: '--files "file with spaces.txt"'
+
+  ecosystem-cpython:
+    name: "ecosystem | cpython"
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: Checkout python/cpython
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: python/cpython
+          ref: f3759d21dd5e6510361d7409a1df53f35ebd9a58
+          path: cpython
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Run prek on cpython
+        uses: ./
+        with:
+          working-directory: ./cpython
