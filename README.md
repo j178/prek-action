@@ -24,6 +24,21 @@ jobs:
       - uses: j178/prek-action@v1
 ```
 
+> Note: The action assumes, that a Python version is installed on the runner. For custom runners, install it before calling the action, e.g. via:
+
+> ```yaml
+>  name: Prek checks
+>  on: [push, pull_request]
+>  
+>  jobs:
+>    prek:
+>      runs-on: some-obscure-non-python-runner
+>      steps:
+>        - uses: actions/checkout@v6
+>        - uses: actions/setup_python@v6
+>        - uses: j178/prek-action@v1
+>  ```
+
 ### Custom Arguments
 
 ```yaml
