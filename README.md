@@ -24,6 +24,10 @@ jobs:
       - uses: j178/prek-action@v1
 ```
 
+> [!NOTE]
+> This action assumes that a Python version is installed on the runner. If you’re using a self-hosted/custom runner,
+> ensure Python is installed before calling this action (e.g. via [`actions/setup-python`](https://github.com/actions/setup-python)).
+
 ### Custom Arguments
 
 ```yaml
