@@ -1,0 +1,5 @@
+rules:
+  # TODO: Find a way to remove this exception
+  github-env:
+    ignore:
+      - action.yaml
