@@ -34,6 +34,10 @@ runs:
   steps:
   - name: Resolve version
     id: resolve
+    shell: python
+    env:
+      PREK_VERSION: ${{ inputs.prek-version }}
+      GH_TOKEN: ${{ inputs.token }}
     run: |
       # Resolve prek version
 
@@ -72,11 +76,12 @@ runs:
 
       with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
           f.write(f'version={version}\n')
-    shell: python
-    env:
-      PREK_VERSION: ${{ inputs.prek-version }}
-      GH_TOKEN: ${{ inputs.token }}
+
   - name: Install prek
+    if: runner.os != 'Windows'
+    shell: bash
+    env:
+      PREK_VERSION: ${{ steps.resolve.outputs.version }}
     run: |
       # Installing prek
 
@@ -87,11 +92,12 @@ runs:
       curl --proto '=https' --tlsv1.2 -LsSf https://github.com/j178/prek/releases/download/${PREK_VERSION}/prek-installer.sh | sh
       echo "$PREK_INSTALL_DIR" >> $GITHUB_PATH
       echo "::endgroup::"
-    shell: bash
-    if: runner.os != 'Windows'
+
+  - name: Install prek (Windows)
+    if: runner.os == 'Windows'
+    shell: pwsh
     env:
       PREK_VERSION: ${{ steps.resolve.outputs.version }}
-  - name: Install prek (Windows)
     run: |
       # Installing prek
 
@@ -102,10 +108,7 @@ runs:
       Invoke-RestMethod https://github.com/j178/prek/releases/download/$env:PREK_VERSION/prek-installer.ps1 | Invoke-Expression
       Add-Content -Path $env:GITHUB_PATH -Value $env:PREK_INSTALL_DIR
       Write-Host "::endgroup::"
-    shell: pwsh
-    if: runner.os == 'Windows'
-    env:
-      PREK_VERSION: ${{ steps.resolve.outputs.version }}
+
   - name: Setup cache
     uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
     with:
@@ -116,7 +119,13 @@ runs:
       # prek doesn't require Python, but the hooks it runs often do (e.g., pre-commit hooks), changing the Python version makes Python virtual environments invalid.
       # So we include it in the cache key to avoid using invalid caches.
       key: prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ env.pythonLocation }}|${{ hashFiles(format('{0}/**/.pre-commit-config.yaml', inputs.working-directory)) }}
+
   - name: Run prek
+    if: inputs.install-only == 'false'
+    working-directory: ${{ inputs.working-directory }}
+    env:
+      EXTRA_ARGS: ${{ inputs.extra_args || inputs.extra-args }}
+    shell: python
     run: |
       # Running prek
 
@@ -137,12 +146,9 @@ runs:
 
       os.execvp(cmd[0], cmd)
 
-    shell: python
-    working-directory: ${{ inputs.working-directory }}
-    if: inputs.install-only == 'false'
-    env:
-      EXTRA_ARGS: ${{ inputs.extra_args || inputs.extra-args }}
   - name: Show verbose logs
+    if: inputs.install-only == 'false'
+    shell: bash
     run: |
       # Prek verbose logs
 
@@ -151,8 +157,15 @@ runs:
       log="$cache_dir/prek.log"
       cat "$log" || echo "No prek log file found at $log"
       echo "::endgroup::"
+
+  - name: Prune cache
+    if: success()
     shell: bash
-    if: inputs.install-only == 'false' && always()
+    run: |
+      # Prune prek cache
+
+      prek cache gc -v || echo "Failed to prune prek cache"
+
 branding:
   icon: 'git-commit'
   color: 'orange'
