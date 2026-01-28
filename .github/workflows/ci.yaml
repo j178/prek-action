@@ -33,6 +33,11 @@ jobs:
         with:
           extra-args: '--files "file with spaces.txt"'
 
+      - name: Test | ${{ matrix.os }} | pin prek version
+        uses: ./
+        with:
+          prek-version: '0.2.30'
+
   ecosystem-cpython:
     name: "ecosystem | cpython"
     timeout-minutes: 5
