@@ -164,7 +164,9 @@ runs:
     run: |
       # Prune prek cache
 
+      echo "::group::Pruning prek cache"
       prek cache gc -v || echo "Failed to prune prek cache"
+      echo "::endgroup::"
 
 branding:
   icon: 'git-commit'
