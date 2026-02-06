@@ -95,7 +95,7 @@ Running `prek` in a separate step can be useful for example when you need to cus
 
 ## Requirements
 
-Your repository must have a prek configuration file (`prek.toml`, `.pre-commit-config.yaml`, or `.pre-commit-config.yml`).
+Your repository must have a [prek configuration](https://prek.j178.dev/configuration/) file (`prek.toml`, `.pre-commit-config.yaml`, or `.pre-commit-config.yml`).
 
 ## License
 
