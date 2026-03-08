@@ -30,6 +30,10 @@ jobs:
 
 ### Custom Arguments
 
+> [!NOTE]
+> prek is always invoked as `prek run --show-diff-on-failure --color=always`. Any `extra-args` are appended after these flags.
+> Do not include `--show-diff-on-failure` or `--color` in `extra-args` as they are already set.
+
 ```yaml
 steps:
   - uses: actions/checkout@v6
@@ -81,7 +85,7 @@ Running `prek` in a separate step can be useful for example when you need to cus
 
 | Input              | Description                                | Required | Default       |
 | ------------------ | ------------------------------------------ | -------- | ------------- |
-| `extra-args`       | Additional arguments to pass to `prek run` | No       | `--all-files` |
+| `extra-args`       | Additional arguments to pass to `prek run`, appended after `--show-diff-on-failure --color=always` | No       | `--all-files` |
 | `install-only`     | Only install prek, do not run it           | No       | `false`       |
 | `prek-version`     | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
 | `working-directory` | The working directory to run prek in      | No       | `.`           |
