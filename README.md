@@ -8,6 +8,22 @@ A GitHub Action that runs [pre-commit](https://pre-commit.com) hooks using [prek
 
 [prek](https://github.com/j178/prek) is a fast hooks runner that provides an alternative to the widely-used [pre-commit](https://pre-commit.com) framework. It offers better performance and caching capabilities for running code quality checks.
 
+## Inputs
+
+| Input              | Description                                | Required | Default       |
+| ------------------ | ------------------------------------------ | -------- | ------------- |
+| `extra-args`       | Additional arguments to pass to `prek run`, appended after `--show-diff-on-failure --color=always` | No       | `--all-files` |
+| `install-only`     | Only install prek, do not run it           | No       | `false`       |
+| `prek-version`     | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
+| `working-directory` | The working directory to run prek in      | No       | `.`           |
+| `token`            | GitHub token to avoid API rate limiting   | No       | `${{ github.token }}` |
+
+## Outputs
+
+| Output         | Description                                           |
+| -------------- | ----------------------------------------------------- |
+| `prek-version` | The resolved version of prek that was installed       |
+
 ## Usage
 
 ### Basic Usage
@@ -29,6 +45,10 @@ jobs:
 > ensure Python is installed before calling this action (e.g. via [`actions/setup-python`](https://github.com/actions/setup-python)).
 
 ### Custom Arguments
+
+> [!NOTE]
+> prek is always invoked as `prek run --show-diff-on-failure --color=always`. Any `extra-args` are appended after these flags.
+> Do not include `--show-diff-on-failure` or `--color` in `extra-args` as they are already set.
 
 ```yaml
 steps:
@@ -76,22 +96,6 @@ steps:
 When `install-only` is set to `true`, the action will only install prek and skip running it. The `extra-args` input has no effect in this mode.
 
 Running `prek` in a separate step can be useful for example when you need to customize the environment.
-
-## Inputs
-
-| Input              | Description                                | Required | Default       |
-| ------------------ | ------------------------------------------ | -------- | ------------- |
-| `extra-args`       | Additional arguments to pass to `prek run` | No       | `--all-files` |
-| `install-only`     | Only install prek, do not run it           | No       | `false`       |
-| `prek-version`     | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
-| `working-directory` | The working directory to run prek in      | No       | `.`           |
-| `token`            | GitHub token to avoid API rate limiting   | No       | `${{ github.token }}` |
-
-## Outputs
-
-| Output         | Description                                           |
-| -------------- | ----------------------------------------------------- |
-| `prek-version` | The resolved version of prek that was installed       |
 
 ## Requirements
 
