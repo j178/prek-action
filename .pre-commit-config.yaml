@@ -1,4 +1,5 @@
 default_install_hook_types: [ pre-push ]
+exclude: ^dist/
 repos:
   - repo: builtin
     hooks:
