@@ -5,7 +5,14 @@ import * as os from 'node:os'
 import * as path from 'node:path'
 
 import {getInputs} from '../src/inputs'
-import {getBinaryPath, getReleaseAssetFor, getRustTargetFor, getToolCacheArchFor} from '../src/install'
+import {
+  getBinaryPath,
+  getReleaseAssetFor,
+  getRustTargetFor,
+  getToolCacheArchFor,
+  hashFile,
+  validateDownloadedChecksum
+} from '../src/install'
 import {normalizeVersion, resolveVersionFromManifest} from '../src/manifest'
 
 test('resolveVersionFromManifest resolves exact versions and latest from the bundled manifest', () => {
@@ -92,4 +99,48 @@ test('getBinaryPath resolves the zip archive layout directly', async () => {
     binaryName: 'prek.exe'
   })
   assert.equal(resolved, expected)
+})
+
+test('validateDownloadedChecksum reports missing checksums without hashing', async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-checksum-'))
+  const archivePath = path.join(rootDir, 'prek.tar.gz')
+  await fs.writeFile(archivePath, 'binary')
+
+  const result = await validateDownloadedChecksum(archivePath, {
+    contentType: 'application/x-gtar',
+    downloadUrl: 'https://example.invalid/prek.tar.gz',
+    name: 'prek.tar.gz',
+    sha256: null,
+    size: 6
+  })
+
+  assert.equal(result, 'missing')
+})
+
+test('validateDownloadedChecksum throws on checksum mismatch', async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-checksum-'))
+  const archivePath = path.join(rootDir, 'prek.tar.gz')
+  await fs.writeFile(archivePath, 'binary')
+
+  await assert.rejects(
+    validateDownloadedChecksum(archivePath, {
+      contentType: 'application/x-gtar',
+      downloadUrl: 'https://example.invalid/prek.tar.gz',
+      name: 'prek.tar.gz',
+      sha256: 'deadbeef',
+      size: 6
+    }),
+    /Checksum mismatch/
+  )
+})
+
+test('hashFile returns the sha256 digest for a file', async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-hash-'))
+  const archivePath = path.join(rootDir, 'prek.tar.gz')
+  await fs.writeFile(archivePath, 'binary')
+
+  assert.equal(
+    await hashFile(archivePath),
+    '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd'
+  )
 })
