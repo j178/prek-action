@@ -89,6 +89,11 @@ jobs:
         with:
           prek-version: '0.2.30'
 
+      - name: Test | ${{ matrix.os }} | resolve prek semver range
+        uses: ./
+        with:
+          prek-version: '0.3.x'
+
   ecosystem-cpython:
     name: "ecosystem | cpython"
     timeout-minutes: 5

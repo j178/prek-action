@@ -10,8 +10,48 @@ import {
   getReleaseAssetFor,
   getRustTargetFor,
   getToolCacheArchFor,
-  normalizeVersion
+  normalizeVersion,
+  resolveVersionFromManifest
 } from '../src/shared'
+
+const manifest = {
+  generatedAt: '2026-03-15T00:00:00.000Z',
+  releases: [
+    {
+      assets: [],
+      draft: false,
+      prerelease: false,
+      publishedAt: '2026-03-15T00:00:00.000Z',
+      tag: 'v0.3.5',
+      version: '0.3.5'
+    },
+    {
+      assets: [],
+      draft: false,
+      prerelease: false,
+      publishedAt: '2026-03-01T00:00:00.000Z',
+      tag: 'v0.3.4',
+      version: '0.3.4'
+    },
+    {
+      assets: [],
+      draft: false,
+      prerelease: false,
+      publishedAt: '2026-02-01T00:00:00.000Z',
+      tag: 'v0.2.9',
+      version: '0.2.9'
+    },
+    {
+      assets: [],
+      draft: false,
+      prerelease: true,
+      publishedAt: '2026-03-16T00:00:00.000Z',
+      tag: 'v0.4.0-rc.1',
+      version: '0.4.0-rc.1'
+    }
+  ],
+  source: 'https://api.github.com/repos/j178/prek/releases'
+}
 
 test('getInputs enables verbose logs by default and allows opting out', () => {
   const originalEnv = {...process.env}
@@ -30,6 +70,23 @@ test('getInputs enables verbose logs by default and allows opting out', () => {
 test('normalizeVersion adds a v prefix once', () => {
   assert.equal(normalizeVersion('0.2.30'), 'v0.2.30')
   assert.equal(normalizeVersion('v0.2.30'), 'v0.2.30')
+})
+
+test('resolveVersionFromManifest resolves latest, exact versions, and ranges', () => {
+  assert.equal(resolveVersionFromManifest('latest', manifest), 'v0.3.5')
+  assert.equal(resolveVersionFromManifest('0.3.4', manifest), 'v0.3.4')
+  assert.equal(resolveVersionFromManifest('0.3.x', manifest), 'v0.3.5')
+  assert.equal(resolveVersionFromManifest('<=0.3.4', manifest), 'v0.3.4')
+})
+
+test('resolveVersionFromManifest ignores prereleases for range and latest resolution', () => {
+  assert.equal(resolveVersionFromManifest('>=0.3.0', manifest), 'v0.3.5')
+  assert.equal(resolveVersionFromManifest('latest', manifest), 'v0.3.5')
+})
+
+test('resolveVersionFromManifest rejects invalid and unsatisfied ranges', () => {
+  assert.throws(() => resolveVersionFromManifest('not-a-version', manifest))
+  assert.throws(() => resolveVersionFromManifest('<0.2.0', manifest))
 })
 
 test('getRustTargetFor maps supported runners to prek release targets', () => {
