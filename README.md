@@ -1,32 +1,8 @@
 # Prek Action
 
-A GitHub Action that runs [pre-commit](https://pre-commit.com) hooks using [prek](https://github.com/j178/prek) in your CI/CD pipeline.
-
-*Despite the name, `pre-commit` hooks can be run at any time, not just before commits.*
-
-## What is prek?
-
-[prek](https://github.com/j178/prek) is a fast hooks runner that provides an alternative to the widely-used [pre-commit](https://pre-commit.com) framework. It offers better performance and caching capabilities for running code quality checks.
-
-## Inputs
-
-| Input              | Description                                | Required | Default       |
-| ------------------ | ------------------------------------------ | -------- | ------------- |
-| `extra-args`       | Additional arguments to pass to `prek run`, appended after `--show-diff-on-failure --color=always` | No       | `--all-files` |
-| `install-only`     | Only install prek, do not run it           | No       | `false`       |
-| `prek-version`     | Version of prek to install (e.g., '0.2.1', 'latest') | No | `latest` |
-| `working-directory` | The working directory to run prek in      | No       | `.`           |
-| `token`            | GitHub token to avoid API rate limiting   | No       | `${{ github.token }}` |
-
-## Outputs
-
-| Output         | Description                                           |
-| -------------- | ----------------------------------------------------- |
-| `prek-version` | The resolved version of prek that was installed       |
+Run [prek](https://github.com/j178/prek) in your GitHub Actions workflows.
 
 ## Usage
-
-### Basic Usage
 
 ```yaml
 name: Prek checks
@@ -40,15 +16,40 @@ jobs:
       - uses: j178/prek-action@v1
 ```
 
-> [!NOTE]
-> This action assumes that a Python version is installed on the runner. If you’re using a self-hosted/custom runner,
-> ensure Python is installed before calling this action (e.g. via [`actions/setup-python`](https://github.com/actions/setup-python)).
+`prek` is always invoked as:
 
-### Custom Arguments
+```text
+prek run --show-diff-on-failure --color=always <extra-args>
+```
 
-> [!NOTE]
-> prek is always invoked as `prek run --show-diff-on-failure --color=always`. Any `extra-args` are appended after these flags.
-> Do not include `--show-diff-on-failure` or `--color` in `extra-args` as they are already set.
+## Inputs
+
+| Input | Description | Required | Default |
+| --- | --- | --- | --- |
+| `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
+| `extra_args` | Deprecated alias for `extra-args` | No | |
+| `install-only` | Install `prek` but skip `prek run` | No | `false` |
+| `prek-version` | Version to install, for example `0.2.30` or `latest` | No | `latest` |
+| `working-directory` | Directory where `prek run` is executed | No | `.` |
+| `token` | Token used to resolve `latest` through the GitHub API | No | `${{ github.token }}` |
+
+## Outputs
+
+| Output | Description |
+| --- | --- |
+| `prek-version` | The resolved `prek` version, normalized to a `v`-prefixed tag |
+
+## Examples
+
+Install and run against all files:
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
+  - uses: j178/prek-action@v1
+```
+
+Pass extra arguments:
 
 ```yaml
 steps:
@@ -58,28 +59,17 @@ steps:
       extra-args: '--all-files --directory packages/'
 ```
 
-### Running Specific Hooks
+Pin a specific `prek` version:
 
 ```yaml
 steps:
   - uses: actions/checkout@v6
   - uses: j178/prek-action@v1
     with:
-      extra-args: '--all-files mypy flake8 ruff'
+      prek-version: '0.2.30'
 ```
 
-### Specifying Prek Version
-
-```yaml
-steps:
-  - uses: actions/checkout@v6
-  - uses: j178/prek-action@v1
-    with:
-      prek-version: '0.2.1'
-      extra-args: '--all-files'
-```
-
-### Install Only
+Install only:
 
 ```yaml
 steps:
@@ -87,20 +77,17 @@ steps:
   - uses: j178/prek-action@v1
     with:
       install-only: true
-  - run: |
-      prek run \
-        --show-diff-on-failure \
-        --color always
+  - run: prek run --show-diff-on-failure --color=always --all-files
 ```
-
-When `install-only` is set to `true`, the action will only install prek and skip running it. The `extra-args` input has no effect in this mode.
-
-Running `prek` in a separate step can be useful for example when you need to customize the environment.
 
 ## Requirements
 
-Your repository must have a [prek configuration](https://prek.j178.dev/configuration/) file (`prek.toml`, `.pre-commit-config.yaml`, or `.pre-commit-config.yml`).
+The target repository needs a `prek` or pre-commit configuration file:
 
-## License
+- `prek.toml`
+- `.pre-commit-config.yaml`
+- `.pre-commit-config.yml`
 
-This action is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+## Contributing
+
+For contributor setup, testing, bundling, and release steps, see [CONTRIBUTING.md](CONTRIBUTING.md).
