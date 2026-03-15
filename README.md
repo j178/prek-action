@@ -30,6 +30,7 @@ prek run --show-diff-on-failure --color=always <extra-args>
 | `extra_args` | Deprecated alias for `extra-args` | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
 | `prek-version` | Version to install, for example `0.2.30` or `latest` | No | `latest` |
+| `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `token` | Token used to resolve `latest` through the GitHub API | No | `${{ github.token }}` |
 
@@ -78,6 +79,16 @@ steps:
     with:
       install-only: true
   - run: prek run --show-diff-on-failure --color=always --all-files
+```
+
+Disable verbose log output after the run:
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
+  - uses: j178/prek-action@v1
+    with:
+      show-verbose-logs: false
 ```
 
 ## Requirements
