@@ -1,9 +1,12 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release, with or without the leading v
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -16,6 +19,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    env:
+      INPUT_VERSION: ${{ inputs.version }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -39,22 +44,47 @@ jobs:
       - name: Check generated files are committed
         run: git diff --exit-code
 
+      - name: Plan release
+        id: plan
+        run: |
+          release_tag="${INPUT_VERSION#v}"
+          release_tag="v${release_tag}"
+          if [[ ! "$release_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.]+)?$ ]]; then
+            echo "Invalid version input: ${INPUT_VERSION}" >&2
+            exit 1
+          fi
+          if git show-ref --tags --verify --quiet "refs/tags/$release_tag"; then
+            echo "Tag already exists: ${release_tag}" >&2
+            exit 1
+          fi
+          is_prerelease=false
+          if [[ "$release_tag" == *-* ]]; then
+            is_prerelease=true
+          fi
+          echo "release_tag=${release_tag}" >> "$GITHUB_OUTPUT"
+          echo "is_prerelease=${is_prerelease}" >> "$GITHUB_OUTPUT"
+          echo "Planned release:"
+          echo "  tag: ${release_tag}"
+          echo "  prerelease: ${is_prerelease}"
+
       - name: Create GitHub release
         env:
+          RELEASE_TAG: ${{ steps.plan.outputs.release_tag }}
+          IS_PRERELEASE: ${{ steps.plan.outputs.is_prerelease }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          args=(--verify-tag --generate-notes)
-          if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
+          args=(--target "${GITHUB_SHA}" --generate-notes)
+          if [[ "${IS_PRERELEASE}" == 'true' ]]; then
             args+=(--prerelease)
           fi
-          gh release create "${GITHUB_REF_NAME}" "${args[@]}"
+          gh release create "${RELEASE_TAG}" "${args[@]}"
 
       - name: Move major tag
-        if: ${{ !contains(github.ref_name, '-') }}
+        if: ${{ steps.plan.outputs.is_prerelease != 'true' }}
         env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ steps.plan.outputs.release_tag }}
         run: |
-          major="${GITHUB_REF_NAME%%.*}"
+          major="${RELEASE_TAG%%.*}"
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git tag -fa "$major" -m "$major"
