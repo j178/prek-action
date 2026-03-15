@@ -6,7 +6,12 @@ import * as path from 'node:path'
 
 import {getInputs} from '../src/inputs'
 import {getBinaryPath, getReleaseAssetFor, getRustTargetFor, getToolCacheArchFor} from '../src/install'
-import {normalizeVersion} from '../src/manifest'
+import {normalizeVersion, resolveVersionFromManifest} from '../src/manifest'
+
+test('resolveVersionFromManifest resolves exact versions and latest from the bundled manifest', () => {
+  assert.equal(resolveVersionFromManifest('latest'), 'v0.3.5')
+  assert.equal(resolveVersionFromManifest('0.3.5'), 'v0.3.5')
+})
 
 test('getInputs enables verbose logs by default and allows opting out', () => {
   const originalEnv = {...process.env}

@@ -16,3 +16,26 @@ export type ReleaseAsset = {
   archiveType: 'tar.gz' | 'zip'
   binaryName: string
 }
+
+export type ManifestAsset = {
+  contentType: string
+  downloadUrl: string
+  name: string
+  sha256: string | null
+  size: number
+}
+
+export type ManifestRelease = {
+  assets: ManifestAsset[]
+  draft: boolean
+  prerelease: boolean
+  publishedAt: string
+  tag: string
+  version: string
+}
+
+export type VersionManifest = {
+  generatedAt: string
+  releases: ManifestRelease[]
+  source: string
+}

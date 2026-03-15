@@ -29,10 +29,10 @@ prek run --show-diff-on-failure --color=always <extra-args>
 | `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
 | `extra_args` | Deprecated alias for `extra-args` | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
-| `prek-version` | Version to install, for example `0.2.30` or `latest` | No | `latest` |
+| `prek-version` | Version to install from the bundled manifest, for example `0.2.30` or `latest` | No | `latest` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
-| `token` | Token used to resolve `latest` through the GitHub API | No | `${{ github.token }}` |
+| `token` | Unused for manifest-resolved versions; retained for backward compatibility | No | `${{ github.token }}` |
 
 ## Outputs
 
@@ -98,6 +98,10 @@ The target repository needs a `prek` or pre-commit configuration file:
 - `prek.toml`
 - `.pre-commit-config.yaml`
 - `.pre-commit-config.yml`
+
+## Version Manifest
+
+This action resolves `prek-version` from a bundled release manifest checked into the repository, including installable `.tar.gz` and `.zip` assets. A scheduled workflow refreshes that manifest from `j178/prek` releases, rebuilds `dist`, and opens a pull request when new versions are published.
 
 ## Contributing
 
