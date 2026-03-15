@@ -1,10 +1,12 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
+import * as crypto from 'node:crypto'
+import {createReadStream} from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 
 import {getManifestAssetForVersion} from './manifest'
-import type {ReleaseAsset} from './types'
+import type {ManifestAsset, ReleaseAsset} from './types'
 
 export async function installPrek(version: string): Promise<string> {
   const toolVersion = version.replace(/^v/, '')
@@ -22,6 +24,7 @@ export async function installPrek(version: string): Promise<string> {
     const asset = getReleaseAssetFor(process.platform, process.arch)
     const manifestAsset = getManifestAssetForVersion(version, asset.archiveName)
     const archivePath = await tc.downloadTool(manifestAsset.downloadUrl)
+    await verifyDownloadChecksum(archivePath, manifestAsset, version)
     const extractedPath =
       asset.archiveType === 'zip' ? await tc.extractZip(archivePath) : await tc.extractTar(archivePath)
     const binaryPath = await getBinaryPath(extractedPath, asset)
@@ -114,4 +117,46 @@ export async function getBinaryPath(rootDir: string, asset: ReleaseAsset): Promi
   }
 
   return path.join(rootDir, entry, asset.binaryName)
+}
+
+async function verifyDownloadChecksum(
+  archivePath: string,
+  asset: ManifestAsset,
+  version: string
+): Promise<void> {
+  const result = await validateDownloadedChecksum(archivePath, asset)
+  if (result === 'missing') {
+    core.warning(`No SHA-256 checksum recorded for ${asset.name} in the ${version} manifest entry`)
+  }
+}
+
+export async function validateDownloadedChecksum(
+  archivePath: string,
+  asset: ManifestAsset
+): Promise<'missing' | 'matched'> {
+  if (!asset.sha256) {
+    return 'missing'
+  }
+
+  const digest = await hashFile(archivePath)
+  if (digest !== asset.sha256) {
+    throw new Error(`Checksum mismatch for ${asset.name}: expected ${asset.sha256}, received ${digest}`)
+  }
+
+  return 'matched'
+}
+
+export async function hashFile(filePath: string): Promise<string> {
+  const hash = crypto.createHash('sha256')
+
+  await new Promise<void>((resolve, reject) => {
+    const stream = createReadStream(filePath)
+    stream.on('data', chunk => {
+      hash.update(chunk)
+    })
+    stream.on('end', resolve)
+    stream.on('error', reject)
+  })
+
+  return hash.digest('hex')
 }
