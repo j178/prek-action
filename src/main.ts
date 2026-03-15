@@ -7,14 +7,19 @@ import {pruneCache, runPrek, showVerboseLogs} from './prek'
 
 async function run(): Promise<void> {
   const inputs = getInputs()
+  core.info(
+    `Resolved action inputs: prek-version="${inputs.prekVersion}", install-only=${inputs.installOnly}, working-directory="${inputs.workingDirectory}"`
+  )
 
   const version = await resolveVersion(inputs.prekVersion, inputs.token)
+  core.info(`Using prek ${version}`)
   core.setOutput('prek-version', version)
 
   await installPrek(version)
   await restorePrekCache(inputs.workingDirectory)
 
   if (inputs.installOnly) {
+    core.info('Skipping prek run because install-only=true')
     return
   }
 

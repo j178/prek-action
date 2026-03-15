@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import * as semver from 'semver'
 import versionManifest from './version-manifest.json'
 import type {ManifestAsset, VersionManifest} from './types'
@@ -14,6 +15,7 @@ export function normalizeVersion(version: string): string {
 
 export function getManifestAssetForVersion(version: string, archiveName: string): ManifestAsset {
   const tag = normalizeVersion(version)
+  core.info(`Looking up asset ${archiveName} for ${tag}`)
   const release = prekVersionManifest.releases.find(candidate => candidate.tag === tag)
   if (!release) {
     throw new Error(`prek version ${normalizeVersion(version)} was not found in the bundled version manifest`)
@@ -28,11 +30,13 @@ export function getManifestAssetForVersion(version: string, archiveName: string)
 
 export function resolveVersionFromManifest(versionInput: string, manifest: VersionManifest = prekVersionManifest): string {
   const normalizedInput = versionInput.trim() || 'latest'
+  core.info(`Resolving prek version from input "${versionInput}"`)
   if (normalizedInput === 'latest') {
     const latestRelease = manifest.releases.find(release => !release.draft && !release.prerelease)
     if (!latestRelease) {
       throw new Error('The bundled prek version manifest does not contain a stable release')
     }
+    core.info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.tag}`)
     return latestRelease.tag
   }
 
@@ -42,6 +46,7 @@ export function resolveVersionFromManifest(versionInput: string, manifest: Versi
     if (!exactRelease) {
       throw new Error(`prek version ${normalizeVersion(exactVersion)} was not found in the bundled version manifest`)
     }
+    core.info(`Resolved exact version "${normalizedInput}" to ${exactRelease.tag}`)
     return exactRelease.tag
   }
 
@@ -57,5 +62,6 @@ export function resolveVersionFromManifest(versionInput: string, manifest: Versi
     throw new Error(`No prek release satisfies version range: ${versionInput}`)
   }
 
+  core.info(`Resolved version range "${normalizedInput}" to ${rangeRelease.tag}`)
   return rangeRelease.tag
 }
