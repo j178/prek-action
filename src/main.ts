@@ -1,13 +1,9 @@
 import * as core from '@actions/core'
-import {
-  getInputs,
-  installPrek,
-  pruneCache,
-  resolveVersion,
-  restorePrekCache,
-  runPrek,
-  showVerboseLogs
-} from './shared'
+import {restorePrekCache} from './cache'
+import {getInputs} from './inputs'
+import {installPrek} from './install'
+import {resolveVersion} from './manifest'
+import {pruneCache, runPrek, showVerboseLogs} from './prek'
 
 async function run(): Promise<void> {
   const inputs = getInputs()
