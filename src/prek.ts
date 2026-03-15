@@ -72,9 +72,12 @@ async function getPrekCacheDir(): Promise<string> {
   if (code === 0) {
     const trimmed = output.trim()
     if (trimmed) {
+      core.info(`Using prek cache dir ${trimmed}`)
       return trimmed
     }
   }
 
-  return getCachePaths()[0]
+  const fallback = getCachePaths()[0]
+  core.info(`Falling back to default prek cache dir ${fallback}`)
+  return fallback
 }
