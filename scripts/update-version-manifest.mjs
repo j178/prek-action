@@ -4,7 +4,9 @@ import semver from 'semver'
 
 const releasesApiUrl = 'https://api.github.com/repos/j178/prek/releases'
 const manifestPath = path.resolve('src/version-manifest.json')
-const archivePattern = /\.(tar\.gz|zip)$/
+const minimumSupportedVersion = '0.0.23'
+const installableArchivePattern = /^prek-(.+)\.(tar\.gz|zip)$/
+const excludedArchiveNames = new Set(['prek-npm-package.tar.gz'])
 
 async function run() {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || ''
@@ -38,20 +40,20 @@ async function fetchAllReleases(token) {
 
     for (const release of pageReleases) {
       const version = semver.valid(release.tag_name)
-      if (!version) {
+      if (!version || semver.lt(version, minimumSupportedVersion)) {
         continue
       }
 
       releases.push({
         assets: Array.isArray(release.assets)
           ? release.assets
-              .filter(asset => archivePattern.test(asset.name))
+              .filter(asset => isInstallableArchive(asset.name))
               .map(asset => ({
-              contentType: asset.content_type,
-              downloadUrl: asset.browser_download_url,
-              name: asset.name,
-              sha256: normalizeDigest(asset.digest),
-              size: asset.size
+                contentType: asset.content_type,
+                downloadUrl: asset.browser_download_url,
+                name: asset.name,
+                sha256: normalizeDigest(asset.digest),
+                size: asset.size
               }))
           : [],
         draft: Boolean(release.draft),
@@ -91,6 +93,10 @@ function normalizeDigest(digest) {
   }
 
   return digest
+}
+
+function isInstallableArchive(name) {
+  return installableArchivePattern.test(name) && !excludedArchiveNames.has(name)
 }
 
 function compareReleasesDesc(left, right) {

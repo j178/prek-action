@@ -74,13 +74,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.5/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "a3d4ccafc78d27cfbcc2f7acc911fe9efc686664bdfac816ebcef711de59c8af",
-          "size": 28434
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.5/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "d63d8bfb3561b298c6c72224b7db46b608dfb574d54685ec39fdbb52db935602",
@@ -120,13 +113,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "b8a18b6da657e2a85cabaa699da191f0aaa55008109cf97d23ae0580962876dc",
           "size": 5621520
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.5/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "e1cbbc8f2fa91e34dd19d87350b8ea105122d4b04ad8af48f0099add37f77df9",
-          "size": 522543
         }
       ],
       "draft": false,
@@ -209,13 +195,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.4/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "e701ce350df2e32c5cc3a525bc9569ad8f413db566a42cf58a39926ea18c5518",
-          "size": 28043
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.4/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "0f2adffeaa17e1735f429d41a1027ca12191c4324655fbe7a252930799a9d473",
@@ -255,13 +234,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "05466ec070a4f3324e800b396e049db3c6e80345c6ab0f4812cf56fc52ce066e",
           "size": 4858035
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.4/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "b05c13c1bf7e947f10ea5ab9739c82a5a12c3a4898a975e186c83741e3a7f203",
-          "size": 500468
         }
       ],
       "draft": false,
@@ -344,13 +316,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.3/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "71ac5fe1a4a0eede25090578fabbace107f65b9f4653f70b58f7d41b2b814829",
-          "size": 32835
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.3/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "e99174f923961d55f71599b8cf5f6ab906d70fc48612ec961dec4723aefc6ea7",
@@ -390,13 +355,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "4967cead51c26313c9dfdad0d2cdedf52ccbfc3d5ebd5dfd61676c45668f3791",
           "size": 4853086
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.3/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "0ce5a4ac33fee5df471f5f681e94e5eca86c1a5218c575c0d4e6d5c0ace76cca",
-          "size": 485320
         }
       ],
       "draft": false,
@@ -479,13 +437,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.2/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "809b71468d75dff55ef2a38416ec02f4e92332db415b63a99aae93b9128ccd75",
-          "size": 32205
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.2/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "12d2b34adba08841c8b0f3118e382b9dc3ce291c6e1db3a044a57c0ed210db4e",
@@ -525,13 +476,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "7960379beca845367258ce4080a0ce1754d88846d9cfe273106f272442729eff",
           "size": 4816073
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.2/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "cc649232080fdfddc2c2b7d5209739c8aba3550b46ee80ec70d17690358c0cd0",
-          "size": 475402
         }
       ],
       "draft": false,
@@ -614,13 +558,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.1/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "5b1e94871bcbafeaa2c3e396413abc3000faeaaf84b5ca5062d1055d5adb9f34",
-          "size": 30737
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.1/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "04e016ed1d8fb117e18b244ac638b64d2e246d9b1bad5ed3d8212b4984a29394",
@@ -660,13 +597,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "dd04fb0c261528c5b00a49c70845d5eb32b09c50fff81f53f742e6a36b5299fe",
           "size": 4482120
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.1/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "31914209914ebba79a4d1e14087c92c5df51311941216e163249bb3b7ea21cf7",
-          "size": 455567
         }
       ],
       "draft": false,
@@ -749,13 +679,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.0/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "1a7d1e6b74ebf86680c992c5cf9ac2981ecada2ef0dc20a584b5891741173582",
-          "size": 30334
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.0/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "385373b35fc2e9b9d009585fd6bad1533544d4e22b1e69106cb1651ea0ac686b",
@@ -795,13 +718,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "d3b4059b4ef630cdff090578e74273e329a76f0dce22bcf78cdfd59df8eb174c",
           "size": 4522413
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.0/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "adb3346347c4f93287ef0a636d961bbeb884e4cae503bf6e5050d24ed386f89b",
-          "size": 446876
         }
       ],
       "draft": false,
@@ -884,13 +800,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.30/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "ffcdeba2ef1bbd25a1518f80b730f0f40b2f22d28fcb5259b1560d2e14942432",
-          "size": 29534
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.30/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "ef356f342a7de91e01c038296387e8487ea90660f27020f98b7d24e04b65be32",
@@ -930,13 +839,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "d3c05588f997a5ce82dc0882695214d93b7f7dc8669c9712649702bc8f9afd55",
           "size": 4467595
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.30/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "f30f28e5b4060885b7216b225be0773a1bcc15bae9d227c59ada712a53cd56f4",
-          "size": 419867
         }
       ],
       "draft": false,
@@ -1019,13 +921,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.29/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "97bd545c719e658d18db7c2f0c783f893cd8e82bcf5538ee72efd7ad12d604da",
-          "size": 29319
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.29/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "41e0b3564b4d7db129298883c102f7dc13575c8db8349c83e41e63487be3a721",
@@ -1065,13 +960,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "75aefe3655426e12c23c4da997f444edb3aa2ad3ec247cf65c4cdbe32b4c1dcc",
           "size": 5788926
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.29/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "d69ef22dbb6e80d5f87c02b717146753f7f116407c571b3827cac5636992a647",
-          "size": 414163
         }
       ],
       "draft": false,
@@ -1154,13 +1042,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.28/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "efa09e0d9aeb1de92808c744a2ec7032b46e837e39a003ecdf82f97a1e635b10",
-          "size": 28912
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.28/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "efe02cb89d8d1402f78fc2fe75085c282e4f58e20b96f56b25b1e76c0d6b499b",
@@ -1200,13 +1081,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "f98884374c4998c2917e573eea4f56d3cc1e9a3faa03d45b286ee383a4541a51",
           "size": 5060318
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.28/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "ba49176e673d44877b1eac2bb014534849a6547bd58bb776226050ba4a91f9c3",
-          "size": 405400
         }
       ],
       "draft": false,
@@ -1289,13 +1163,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.27/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "0a1a86c23adc7e66564df64a332590d800cf3109c812e874ce50f7cc53b58442",
-          "size": 28666
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.27/prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
           "sha256": "65e3a6f9b84d37b1870c52de6138d70ba57c88258ec58efb1363cd7bf93bbf10",
@@ -1335,13 +1202,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "35d36e049a9c134e729bf5a14f1ab900b5ec305ecf5d86e20e9356802bc85d1e",
           "size": 5062602
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.27/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "aa7808ea0348c033c6c61eb31c0849d7e2286da6b6986c80c57a7b14e940536b",
-          "size": 394872
         }
       ],
       "draft": false,
@@ -1424,13 +1284,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.25/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "55f9f4d8f25412b0409bbedbbfd47d6cae57ebbdc2ebecdba7c1d40e4aa5b44b",
-          "size": 28188
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.25/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "c0d166982e4d011a0d60f2b521fc3fea912025311c3e174b7d497072b409cbf1",
@@ -1484,13 +1337,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "f5f0b013d7c2b98e3e9985bd08e3c24956a76484729de539518df774acc747b5",
           "size": 5051913
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.25/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "2257ee25b81f04b6dcb81ff0f95073d89404ac7099ea82a806df5b2e4946a421",
-          "size": 391409
         }
       ],
       "draft": false,
@@ -1573,13 +1419,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.24/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "f9e10b0fcc89a35224bafe84488cfe8d9af520fc13f4510feebef499dbe8ae07",
-          "size": 28111
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.24/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "ed47f242690ca8ad1da51e5ed256e9dcf25b71b4e4cc5c238e29435f8a970cbd",
@@ -1633,13 +1472,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "df449e8889aa7bb27b5f99345646b1f587c9bfc0f668542ba97949ffd0a66b22",
           "size": 5045598
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.24/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "8451e83581750fae3063914088b7bd748938d44524fb5b0d4ecc2cf2be4736fd",
-          "size": 386898
         }
       ],
       "draft": false,
@@ -1722,13 +1554,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.23/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "5b4ce8b27c6d252c37ad91656f827ca073655976809a74cc2fb4f1328c7d7a18",
-          "size": 30865
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.23/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "b0d4032856c9cfd287c70fd857e67831814c9495c871b352b6b59c3c3a9d7eed",
@@ -1782,13 +1607,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "f1807324f904056d17996dfefad5ef66ff5f59fa57b9d48f1addadd7b4f54d73",
           "size": 5046227
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.23/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "d615e1609ce39cdb79fd9795740de79c14b541b2e4f84427c0ddd9fc76b0f663",
-          "size": 383033
         }
       ],
       "draft": false,
@@ -1871,13 +1689,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.22/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "f1c1e4e7e17f7de82bcc2dbfd97f0743dd67a7280d9cf3220c678a040359bde6",
-          "size": 30370
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.22/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "dcc824432bc61a9f4ed1edb1545f2e139410d05ad4755ce024f2da1b5fdcdccf",
@@ -1931,13 +1742,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "ef1ed96f85c6808596fb1982dd2649fdc70f1a20e1db621a4bf709d8578cb8b8",
           "size": 5045024
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.22/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "65dbeb2194c18dc9627e9e5385744835924eb85bd7af717584b48d69b8dc7064",
-          "size": 375489
         }
       ],
       "draft": false,
@@ -2020,13 +1824,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.21/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "90ab20406256cb90ac5a38f52f434c2454dd10889b3b4d56e0b01125a6b46bb9",
-          "size": 30091
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.21/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "d1b2f1a09b625d9990ac1cf03e709373d025cf90f0467c650ae01b795b04db5a",
@@ -2080,13 +1877,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "9e2f855206df44687e08f1d039f0fcf1a7a207cb7845ad42224cde37ba3fcb16",
           "size": 5040297
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.21/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "4cf42bc802db1437daf6def8390a8354f9086556e19acd9f9415d55f5c6e083e",
-          "size": 370494
         }
       ],
       "draft": false,
@@ -2169,13 +1959,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.20/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "b82960bec8764ceaa72ace697483c9ed873a1b7d38f735e9c91471f841ad29bd",
-          "size": 30002
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.20/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "2b565311f0bd6b6bf6be8fedc8ccbc9a97b2a4f735137f8d1e81641f96043f6a",
@@ -2229,13 +2012,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "60fe951055c874dff06f9fb0c6aa9afc0d509bef0d3d9b514f6b4cc28f2b98bf",
           "size": 5057320
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.20/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "a84bba90f81aefc1c2609657c197a0aef1c5ec5802b8a977190a5d4d7cb8f47f",
-          "size": 370096
         }
       ],
       "draft": false,
@@ -2318,13 +2094,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.19/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "626597397b056962cc0d4c2992b69b467a3bea034bdb284e62246e4b191fb468",
-          "size": 29150
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.19/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "561f05a400fc546e093ca9ed6892fb1e52f8217b3aae6c9c5651610cf9127f6a",
@@ -2378,13 +2147,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "c8690f58b6eb2a8fe41321917c3ead3eae089dfde568eed1917c3f143f709c94",
           "size": 4908981
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.19/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "3fb785fb1baf13883853dca3537d759cb190c6d6be1e2195141633ac4e4e94e6",
-          "size": 343615
         }
       ],
       "draft": false,
@@ -2467,13 +2229,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.18/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "486683f51b91b599543401841ebeb0ce9c668eb341860ac30b3102cf66bc51bf",
-          "size": 28992
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.18/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "4b8e9a81062f330a89ceaad7dc49bc7b8ddada89663fe222975f29d9d513c149",
@@ -2527,13 +2282,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "06558bb1e561b8533b2b1cc6c841ea9b06e063233a39576811d8df330566ad1d",
           "size": 4916553
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.18/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "a47ba6192db43e2d02544f7138350313df41d99812f2b8b938e0e3d9fcefb362",
-          "size": 344363
         }
       ],
       "draft": false,
@@ -2616,13 +2364,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.17/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "44bdacaf1027229aa1b92e46db8814f1ad1dcb1f36434f3e46ac3e5b9d9192da",
-          "size": 28581
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.17/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "d3044afa821231eb2c17fcc20a9b203865b11beaab32fdb862d93d8b87c2b96a",
@@ -2676,13 +2417,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "e1efda3ea6f22d277ff4763bd97c12fab2971f9f501c8f86eb94a8e635244a6e",
           "size": 4894965
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.17/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "acacdc3b8e2bc1cf2a91784d174b27a49946713b5d0c121e0f1eda52ff493f03",
-          "size": 339448
         }
       ],
       "draft": false,
@@ -2765,13 +2499,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.16/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "952d83b6ffe2f4e6faa4814b2e2107d92d847712122b7118186e0858a4910d2d",
-          "size": 28559
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.16/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "748d68747d6644dde283f272580e2fcd5f242d119c9432c2be674cd71780dcea",
@@ -2825,13 +2552,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "ecd2376882b20b2422bb92bfd24a3801d580ef8c8d9829a280503ac48e7e0591",
           "size": 5053730
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.16/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "649761f989b24746ea047f13a1e54a369490c4e78394ca913cf6b93382eb2e28",
-          "size": 338603
         }
       ],
       "draft": false,
@@ -2914,13 +2634,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.15/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "6dc612950e80e8f2e98f4370b288c131c2c83b940e3cd2582694c16831a6ce86",
-          "size": 28450
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.15/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "3bbd8ed61d0acdefbcb5864ffe1e0a70224376181dc30a450b2d7dcac84b7c01",
@@ -2974,13 +2687,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "1c8d38f8cf908e9c0f07daa600f87b2a520fff45125ab68757f0c2b6609c80c9",
           "size": 4942865
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.15/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "b6dd012e969aeeb6e09d0c65bb896484b5c84205684cef814714d7bef64e7e44",
-          "size": 337386
         }
       ],
       "draft": false,
@@ -3063,13 +2769,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.14/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "7407c05fad2da9dabdd3b9b3f9b90e3ef218c6bcf462e7b15f1c06f503f8c698",
-          "size": 28245
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.14/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "c53e90e0a0f8d2f5bb3c5af6e919781277959a603a9a55dcb8b6295469ea0656",
@@ -3123,13 +2822,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "8e2b45b14c67dc7884913af8cedd5e178843929c85e09842bfc7ac2397ae576e",
           "size": 4883289
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.14/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "bcdff0a780889e40659d3ef8f63a54b0096b13fba66fe66d5cf770c4b4189dcd",
-          "size": 337084
         }
       ],
       "draft": false,
@@ -3212,13 +2904,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.13/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "2500491b2ec9dcef36034940c6c5092d9202c3c88dee860dd4f5119cb40fb257",
-          "size": 27718
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.13/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "4fa1e8bd85bca48022d779ad01f7b33d683f0b6b664771e5823d0a19c7ed91c7",
@@ -3272,13 +2957,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "e64558f45e77bcf5236bb34abd3ad502a0d653e5a77f0d069d88976d41be31ea",
           "size": 4874403
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.13/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "6fcae502458e8b3f3e7d614d878acfc5733db9ba83f5c2cd6015e54a1acead70",
-          "size": 334804
         }
       ],
       "draft": false,
@@ -3361,13 +3039,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.12/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "75d2a0a93c85227d40bd1b858af3fdab16c9b426adb3afc93c182ad7bf2ae6d9",
-          "size": 27168
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.12/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "9410c26b3fa16d66717f0ec5e98a2cb1cc583b3e13f1c56ab8fff92faaba72e9",
@@ -3421,13 +3092,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "96900915c073a514febca47a659cdfda5320d7f4e7a7be3b6fdaa46e625d1d2d",
           "size": 4829782
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.12/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "f5b4a760490d0578339dca80c9feb8b20165ccc1a60e540d2f34637ca53767df",
-          "size": 314456
         }
       ],
       "draft": false,
@@ -3510,13 +3174,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.11/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "a2fe8f380ef000ee42faa2adb94fc8034d2fcb51feaf5f4917454bd812b672ae",
-          "size": 27008
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.11/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "ba7b76742a4ef3a18e733bda789b4120282e96e02c51cc83e8dd107877cb6300",
@@ -3570,13 +3227,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "081b98dfa8fd24008af3b7a0c013fc5c94811efbd3f3c7a8e63177c9a0be95a1",
           "size": 4811014
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.11/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "05b3535618846c55d64021e884a6230267a1f9bbeceb1bbbc1f233d25272c471",
-          "size": 312053
         }
       ],
       "draft": false,
@@ -3659,13 +3309,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.10/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "a78f7445aad5dc048bcba9d0123505962dc387f17ba33b1c6a3f8c8223e0905e",
-          "size": 27075
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.10/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "582706aedb76b44af70cbfda122a1d8a12a1ac6dfef48671f6d9b558f33b037c",
@@ -3719,13 +3362,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "0698181ada5bd269dc902ae58b126a6284c788ad9d168dc3530a6ec0fdf28b8a",
           "size": 4800021
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.10/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "cb7a575a38279947981896ba7885c4e71304f936661cd4828fb41f54b34be313",
-          "size": 301762
         }
       ],
       "draft": false,
@@ -3808,13 +3444,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.9/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "622b10d9c5f06a6ac0e0fc4d7660469ba1a2c8e8baca2b3d0565dc9ee9dc5073",
-          "size": 26375
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.9/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "7ace36fdab0efb27fa56d6af5b325efb2c236d6f9f3fe114158d13197565e31a",
@@ -3868,13 +3497,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "15576c6c58c3bfc68a7dd3680dd27be5ca857f6c069eb193cb8f4fac719b8eb1",
           "size": 4782611
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.9/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "1a5b679f124b7dcdcae6db887c9f0626df08dda460b1b313a2f51e4451a6a952",
-          "size": 3013199
         }
       ],
       "draft": false,
@@ -3957,13 +3579,6 @@
         },
         {
           "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.8/prek-npm-package.tar.gz",
-          "name": "prek-npm-package.tar.gz",
-          "sha256": "9420218322bda8ab9a0f023f6294ecd592b4ba3564cb14dd2f84a8a6aec6e1ca",
-          "size": 26141
-        },
-        {
-          "contentType": "application/x-gtar",
           "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.8/prek-powerpc64-unknown-linux-gnu.tar.gz",
           "name": "prek-powerpc64-unknown-linux-gnu.tar.gz",
           "sha256": "a9ad7184e1080bf80089b7ee34f92ddb63894089d32a7438615c93847988acef",
@@ -4017,13 +3632,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "65cc39728ada7557e8f6d6c935dda020e604a90ac09e6b82ce5271697b8d2233",
           "size": 4768523
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.8/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "a6e19feeb8b1428db7d52d2d42218ffd370408cb51ea1be109303b24ebf65394",
-          "size": 3009434
         }
       ],
       "draft": false,
@@ -4159,13 +3767,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "c21d5c5e7d29cfe9ebf1525a7e044b132eedfcb33acc322f95056cf236861fb1",
           "size": 4762696
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.5/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "8cbeb357c3eefe66315aa10fc82d81f52cdaed5e743233fc878d4771e572043a",
-          "size": 3007335
         }
       ],
       "draft": false,
@@ -4301,13 +3902,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "0d4b188100fe50342651a4d608b0aaa0e4304318a3f600a5189d379710172394",
           "size": 4748845
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.4/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "cd8e378b9f9ff738c78e767f09b42ff4a40810ede66ffccf130829cea69369de",
-          "size": 3001983
         }
       ],
       "draft": false,
@@ -4443,13 +4037,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "aacb6bcfe265f2eb4d2191b28c2eacf71a488ebf6678349d6632f63b2580ee89",
           "size": 4739675
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.3/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "75b38e0e97f5294265be80c2cb7b369c7e962e789d2018502c6e35a24464c4f5",
-          "size": 3000791
         }
       ],
       "draft": false,
@@ -4585,13 +4172,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "3b11c5813ef6762f22b677ed7b2b5435273eb480c51244e2207ce10d7f109581",
           "size": 4737754
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.2/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "f2d734918a95930572dfa8d547747849d825e94d76d30b6d1183cc6c33b7fb39",
-          "size": 2998224
         }
       ],
       "draft": false,
@@ -4727,13 +4307,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "4cee17a39ab7435bf3c05721e2756bab2df6b284931e3e87e491533aaeb92b42",
           "size": 4709163
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.1/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "2dbf9842a9d59f77f1c192d70c4a0823e2f2ac3d05a08b38eca57082f04d983a",
-          "size": 2914086
         }
       ],
       "draft": false,
@@ -4869,13 +4442,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "3c4273b05d91c19b0c5fbe27198167ed8e9a61caf42d9074640416614617db43",
           "size": 4703547
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "f978ec03c7ec11ab6f6b1ff48f89a5ee28b7abaf93694b526168f061152fcd31",
-          "size": 3107307
         }
       ],
       "draft": false,
@@ -5011,13 +4577,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "61bbf8532f80c7e1a222f6bf7207c9d9472246737625bb545c4bfd35b4837756",
           "size": 6196061
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.5/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "56340e906c0aa5c4d8146745a07213dd6134f634d0f5c95d29cacf3f0f08b3c7",
-          "size": 3106204
         }
       ],
       "draft": false,
@@ -5153,13 +4712,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "d0bc07b9c4f2dddbcfa6bab233d18b97e97103e368ba6f830af4d19f44b8f5b4",
           "size": 6182141
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.4/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "e68b3821f3493fc21286041c479922ce9151181d8ea1db1b55c211e080191f20",
-          "size": 3095002
         }
       ],
       "draft": false,
@@ -5295,13 +4847,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "0d81355f6b4323ca27dd30ba3abc6e7707c60b0383e8c35d9f8d9aec70d4538c",
           "size": 6174884
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.3/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "d4e336fab1a9ee520f84d5b2aaf41e97185d84044815b0443db758d5fbc894a1",
-          "size": 3092305
         }
       ],
       "draft": false,
@@ -5437,13 +4982,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "d2eb3f09fca6b2c1a97b1cd547b439342be09f5f2d45f23c987dbf6f73524099",
           "size": 6170757
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.2/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "ddf271d7b74628dfdd314beb016b766dd9cc787d54ed9d3099fb51268accb460",
-          "size": 3092103
         }
       ],
       "draft": false,
@@ -5579,13 +5117,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "69a10c0616a871c9171042a5a483d262377a59ee5a814aa4f2962439606fd726",
           "size": 6170261
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.1/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "b01e76f60fed430eff0a4d20e03f378cc6b9a63b759225dda2e556b56f1f4c71",
-          "size": 3091960
         }
       ],
       "draft": false,
@@ -5721,13 +5252,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "0ed08e15a1c34a195019764b23a7f17546c804cfad08f35f97aa520aed564b29",
           "size": 5911154
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.6/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "c3ce130243244abd39dd9afb5625fd6ae2fb0242a7507c6f3a523eafad4f5efd",
-          "size": 193202
         }
       ],
       "draft": false,
@@ -5863,13 +5387,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "036a8cbd5b9e5bcb4756fdd6b2c10ce7f14a73f5e9072580c1315800c46a101e",
           "size": 5919056
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.5/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "befc8d6d83dbc6e8b9538523e22b0170e265e44af4970eec797e397a984ac9de",
-          "size": 193142
         }
       ],
       "draft": false,
@@ -6005,13 +5522,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "5ac08f0a62ee1598a08bd16b75ead16ea083e21e40969e6e712ecb203c2d49dd",
           "size": 6184883
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.4/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "01e2aa29b560216fd94d8ec9925732e2c6c84a71adef73063b62a89d147375e5",
-          "size": 189127
         }
       ],
       "draft": false,
@@ -6147,13 +5657,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "eec04817fbb2c8b67db30335a8baf943993fcd22a461e867c77c38ca64c4dbf1",
           "size": 6186615
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.3/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "9ba79f9b0ed440ba32a5817a2a9ae2846d67a19c3e0ef1bc2eea7ebe2d1a4eb8",
-          "size": 188615
         }
       ],
       "draft": false,
@@ -6289,13 +5792,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "155dcaa0c64784f975cb9f7b87f28d7364b98aacc105c71bd5d5f1bc779798ce",
           "size": 6067447
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.2/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "2503707aedf641648eb9fd3e01ce3359d5ca18c7f53684d416f02c894f604844",
-          "size": 182894
         }
       ],
       "draft": false,
@@ -6431,13 +5927,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "b759a3adb1b2070ab4a0a653575a4d026eb3b8b64a2a8be2a03f75961b53d543",
           "size": 6072252
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.1/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "d1811984fbc703b371a96512e91d812d75a2acb3c23fd5b6cc49b74473a9b8e3",
-          "size": 181941
         }
       ],
       "draft": false,
@@ -6573,13 +6062,6 @@
           "name": "prek-x86_64-unknown-linux-musl.tar.gz",
           "sha256": "a211021181f39155bea67882c11a350c7b6fdffb89e39ab98cee7756b3f4446a",
           "size": 5964933
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.29/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "fe08720f0e644618f06d6e9ba295c00deb1207a76d5f6cfa0c98a51b4bb78a1b",
-          "size": 175977
         }
       ],
       "draft": false,
@@ -6617,13 +6099,6 @@
           "name": "prek-x86_64-unknown-linux-gnu.tar.gz",
           "sha256": "1d468f8c22458e3043d24151422bba540f560d97276655e6f32ae6977d80fb3b",
           "size": 5877233
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.28/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "a402bfc4fd3b1dc8ed6e52a82372bb7b3bfda12961ba541f77b702b96807c4e9",
-          "size": 174592
         }
       ],
       "draft": false,
@@ -6661,13 +6136,6 @@
           "name": "prek-x86_64-unknown-linux-gnu.tar.gz",
           "sha256": "364eb514a8b08026f3c8d03bc533109ca3ccb1a44cc630a8e9d7e683bf5953c8",
           "size": 5863658
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.27/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "653c28ec2ccacf7a3ffcf027ed73943f6534d3a8ae939fafea092e5a5150e553",
-          "size": 173535
         }
       ],
       "draft": false,
@@ -6705,13 +6173,6 @@
           "name": "prek-x86_64-unknown-linux-gnu.tar.gz",
           "sha256": "dc9cc844e4508bb50f94067c7e825ba2b325ba697e3dd4e19f2596f573fbe77a",
           "size": 5861673
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.26/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "16b9720a6e4fdc3511a8a2e264ae0216f2aaede586e440aeac6e5f750299e9f2",
-          "size": 172352
         }
       ],
       "draft": false,
@@ -6749,13 +6210,6 @@
           "name": "prek-x86_64-unknown-linux-gnu.tar.gz",
           "sha256": "d7402dd4bff2d027e663b7347a2cdba810c0dc898aae5ba7a8c321c495ad5012",
           "size": 5861125
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.25/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "42bb1977d1114b7b1f60eaae7cc56ffa7a98d41d63e5115a75beb7dffd47a619",
-          "size": 166277
         }
       ],
       "draft": false,
@@ -6793,13 +6247,6 @@
           "name": "prek-x86_64-unknown-linux-gnu.tar.gz",
           "sha256": "de4bb7a9bb03f9b99cbd62bd838240b80bfd15fd3fbdea1e678d2f79bca4af63",
           "size": 5396117
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.24/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "65b97691c61cac1b6f1b8c083a2d6e20949932b1d1ec1552ae23c0a480fc08c0",
-          "size": 156698
         }
       ],
       "draft": false,
@@ -6837,13 +6284,6 @@
           "name": "prek-x86_64-unknown-linux-gnu.tar.gz",
           "sha256": "f31350274fcf7467324dc09ca28dfdf9ff4966f1485fc9a035e32d6b19ab8bd9",
           "size": 5228645
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.23/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "1342c8fa38f55224e8d6e6d80ad0bce4f5e3c454a101b88e0ed844438bc2ece3",
-          "size": 146051
         }
       ],
       "draft": false,
@@ -6851,886 +6291,6 @@
       "publishedAt": "2025-08-08T15:39:05Z",
       "tag": "v0.0.23",
       "version": "0.0.23"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.22/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "9b85f3912548957994d91a4b0565e0fe6059168f785ec4be7f2075471a55c182",
-          "size": 4648810
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.22/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "b751db22dbc1a13b3c2797c4ce67b258afeabb35255cc012d2e391921a00663e",
-          "size": 4862303
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.22/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "557ea1cc275a72e060c0d96c0f190ccd5759b08f82eaf30a5085584c9cfbde55",
-          "size": 4130096
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.22/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "2aa67b6dec037d9672abd7c6fca55fffbdc5c747d9eee30b115b868c7e941699",
-          "size": 5216898
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.22/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "baff09b27f500cc95c67c44cf90d8ad96f4263cfd7e7d64b63ee8c6d58ae08b1",
-          "size": 144723
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-07T17:20:52Z",
-      "tag": "v0.0.22",
-      "version": "0.0.22"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.21/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "9951a045826e378ffdd060cfb95100b8179d074058531ff8a3ca1d1180521a15",
-          "size": 4650250
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.21/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "56d8f7ac7aa003de579d27d312d8afe55bd5fb14d726999b37dbd3a325e2e46e",
-          "size": 4872445
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.21/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "ae88110599833d2de7999668963f2b0930821550cd3880bc60b9eee558113e68",
-          "size": 4127255
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.21/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "ff37066e0717acb337ee49c3922c1f7408cc59a3ccffc9f6efefd659d870199c",
-          "size": 5218254
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.21/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "0771fa52c6f614180d620c19d14fd956115f9cb466b3fe7067b1c31ce45be83e",
-          "size": 142570
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-06T12:12:27Z",
-      "tag": "v0.0.21",
-      "version": "0.0.21"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.20/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "227bbcbd2b59905d392cb1123eecc54f789bb86cb4abcf3f2f982c5ecde19fc0",
-          "size": 4629531
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.20/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "f5a24973f5f6e94344082d67737de5ba853e619b14b25f977991202969f4c95c",
-          "size": 4852224
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.20/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "4d63408f59a97e4a0cc046d172b5107bc339e17a43d25cf031cedc9d70852333",
-          "size": 4113892
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.20/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "fd43719d923d01830f3b4188852ecbae6b539b123e8227f0fea5cae161ee431b",
-          "size": 5204032
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.20/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "4e3390c075f0afce54ec9c40967ec333bf85676325fb608576f313e7348f96cb",
-          "size": 140477
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-05T11:56:40Z",
-      "tag": "v0.0.20",
-      "version": "0.0.20"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.19/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "12f932bbee7031ac271cee7cf632be15b49e7a968cccb38dbe133f49fcefdf7d",
-          "size": 4597848
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.19/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "53bf8439bcdbf92cfb0360af8aeee8f9d596bfbfafeb5bf30371ba713f2a343b",
-          "size": 4814521
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.19/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "14af2b765c6adcce272948b17735f10da3b3a2aeb15742c00201d7624ad4702f",
-          "size": 4085167
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.19/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "803619959547cd347fe1fe40df25d70ccac85aecda89a59cf0ace78ab6cf4c04",
-          "size": 5161468
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.19/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "7b8340360f6578516d0deae242ed606238c17b700218a7ff0934d32b812a950d",
-          "size": 134582
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-04T17:46:21Z",
-      "tag": "v0.0.19",
-      "version": "0.0.19"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.18/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "cd0b0b402490e51b20eb5cab0f7c5de3c394a034f57b881ae3bd07b8add93b85",
-          "size": 4601349
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.18/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "4fe6496df5322feea5920ed40075c3cdbf0d018479a39142afcfe0174c7fcabb",
-          "size": 4811432
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.18/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "6e3d22e49686e33ceac4dcbd4aea7aa485f5a022795c2416c78df77c83a5dd92",
-          "size": 4086837
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.18/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "d775cf86da72a9a3d2622445aa7355264a4f3e5b5d59cccf50b4368897439912",
-          "size": 5166919
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.18/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "cb350cebc253988d6d5e25df2b30234faa8e37cdf13e7dd0b9647e3e50b90d31",
-          "size": 133073
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-04T13:57:40Z",
-      "tag": "v0.0.18",
-      "version": "0.0.18"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.17/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "2b137f0b46034db5f303d282d9e2959c0f1be82555cf0857e741d922c831de30",
-          "size": 4599959
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.17/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "3a0d75c2ded58acb4ccae9e626a39a1d716e865f24a68d97ee879b78646ddcb8",
-          "size": 4817295
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.17/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "2f54a3b69b1cec5f0a10d8d3555b3f67b832d06e292a1334a38370144b8978e2",
-          "size": 4082824
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.17/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "e2552e4af8345111c5ec92f85d27ceee4ec23a835a7fba0e42818a87a70bd64c",
-          "size": 5169560
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.17/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "468919e2c3829c65f6159aae98f4e1a38a6099ceaef18d51e5b556153a06199f",
-          "size": 131720
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-03T12:57:40Z",
-      "tag": "v0.0.17",
-      "version": "0.0.17"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.16/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "4d222c61cd222442f5b81adf3fe4447f4635fae39b21d67c2288284b4e0e5a85",
-          "size": 4577744
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.16/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "afc6c3e30d967108c23d0d39c07e9feab5e868514872461ccfd95d0348f20dc3",
-          "size": 4791714
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.16/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "3610bc3b7b005f27500908c547c765999f315999c674ddc665c208558d65cc03",
-          "size": 4060858
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.16/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "d23b16493483df5ab6d844f09e49920ef68f67c67a4e0376a28267756bfcf33b",
-          "size": 5144383
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.16/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "95bf641a9beb816f55675702646a86ff9c3ad6bb073b8b6cbaa17345fc3ac3b6",
-          "size": 130083
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-02T13:13:23Z",
-      "tag": "v0.0.16",
-      "version": "0.0.16"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.15/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "608be0cf77c6783c5ba9c3b40aa796c66919ed84e5132ccf498c75cf502e2179",
-          "size": 4576160
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.15/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "a2ae163e486a85e02540e793a5e9101590a59dd363672f54ce1759aceacda8e5",
-          "size": 4792963
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.15/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "1bbca3fc5acd1ac2da3349afd225a312db1352803cb7afe7307255fc287999eb",
-          "size": 4063661
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.15/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "43c947d4cf8a2970e3999f9de1caf1783323e8c2767ff7b5d2b4223a11076d1d",
-          "size": 5144961
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.15/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "bc9cc659831961304675333648eafc635fa2b9321b6d71526ebb6bfbfce4490e",
-          "size": 128103
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-02T03:24:40Z",
-      "tag": "v0.0.15",
-      "version": "0.0.15"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.14/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "91e6f454c1ed723424af58e70ed1dc62c8530f78f16e7e877d4941763b353d6b",
-          "size": 4319788
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.14/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "f8f69048ab628ea2b1d2552c1d2fb111ddfe28d2225679d843fa1e9ce7ebfdc8",
-          "size": 4492571
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.14/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "bec03e8ce51d6172a58147f7e439de49083eb4cf6fb5b77605926683f99ff031",
-          "size": 3780518
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.14/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "20588f622ed5217e5e1a5b81a6b0c15889207d50315e2efb5d55fe41f0ce3edd",
-          "size": 4836976
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.14/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "2e1ab1e68d2858e2324718ac187fcb0bb1858e5b3dfef00cc46be0dfc41cee8d",
-          "size": 124929
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-08-01T04:25:07Z",
-      "tag": "v0.0.14",
-      "version": "0.0.14"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.13/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "bf34f249383e17615bf6bfba82820e7bd5ade1337f90298dcadaf1e3b22ecaef",
-          "size": 4321099
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.13/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "386d2f51a0bb7769f441650cf69f32f1819ea6b32c65fa4a086a25f93e4b0772",
-          "size": 4488798
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.13/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "a6c3d54e579d785e9cee339b15aeb35f2fa8463a6cffa5ebdf10eb3e9d7f5f87",
-          "size": 3779618
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.13/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "ac38eb0153b8e5a846e038f95d8abe6a61e67b5c3ef66381b14d94abf2ac7e25",
-          "size": 4833819
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.13/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "a0e9da6adc4e6c023f22c2f65ae4f806be9afb3210191def5e82790f9fd5c862",
-          "size": 123742
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-07-31T16:40:55Z",
-      "tag": "v0.0.13",
-      "version": "0.0.13"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.12/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "72ace51836c2335429e7be5af805f5c059575d5e1e1f8bf5e360b22d3ee7a5e9",
-          "size": 4309198
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.12/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "711ef37761ad140f5fbf4d96c163a438012cb389e95c3e9e9616774ab79a7d06",
-          "size": 4483190
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.12/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "e0ba7f0a32b130a72b5765a724adaf817b7e79653a7ccfcd4b0d676e4c0420a4",
-          "size": 3769682
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.12/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "bd9b7726e6c7cd3bd979e5518a5271b5999dcdd0781e65ecb224b4ee2477888e",
-          "size": 4822139
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.12/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "d787f6c87f70699b88d1f85446edb9abef4f5243c74d902ab0d870d59c81911d",
-          "size": 120307
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-07-29T02:25:27Z",
-      "tag": "v0.0.12",
-      "version": "0.0.12"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.11/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": "7425a861ca67e04ba83c33b003ad5f1a17888f2db0a437c8a0fa83c2986dc2c5",
-          "size": 4297071
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.11/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": "86632ae20878e3bcb2ee2171ce05e6ec29f11d731fd0b6b0aebd79e0dcd6e59a",
-          "size": 4473955
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.11/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": "84ffd11c3557f846f95f5d9bbbb305db042c3440e06d16872fb13a5637eeeaf7",
-          "size": 3757695
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.11/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": "e2924b5431479753643e88aadcfe2c8f40865be88d3678c6ecd48fe16b83d906",
-          "size": 4825905
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.11/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": "0bd1a9cf7672c74be46332ca4bc1d23611b228f913daa9871f9e93eb62ac6898",
-          "size": 119736
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-07-28T09:13:44Z",
-      "tag": "v0.0.11",
-      "version": "0.0.11"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.10/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4142421
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.10/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4316758
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.10/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": null,
-          "size": 3661359
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.10/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": null,
-          "size": 4656800
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.10/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": null,
-          "size": 105907
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-02-18T08:41:52Z",
-      "tag": "v0.0.10",
-      "version": "0.0.10"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.8/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4897875
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.8/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 5134961
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.8/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": null,
-          "size": 4462136
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.8/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": null,
-          "size": 5567894
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.8/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": null,
-          "size": 104958
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2025-01-06T11:29:11Z",
-      "tag": "v0.0.8",
-      "version": "0.0.8"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.7/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4854593
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.7/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 5096144
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.7/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": null,
-          "size": 4425207
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.7/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": null,
-          "size": 5524137
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.7/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": null,
-          "size": 100880
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2024-12-09T09:41:59Z",
-      "tag": "v0.0.7",
-      "version": "0.0.7"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.6/prefligit-aarch64-apple-darwin.tar.gz",
-          "name": "prefligit-aarch64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4746337
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.6/prefligit-x86_64-apple-darwin.tar.gz",
-          "name": "prefligit-x86_64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4980442
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.6/prefligit-x86_64-pc-windows-msvc.zip",
-          "name": "prefligit-x86_64-pc-windows-msvc.zip",
-          "sha256": null,
-          "size": 4338760
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.6/prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "prefligit-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": null,
-          "size": 5396883
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.6/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": null,
-          "size": 93397
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2024-12-03T05:28:46Z",
-      "tag": "v0.0.6",
-      "version": "0.0.6"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.5/pre-commit-rs-aarch64-apple-darwin.tar.gz",
-          "name": "pre-commit-rs-aarch64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4712485
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.5/pre-commit-rs-x86_64-apple-darwin.tar.gz",
-          "name": "pre-commit-rs-x86_64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4955360
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.5/pre-commit-rs-x86_64-pc-windows-msvc.zip",
-          "name": "pre-commit-rs-x86_64-pc-windows-msvc.zip",
-          "sha256": null,
-          "size": 4306346
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.5/pre-commit-rs-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "pre-commit-rs-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": null,
-          "size": 5381390
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.5/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": null,
-          "size": 91425
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2024-11-21T15:05:39Z",
-      "tag": "v0.0.5",
-      "version": "0.0.5"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.3/pre-commit-rs-aarch64-apple-darwin.tar.gz",
-          "name": "pre-commit-rs-aarch64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4849397
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.3/pre-commit-rs-x86_64-apple-darwin.tar.gz",
-          "name": "pre-commit-rs-x86_64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 5082801
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.3/pre-commit-rs-x86_64-pc-windows-msvc.zip",
-          "name": "pre-commit-rs-x86_64-pc-windows-msvc.zip",
-          "sha256": null,
-          "size": 4421517
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.3/pre-commit-rs-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "pre-commit-rs-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": null,
-          "size": 5520515
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.3/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": null,
-          "size": 83665
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2024-11-18T07:35:26Z",
-      "tag": "v0.0.3",
-      "version": "0.0.3"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.2/pre-commit-rs-aarch64-apple-darwin.tar.gz",
-          "name": "pre-commit-rs-aarch64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 4908844
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.2/pre-commit-rs-x86_64-apple-darwin.tar.gz",
-          "name": "pre-commit-rs-x86_64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 5159640
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.2/pre-commit-rs-x86_64-pc-windows-msvc.zip",
-          "name": "pre-commit-rs-x86_64-pc-windows-msvc.zip",
-          "sha256": null,
-          "size": 11646034
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.2/pre-commit-rs-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "pre-commit-rs-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": null,
-          "size": 5588476
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.2/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": null,
-          "size": 80197
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2024-11-16T15:17:15Z",
-      "tag": "v0.0.2",
-      "version": "0.0.2"
-    },
-    {
-      "assets": [
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.1/pre-commit-rs-aarch64-apple-darwin.tar.gz",
-          "name": "pre-commit-rs-aarch64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 3100547
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.1/pre-commit-rs-x86_64-apple-darwin.tar.gz",
-          "name": "pre-commit-rs-x86_64-apple-darwin.tar.gz",
-          "sha256": null,
-          "size": 3272105
-        },
-        {
-          "contentType": "application/zip",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.1/pre-commit-rs-x86_64-pc-windows-msvc.zip",
-          "name": "pre-commit-rs-x86_64-pc-windows-msvc.zip",
-          "sha256": null,
-          "size": 7353789
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.1/pre-commit-rs-x86_64-unknown-linux-gnu.tar.gz",
-          "name": "pre-commit-rs-x86_64-unknown-linux-gnu.tar.gz",
-          "sha256": null,
-          "size": 3527825
-        },
-        {
-          "contentType": "application/x-gtar",
-          "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.1/source.tar.gz",
-          "name": "source.tar.gz",
-          "sha256": null,
-          "size": 59986
-        }
-      ],
-      "draft": false,
-      "prerelease": false,
-      "publishedAt": "2024-10-31T07:00:36Z",
-      "tag": "v0.0.1",
-      "version": "0.0.1"
     }
   ],
   "source": "https://api.github.com/repos/j178/prek/releases"
