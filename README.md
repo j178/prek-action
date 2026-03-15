@@ -22,6 +22,12 @@ jobs:
 prek run --show-diff-on-failure --color=always <extra-args>
 ```
 
+## Version Tags
+
+The major tag, such as `v1`, is a moving tag. It is updated to point to the latest `v1.x.y` release.
+
+If you want a stable reference, do not pin to `v1`. Instead, pin to a specific release tag such as `v1.1.1`, or pin to a commit SHA.
+
 ## Inputs
 
 | Input | Description | Required | Default |
