@@ -4,15 +4,9 @@ import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
 
-import {
-  getInputs,
-  getBinaryPath,
-  getReleaseAssetFor,
-  getRustTargetFor,
-  getToolCacheArchFor,
-  normalizeVersion,
-  resolveVersionFromManifest
-} from '../src/shared'
+import {getInputs} from '../src/inputs'
+import {getBinaryPath, getReleaseAssetFor, getRustTargetFor, getToolCacheArchFor} from '../src/install'
+import {normalizeVersion, resolveVersionFromManifest} from '../src/manifest'
 
 const manifest = {
   generatedAt: '2026-03-15T00:00:00.000Z',
