@@ -3,6 +3,7 @@ import * as tc from '@actions/tool-cache'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 
+import {getManifestAssetForVersion} from './manifest'
 import type {ReleaseAsset} from './types'
 
 export async function installPrek(version: string): Promise<string> {
@@ -19,8 +20,8 @@ export async function installPrek(version: string): Promise<string> {
     }
 
     const asset = getReleaseAssetFor(process.platform, process.arch)
-    const downloadUrl = `https://github.com/j178/prek/releases/download/${version}/${asset.archiveName}`
-    const archivePath = await tc.downloadTool(downloadUrl)
+    const manifestAsset = getManifestAssetForVersion(version, asset.archiveName)
+    const archivePath = await tc.downloadTool(manifestAsset.downloadUrl)
     const extractedPath =
       asset.archiveType === 'zip' ? await tc.extractZip(archivePath) : await tc.extractTar(archivePath)
     const binaryPath = await getBinaryPath(extractedPath, asset)

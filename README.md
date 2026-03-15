@@ -32,7 +32,7 @@ prek run --show-diff-on-failure --color=always <extra-args>
 | `prek-version` | Version to install, for example `0.2.30` or `latest` | No | `latest` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
-| `token` | Token used to resolve `latest` through the GitHub API | No | `${{ github.token }}` |
+| `token` | Unused; retained for backward compatibility | No | `${{ github.token }}` |
 
 ## Outputs
 
