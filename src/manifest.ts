@@ -1,33 +1,11 @@
-import * as core from '@actions/core'
-import {HttpClient} from '@actions/http-client'
+import * as semver from 'semver'
 import versionManifest from './version-manifest.json'
-import type {ManifestAsset, ManifestRelease, VersionManifest} from './types'
+import type {ManifestAsset, VersionManifest} from './types'
 
 const prekVersionManifest = versionManifest as VersionManifest
 
-export async function resolveVersion(versionInput: string, token: string): Promise<string> {
-  const normalizedInput = versionInput.trim() || 'latest'
-  if (normalizedInput === 'latest') {
-    return getLatestManifestRelease().tag
-  }
-
-  const manifestVersion = getManifestReleaseByTag(normalizedInput)
-  if (manifestVersion) {
-    return manifestVersion.tag
-  }
-
-  return resolveVersionFromGitHub(normalizedInput, token)
-}
-
-async function fetchLatestVersion(client: HttpClient, token: string): Promise<string> {
-  const response = await client.getJson<{tag_name: string}>(
-    'https://api.github.com/repos/j178/prek/releases/latest',
-    buildHeaders(token)
-  )
-  if (!response.result?.tag_name) {
-    throw new Error('GitHub API response did not include tag_name')
-  }
-  return response.result.tag_name
+export async function resolveVersion(versionInput: string, _token: string): Promise<string> {
+  return resolveVersionFromManifest(versionInput)
 }
 
 export function normalizeVersion(version: string): string {
@@ -35,7 +13,8 @@ export function normalizeVersion(version: string): string {
 }
 
 export function getManifestAssetForVersion(version: string, archiveName: string): ManifestAsset {
-  const release = getManifestReleaseByTag(version)
+  const tag = normalizeVersion(version)
+  const release = prekVersionManifest.releases.find(candidate => candidate.tag === tag)
   if (!release) {
     throw new Error(`prek version ${normalizeVersion(version)} was not found in the bundled version manifest`)
   }
@@ -47,59 +26,36 @@ export function getManifestAssetForVersion(version: string, archiveName: string)
   return asset
 }
 
-export function resolveVersionFromManifest(versionInput: string): string {
+export function resolveVersionFromManifest(versionInput: string, manifest: VersionManifest = prekVersionManifest): string {
   const normalizedInput = versionInput.trim() || 'latest'
   if (normalizedInput === 'latest') {
-    return getLatestManifestRelease().tag
-  }
-
-  const release = getManifestReleaseByTag(normalizedInput)
-  if (!release) {
-    throw new Error(`prek version ${normalizeVersion(versionInput)} was not found in the bundled version manifest`)
-  }
-  return release.tag
-}
-
-function buildHeaders(token: string): Record<string, string> {
-  const headers: Record<string, string> = {
-    Accept: 'application/vnd.github+json'
-  }
-  if (token) {
-    headers.Authorization = `Bearer ${token}`
-  }
-  return headers
-}
-
-function formatError(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
-}
-
-async function resolveVersionFromGitHub(versionInput: string, token: string): Promise<string> {
-  if (versionInput !== 'latest') {
-    return normalizeVersion(versionInput)
-  }
-
-  const client = new HttpClient('prek-action')
-  try {
-    return normalizeVersion(await fetchLatestVersion(client, token))
-  } catch (error) {
-    if (!token) {
-      throw error
+    const latestRelease = manifest.releases.find(release => !release.draft && !release.prerelease)
+    if (!latestRelease) {
+      throw new Error('The bundled prek version manifest does not contain a stable release')
     }
-    core.warning(`Authenticated request failed: ${formatError(error)}. Retrying without token.`)
-    return normalizeVersion(await fetchLatestVersion(client, ''))
+    return latestRelease.tag
   }
-}
 
-function getLatestManifestRelease(): ManifestRelease {
-  const latestRelease = prekVersionManifest.releases.find(release => !release.draft && !release.prerelease)
-  if (!latestRelease) {
-    throw new Error('The bundled prek version manifest does not contain a stable release')
+  const exactVersion = semver.valid(normalizedInput)
+  if (exactVersion) {
+    const exactRelease = manifest.releases.find(candidate => candidate.version === exactVersion)
+    if (!exactRelease) {
+      throw new Error(`prek version ${normalizeVersion(exactVersion)} was not found in the bundled version manifest`)
+    }
+    return exactRelease.tag
   }
-  return latestRelease
-}
 
-function getManifestReleaseByTag(version: string): ManifestRelease | undefined {
-  const tag = normalizeVersion(version)
-  return prekVersionManifest.releases.find(candidate => candidate.tag === tag)
+  const range = semver.validRange(normalizedInput)
+  if (!range) {
+    throw new Error(`Invalid prek-version input: ${versionInput}`)
+  }
+
+  const rangeRelease = manifest.releases.find(
+    candidate => !candidate.draft && !candidate.prerelease && semver.satisfies(candidate.version, range)
+  )
+  if (!rangeRelease) {
+    throw new Error(`No prek release satisfies version range: ${versionInput}`)
+  }
+
+  return rangeRelease.tag
 }
