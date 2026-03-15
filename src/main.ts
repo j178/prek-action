@@ -26,7 +26,9 @@ async function run(): Promise<void> {
   try {
     exitCode = await runPrek(inputs.workingDirectory, inputs.extraArgs)
   } finally {
-    await showVerboseLogs()
+    if (inputs.showVerboseLogs) {
+      await showVerboseLogs()
+    }
     if (exitCode === 0) {
       await pruneCache()
     }

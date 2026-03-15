@@ -5,12 +5,27 @@ import * as os from 'node:os'
 import * as path from 'node:path'
 
 import {
+  getInputs,
   getBinaryPath,
   getReleaseAssetFor,
   getRustTargetFor,
   getToolCacheArchFor,
   normalizeVersion
 } from '../src/shared'
+
+test('getInputs enables verbose logs by default and allows opting out', () => {
+  const originalEnv = {...process.env}
+  try {
+    process.env['INPUT_INSTALL-ONLY'] = 'false'
+    delete process.env['INPUT_SHOW-VERBOSE-LOGS']
+    assert.equal(getInputs().showVerboseLogs, true)
+
+    process.env['INPUT_SHOW-VERBOSE-LOGS'] = 'false'
+    assert.equal(getInputs().showVerboseLogs, false)
+  } finally {
+    process.env = originalEnv
+  }
+})
 
 test('normalizeVersion adds a v prefix once', () => {
   assert.equal(normalizeVersion('0.2.30'), 'v0.2.30')

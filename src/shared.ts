@@ -19,15 +19,18 @@ type Inputs = {
   extraArgs: string
   installOnly: boolean
   prekVersion: string
+  showVerboseLogs: boolean
   workingDirectory: string
   token: string
 }
 
 export function getInputs(): Inputs {
+  const showVerboseLogsInput = core.getInput('show-verbose-logs')
   return {
     extraArgs: core.getInput('extra_args') || core.getInput('extra-args') || '--all-files',
     installOnly: core.getBooleanInput('install-only'),
     prekVersion: core.getInput('prek-version') || 'latest',
+    showVerboseLogs: showVerboseLogsInput === '' ? true : core.getBooleanInput('show-verbose-logs'),
     workingDirectory: core.getInput('working-directory') || '.',
     token: core.getInput('token')
   }

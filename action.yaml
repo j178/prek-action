@@ -16,6 +16,10 @@ inputs:
     description: Version of prek to install (for example `0.2.1` or `latest`)
     required: false
     default: 'latest'
+  show-verbose-logs:
+    description: Whether to print the prek verbose log after `prek run`
+    required: false
+    default: 'true'
   working-directory:
     description: The working directory to run prek in
     required: false
