@@ -4,6 +4,7 @@
     "module": "commonjs",
     "lib": ["ES2022"],
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -11,5 +12,5 @@
     "outDir": "lib",
     "rootDir": "src"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }
