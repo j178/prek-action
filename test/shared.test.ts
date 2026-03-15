@@ -14,6 +14,7 @@ import {
   validateDownloadedChecksum
 } from '../src/install'
 import {normalizeVersion, resolveVersionFromManifest} from '../src/manifest'
+import type {VersionManifest} from '../src/types'
 
 test('resolveVersionFromManifest resolves exact versions and latest from the bundled manifest', () => {
   assert.equal(resolveVersionFromManifest('latest'), 'v0.3.5')
@@ -23,6 +24,41 @@ test('resolveVersionFromManifest resolves exact versions and latest from the bun
 test('resolveVersionFromManifest resolves semver ranges from the bundled manifest', () => {
   assert.equal(resolveVersionFromManifest('0.3.x'), 'v0.3.5')
   assert.equal(resolveVersionFromManifest('<=0.3.4'), 'v0.3.4')
+})
+
+test('resolveVersionFromManifest ignores prereleases even when they appear first', () => {
+  const manifest: VersionManifest = {
+    source: 'test fixture',
+    releases: [
+      {
+        assets: [],
+        draft: false,
+        prerelease: true,
+        publishedAt: '2026-03-01T00:00:00Z',
+        tag: 'v0.3.6-beta.1',
+        version: '0.3.6-beta.1'
+      },
+      {
+        assets: [],
+        draft: false,
+        prerelease: false,
+        publishedAt: '2026-02-28T00:00:00Z',
+        tag: 'v0.3.5',
+        version: '0.3.5'
+      },
+      {
+        assets: [],
+        draft: false,
+        prerelease: false,
+        publishedAt: '2026-02-27T00:00:00Z',
+        tag: 'v0.3.4',
+        version: '0.3.4'
+      }
+    ]
+  }
+
+  assert.equal(resolveVersionFromManifest('latest', manifest), 'v0.3.5')
+  assert.equal(resolveVersionFromManifest('0.3.x', manifest), 'v0.3.5')
 })
 
 test('resolveVersionFromManifest rejects invalid and unsatisfied ranges', () => {

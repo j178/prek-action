@@ -1,6 +1,6 @@
 import * as semver from 'semver'
 import versionManifest from './version-manifest.json'
-import type {ManifestAsset, ManifestRelease, VersionManifest} from './types'
+import type {ManifestAsset, VersionManifest} from './types'
 
 const prekVersionManifest = versionManifest as VersionManifest
 
@@ -13,7 +13,8 @@ export function normalizeVersion(version: string): string {
 }
 
 export function getManifestAssetForVersion(version: string, archiveName: string): ManifestAsset {
-  const release = getManifestReleaseByTag(version)
+  const tag = normalizeVersion(version)
+  const release = prekVersionManifest.releases.find(candidate => candidate.tag === tag)
   if (!release) {
     throw new Error(`prek version ${normalizeVersion(version)} was not found in the bundled version manifest`)
   }
@@ -25,15 +26,19 @@ export function getManifestAssetForVersion(version: string, archiveName: string)
   return asset
 }
 
-export function resolveVersionFromManifest(versionInput: string): string {
+export function resolveVersionFromManifest(versionInput: string, manifest: VersionManifest = prekVersionManifest): string {
   const normalizedInput = versionInput.trim() || 'latest'
   if (normalizedInput === 'latest') {
-    return getLatestManifestRelease().tag
+    const latestRelease = manifest.releases.find(release => !release.draft && !release.prerelease)
+    if (!latestRelease) {
+      throw new Error('The bundled prek version manifest does not contain a stable release')
+    }
+    return latestRelease.tag
   }
 
   const exactVersion = semver.valid(normalizedInput)
   if (exactVersion) {
-    const exactRelease = getManifestReleaseByVersion(exactVersion)
+    const exactRelease = manifest.releases.find(candidate => candidate.version === exactVersion)
     if (!exactRelease) {
       throw new Error(`prek version ${normalizeVersion(exactVersion)} was not found in the bundled version manifest`)
     }
@@ -45,7 +50,7 @@ export function resolveVersionFromManifest(versionInput: string): string {
     throw new Error(`Invalid prek-version input: ${versionInput}`)
   }
 
-  const rangeRelease = prekVersionManifest.releases.find(
+  const rangeRelease = manifest.releases.find(
     candidate => !candidate.draft && !candidate.prerelease && semver.satisfies(candidate.version, range)
   )
   if (!rangeRelease) {
@@ -53,21 +58,4 @@ export function resolveVersionFromManifest(versionInput: string): string {
   }
 
   return rangeRelease.tag
-}
-
-function getLatestManifestRelease(): ManifestRelease {
-  const latestRelease = prekVersionManifest.releases.find(release => !release.draft && !release.prerelease)
-  if (!latestRelease) {
-    throw new Error('The bundled prek version manifest does not contain a stable release')
-  }
-  return latestRelease
-}
-
-function getManifestReleaseByTag(version: string): ManifestRelease | undefined {
-  const tag = normalizeVersion(version)
-  return prekVersionManifest.releases.find(candidate => candidate.tag === tag)
-}
-
-function getManifestReleaseByVersion(version: string): ManifestRelease | undefined {
-  return prekVersionManifest.releases.find(candidate => candidate.version === version)
 }
