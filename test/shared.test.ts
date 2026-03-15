@@ -4,14 +4,9 @@ import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
 
-import {
-  getInputs,
-  getBinaryPath,
-  getReleaseAssetFor,
-  getRustTargetFor,
-  getToolCacheArchFor,
-  normalizeVersion
-} from '../src/shared'
+import {getInputs} from '../src/inputs'
+import {getBinaryPath, getReleaseAssetFor, getRustTargetFor, getToolCacheArchFor} from '../src/install'
+import {normalizeVersion} from '../src/manifest'
 
 test('getInputs enables verbose logs by default and allows opting out', () => {
   const originalEnv = {...process.env}
