@@ -35,7 +35,6 @@ export type ManifestRelease = {
 }
 
 export type VersionManifest = {
-  generatedAt: string
   releases: ManifestRelease[]
   source: string
 }

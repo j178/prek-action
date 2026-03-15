@@ -10,7 +10,6 @@ async function run() {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || ''
   const releases = await fetchAllReleases(token)
   const manifest = {
-    generatedAt: new Date().toISOString(),
     releases,
     source: releasesApiUrl
   }
