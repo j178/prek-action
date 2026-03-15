@@ -20,6 +20,16 @@ test('resolveVersionFromManifest resolves exact versions and latest from the bun
   assert.equal(resolveVersionFromManifest('0.3.5'), 'v0.3.5')
 })
 
+test('resolveVersionFromManifest resolves semver ranges from the bundled manifest', () => {
+  assert.equal(resolveVersionFromManifest('0.3.x'), 'v0.3.5')
+  assert.equal(resolveVersionFromManifest('<=0.3.4'), 'v0.3.4')
+})
+
+test('resolveVersionFromManifest rejects invalid and unsatisfied ranges', () => {
+  assert.throws(() => resolveVersionFromManifest('hello world'))
+  assert.throws(() => resolveVersionFromManifest('>9.9.9'))
+})
+
 test('getInputs enables verbose logs by default and allows opting out', () => {
   const originalEnv = {...process.env}
   try {
