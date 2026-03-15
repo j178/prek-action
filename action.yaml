@@ -13,7 +13,7 @@ inputs:
     required: false
     default: 'false'
   prek-version:
-    description: Version of prek to install from the bundled manifest (for example `0.2.1` or `latest`)
+    description: Version of prek to install (for example `0.2.1` or `latest`)
     required: false
     default: 'latest'
   show-verbose-logs:
@@ -25,7 +25,7 @@ inputs:
     required: false
     default: '.'
   token:
-    description: Unused for manifest-resolved versions; retained for backward compatibility
+    description: Unused; retained for backward compatibility
     required: false
     default: ${{ github.token }}
 outputs:
