@@ -1,4 +1,4 @@
-import {mkdir, writeFile} from 'node:fs/promises'
+import {appendFile, mkdir, readFile, writeFile} from 'node:fs/promises'
 import path from 'node:path'
 import semver from 'semver'
 
@@ -10,11 +10,25 @@ const excludedArchiveNames = new Set(['prek-npm-package.tar.gz'])
 
 async function run() {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || ''
+  const previousReleases = await readExistingManifest()
+  const previousVersions = new Set(previousReleases.map(release => release.version))
   const releases = await fetchAllReleases(token)
+  const addedVersions = releases.map(release => release.version).filter(version => !previousVersions.has(version))
 
   await mkdir(path.dirname(manifestPath), {recursive: true})
   await writeFile(manifestPath, `${JSON.stringify(releases, null, 2)}\n`)
   console.log(`Wrote ${releases.length} prek releases to ${manifestPath}`)
+  if (addedVersions.length === 0) {
+    console.log('No new prek releases found')
+  } else {
+    console.log(`New prek releases: ${addedVersions.join(', ')}`)
+  }
+
+  await writeOutputs(addedVersions)
+}
+
+async function readExistingManifest() {
+  return JSON.parse(await readFile(manifestPath, 'utf8'))
 }
 
 async function fetchAllReleases(token) {
@@ -94,6 +108,41 @@ function isInstallableArchive(name) {
 
 function compareReleasesDesc(left, right) {
   return semver.rcompare(left.version, right.version) || right.publishedAt.localeCompare(left.publishedAt)
+}
+
+async function writeOutputs(addedVersions) {
+  const outputPath = process.env.GITHUB_OUTPUT
+  if (!outputPath) {
+    return
+  }
+
+  const prTitle =
+    addedVersions.length === 0
+      ? 'Update prek version manifest'
+      : `Update prek version manifest for ${formatVersionSummary(addedVersions)}`
+  const addedVersionsMarkdown =
+    addedVersions.length === 0
+      ? '- None'
+      : addedVersions.map(version => `- prek ${version}`).join('\n')
+
+  await appendFile(
+    outputPath,
+    [
+      `added_versions=${addedVersions.join(',')}`,
+      `pr_title=${prTitle}`,
+      'added_versions_markdown<<EOF',
+      addedVersionsMarkdown,
+      'EOF'
+    ].join('\n') + '\n'
+  )
+}
+
+function formatVersionSummary(addedVersions) {
+  if (addedVersions.length === 1) {
+    return `prek ${addedVersions[0]}`
+  }
+
+  return `prek ${addedVersions[0]} and ${addedVersions.length - 1} more`
 }
 
 run().catch(error => {
