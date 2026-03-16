@@ -6,7 +6,7 @@ import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
 
-import {CACHE_KEY_STATE, CACHE_PATHS_STATE, PREK_CACHE_KEY_PREFIX} from './types'
+import {CACHE_KEY_STATE, CACHE_MATCHED_KEY_STATE, CACHE_PATHS_STATE, PREK_CACHE_KEY_PREFIX} from './types'
 
 function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
@@ -23,6 +23,7 @@ export async function restorePrekCache(workingDirectory: string): Promise<void> 
     const restoredKey = await cache.restoreCache(paths, primaryKey)
     if (restoredKey) {
       core.info(`Restored prek cache with key ${restoredKey}`)
+      core.saveState(CACHE_MATCHED_KEY_STATE, restoredKey)
     } else {
       core.info(`No cache found for key ${primaryKey}`)
     }
@@ -35,24 +36,28 @@ export async function restorePrekCache(workingDirectory: string): Promise<void> 
 
 export async function savePrekCache(): Promise<void> {
   const primaryKey = core.getState(CACHE_KEY_STATE)
+  const matchedKey = core.getState(CACHE_MATCHED_KEY_STATE)
   const rawPaths = core.getState(CACHE_PATHS_STATE)
   if (!primaryKey || !rawPaths) {
     core.info('No cache state found, skipping cache save')
     return
   }
 
+  if (primaryKey === matchedKey) {
+    core.info(`Cache hit occurred on the primary key ${primaryKey}, not saving cache.`)
+    return
+  }
+
   const paths = JSON.parse(rawPaths) as string[]
   core.startGroup('Save prek cache')
   try {
-    await cache.saveCache(paths, primaryKey)
-    core.info(`Saved prek cache with key ${primaryKey}`)
-  } catch (error) {
-    const message = formatError(error)
-    if (message.includes('already exists')) {
-      core.info(`Cache with key ${primaryKey} already exists`)
-      return
+    const cacheId = await cache.saveCache(paths, primaryKey)
+    if (cacheId !== -1) {
+      core.info(`Saved prek cache with key ${primaryKey}`)
     }
-    core.warning(`Failed to save cache: ${message}`)
+  } catch (error) {
+    // @actions/cache may already log non-fatal save failures and return -1.
+    core.warning(`Failed to save cache: ${formatError(error)}`)
   } finally {
     core.endGroup()
   }
