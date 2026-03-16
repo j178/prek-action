@@ -1,8 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import * as tc from '@actions/tool-cache'
 
 import {getInputs} from '../src/inputs'
 import {
+  getAssetForVersion,
   getManifestAssetForVersion,
   normalizeVersion,
   resolveVersion,
@@ -80,6 +82,23 @@ test('getManifestAssetForVersion returns the manifest entry without checksum dat
     downloadUrl: 'https://example.invalid/prek.tar.gz',
     name: 'prek-x86_64-unknown-linux-gnu.tar.gz'
   })
+})
+
+test('getAssetForVersion falls back to the release URL pattern when manifest download fails', async () => {
+  const toolCache = tc as {downloadTool: typeof tc.downloadTool}
+  const originalDownloadTool = toolCache.downloadTool
+  toolCache.downloadTool = async () => {
+    throw new Error('manifest unavailable')
+  }
+
+  try {
+    assert.deepEqual(await getAssetForVersion(toVersion('0.2.100'), 'prek-x86_64-unknown-linux-gnu.tar.gz'), {
+      downloadUrl: 'https://github.com/j178/prek/releases/download/v0.2.100/prek-x86_64-unknown-linux-gnu.tar.gz',
+      name: 'prek-x86_64-unknown-linux-gnu.tar.gz'
+    })
+  } finally {
+    toolCache.downloadTool = originalDownloadTool
+  }
 })
 
 test('resolveVersionFromManifest resolves semver ranges from the manifest', () => {

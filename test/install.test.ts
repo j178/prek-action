@@ -12,6 +12,9 @@ import {
   hashFile,
   validateDownloadedChecksum
 } from '../src/install'
+import {toVersion} from '../src/manifest'
+
+const testVersion = toVersion('1.2.3')
 
 test('getRustTargetFor maps supported runners to prek release targets', () => {
   assert.equal(getRustTargetFor('linux', 'x64'), 'x86_64-unknown-linux-gnu')
@@ -83,7 +86,7 @@ test('validateDownloadedChecksum accepts a digest found in the known checksum se
   const result = await validateDownloadedChecksum(archivePath, {
     downloadUrl: 'https://example.invalid/prek.tar.gz',
     name: 'prek.tar.gz'
-  }, '1.2.3' as never, new Map([['1.2.3:prek.tar.gz', '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd']]))
+  }, testVersion, new Map([['1.2.3:prek.tar.gz', '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd']]))
 
   assert.equal(result, 'matched')
 })
@@ -99,7 +102,7 @@ test('validateDownloadedChecksum reports missing when no checksum is known for t
       downloadUrl: 'https://example.invalid/prek.tar.gz',
       name: 'prek.tar.gz'
     },
-    '1.2.3' as never,
+    testVersion,
     new Map()
   )
 
@@ -115,7 +118,7 @@ test('validateDownloadedChecksum throws on checksum mismatch', async () => {
     validateDownloadedChecksum(archivePath, {
       downloadUrl: 'https://example.invalid/prek.tar.gz',
       name: 'prek.tar.gz'
-    }, '1.2.3' as never, new Map([['1.2.3:prek.tar.gz', 'deadbeef']])),
+    }, testVersion, new Map([['1.2.3:prek.tar.gz', 'deadbeef']])),
     /Checksum mismatch/
   )
 })
