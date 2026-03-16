@@ -26,14 +26,14 @@ export async function installPrek(version: Version): Promise<string> {
       `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`
     )
     const manifestAsset = getAssetForVersion(version, asset.archiveName)
+
     core.info(`Downloading prek from ${manifestAsset.downloadUrl}`)
     const archivePath = await tc.downloadTool(manifestAsset.downloadUrl)
-
     core.info(`Downloaded archive to ${archivePath}`)
+
     await verifyDownloadChecksum(archivePath, manifestAsset, version)
 
-    const extractedPath =
-      asset.archiveType === 'zip' ? await tc.extractZip(archivePath) : await tc.extractTar(archivePath)
+    const extractedPath = await extractArchive(archivePath, asset)
     core.info(`Extracted ${asset.archiveType} archive to ${extractedPath}`)
 
     const binaryPath = await getBinaryPath(extractedPath, asset)
@@ -47,6 +47,29 @@ export async function installPrek(version: Version): Promise<string> {
     return toolPath
   } finally {
     core.endGroup()
+  }
+}
+
+async function extractArchive(archivePath: string, asset: ReleaseAsset): Promise<string> {
+  if (asset.archiveType === 'tar.gz') {
+    return tc.extractTar(archivePath)
+  }
+
+  if (process.platform === 'win32') {
+    return extractWindowsZipArchive(archivePath)
+  }
+
+  return tc.extractZip(archivePath)
+}
+
+async function extractWindowsZipArchive(archivePath: string): Promise<string> {
+  try {
+    // bsdtar can extract zip archives much faster than the zip fallback on Windows runners.
+    return await tc.extractTar(archivePath, undefined, 'x')
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    core.info(`Extracting zip with tar failed, falling back to zip extraction: ${message}`)
+    return tc.extractZip(archivePath)
   }
 }
 
