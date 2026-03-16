@@ -1,4 +1,5 @@
 * text=auto eol=lf
 
 dist/** linguist-generated=true
-src/version-manifest.json linguist-generated=true
+src/known-checksums.ts linguist-generated=true
+version-manifest.json linguist-generated=true

@@ -6,6 +6,7 @@ import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 
 import {getAssetForVersion} from './manifest'
+import {knownChecksumsByAsset} from './known-checksums'
 import type {ManifestAsset, ReleaseAsset, Version} from './types'
 
 // Install a specific bare prek version, preferring the GitHub Actions tool cache when available.
@@ -25,7 +26,7 @@ export async function installPrek(version: Version): Promise<string> {
     core.info(
       `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`
     )
-    const manifestAsset = getAssetForVersion(version, asset.archiveName)
+    const manifestAsset = await getAssetForVersion(version, asset.archiveName)
 
     core.info(`Downloading prek from ${manifestAsset.downloadUrl}`)
     const archivePath = await tc.downloadTool(manifestAsset.downloadUrl)
@@ -164,28 +165,36 @@ async function verifyDownloadChecksum(
   asset: ManifestAsset,
   version: Version
 ): Promise<void> {
-  const result = await validateDownloadedChecksum(archivePath, asset)
+  const result = await validateDownloadedChecksum(archivePath, asset, version)
   if (result === 'missing') {
-    core.warning(`No SHA-256 checksum recorded for ${asset.name} in the ${version} manifest entry`)
-  } else {
-    core.info(`Verified SHA-256 checksum for ${asset.name}`)
+    core.warning(`Checksum is not known for ${buildChecksumKey(version, asset.name)}; skipping verification for prek ${version}`)
+    return
   }
+
+  core.info(`Verified SHA-256 checksum for ${asset.name} from prek ${version}`)
 }
 
 export async function validateDownloadedChecksum(
   archivePath: string,
-  asset: ManifestAsset
-): Promise<'missing' | 'matched'> {
-  if (!asset.sha256) {
+  asset: ManifestAsset,
+  version: Version,
+  checksumMap: ReadonlyMap<string, string> = knownChecksumsByAsset
+): Promise<'matched' | 'missing'> {
+  const expectedDigest = checksumMap.get(buildChecksumKey(version, asset.name))
+  if (!expectedDigest) {
     return 'missing'
   }
 
   const digest = await hashFile(archivePath)
-  if (digest !== asset.sha256) {
-    throw new Error(`Checksum mismatch for ${asset.name}: expected ${asset.sha256}, received ${digest}`)
+  if (digest !== expectedDigest) {
+    throw new Error(`Checksum mismatch for ${asset.name}: expected ${expectedDigest}, received ${digest}`)
   }
 
   return 'matched'
+}
+
+function buildChecksumKey(version: Version, assetName: string): string {
+  return `${version}:${assetName}`
 }
 
 // Stream the archive through SHA-256 hashing to avoid loading the whole file into memory.

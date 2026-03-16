@@ -12,6 +12,9 @@ import {
   hashFile,
   validateDownloadedChecksum
 } from '../src/install'
+import {toVersion} from '../src/manifest'
+
+const testVersion = toVersion('1.2.3')
 
 test('getRustTargetFor maps supported runners to prek release targets', () => {
   assert.equal(getRustTargetFor('linux', 'x64'), 'x86_64-unknown-linux-gnu')
@@ -75,17 +78,33 @@ test('getBinaryPath resolves the zip archive layout directly', async () => {
   assert.equal(resolved, expected)
 })
 
-test('validateDownloadedChecksum reports missing checksums without hashing', async () => {
+test('validateDownloadedChecksum accepts a digest found in the known checksum set', async () => {
   const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-checksum-'))
   const archivePath = path.join(rootDir, 'prek.tar.gz')
   await fs.writeFile(archivePath, 'binary')
 
   const result = await validateDownloadedChecksum(archivePath, {
     downloadUrl: 'https://example.invalid/prek.tar.gz',
-    name: 'prek.tar.gz',
-    sha256: null,
-    size: 6
-  })
+    name: 'prek.tar.gz'
+  }, testVersion, new Map([['1.2.3:prek.tar.gz', '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd']]))
+
+  assert.equal(result, 'matched')
+})
+
+test('validateDownloadedChecksum reports missing when no checksum is known for the asset', async () => {
+  const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-checksum-'))
+  const archivePath = path.join(rootDir, 'prek.tar.gz')
+  await fs.writeFile(archivePath, 'binary')
+
+  const result = await validateDownloadedChecksum(
+    archivePath,
+    {
+      downloadUrl: 'https://example.invalid/prek.tar.gz',
+      name: 'prek.tar.gz'
+    },
+    testVersion,
+    new Map()
+  )
 
   assert.equal(result, 'missing')
 })
@@ -98,10 +117,8 @@ test('validateDownloadedChecksum throws on checksum mismatch', async () => {
   await assert.rejects(
     validateDownloadedChecksum(archivePath, {
       downloadUrl: 'https://example.invalid/prek.tar.gz',
-      name: 'prek.tar.gz',
-      sha256: 'deadbeef',
-      size: 6
-    }),
+      name: 'prek.tar.gz'
+    }, testVersion, new Map([['1.2.3:prek.tar.gz', 'deadbeef']])),
     /Checksum mismatch/
   )
 })

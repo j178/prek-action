@@ -9,7 +9,7 @@
     "bundle": "npm run build && ncc build src/main.ts -o dist && ncc build src/post.ts -o dist/post",
     "check-format": "prettier --check .",
     "test": "npm run build:test && node --test .test-build/test/**/*.test.js",
-    "update-version-manifest": "node scripts/update-version-manifest.mjs"
+    "update-known-versions": "node scripts/update-known-versions.mjs"
   },
   "engines": {
     "node": ">=24"

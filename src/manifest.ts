@@ -1,13 +1,16 @@
 import * as core from '@actions/core'
+import * as tc from '@actions/tool-cache'
+import * as fs from 'node:fs/promises'
 import * as semver from 'semver'
-import versionManifest from './version-manifest.json'
 import type {ManifestAsset, NormalizedVersion, Version, VersionManifest} from './types'
 
-const prekVersionManifest = versionManifest as VersionManifest
 const prekReleasesBaseUrl = 'https://github.com/j178/prek/releases/download'
+const prekVersionManifestUrl = 'https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json'
+// Cache the in-flight manifest download so version resolution and asset lookup share one request per process.
+let versionManifestPromise: Promise<VersionManifest> | undefined
 
 // Resolve user input to a bare version. Exact versions pass through directly; ranges and `latest`
-// are resolved from the bundled manifest.
+// are resolved from the downloaded version manifest.
 export async function resolveVersion(versionInput: string, _token: string): Promise<Version> {
   const normalizedInput = versionInput.trim() || 'latest'
   const exactVersion = semver.valid(toVersion(normalizedInput))
@@ -17,7 +20,7 @@ export async function resolveVersion(versionInput: string, _token: string): Prom
     return version
   }
 
-  return resolveVersionFromManifest(versionInput)
+  return resolveVersionFromManifest(versionInput, await getVersionManifest())
 }
 
 // Internal code uses bare semver strings; GitHub-facing tags still need a leading v.
@@ -29,43 +32,51 @@ export function toVersion(version: string): Version {
   return version.replace(/^v/, '') as Version
 }
 
-// Return the bundled asset metadata for a version, if that version exists in the manifest.
+// Return the manifest asset metadata for a version, if that version exists in the manifest.
 // If the version exists but the expected asset is missing, treat that as a manifest error.
-export function getManifestAssetForVersion(version: Version, archiveName: string): ManifestAsset | undefined {
+export function getManifestAssetForVersion(
+  version: Version,
+  archiveName: string,
+  manifest: VersionManifest
+): ManifestAsset | undefined {
   core.info(`Looking up asset ${archiveName} for ${version}`)
-  const release = prekVersionManifest.find(candidate => candidate.version === version)
+  const release = manifest.find(candidate => candidate.version === version)
   if (!release) {
     return undefined
   }
 
   const asset = release.assets.find(candidate => candidate.name === archiveName)
   if (!asset) {
-    throw new Error(`prek asset ${archiveName} was not found for ${release.version} in the bundled version manifest`)
+    throw new Error(`prek asset ${archiveName} was not found for ${release.version} in the version manifest`)
   }
   return asset
 }
 
-// Return the asset to download for a version. Prefer bundled metadata so we can verify checksums;
-// if an exact version is newer than the bundled manifest, fall back to the release URL pattern.
-export function getAssetForVersion(version: Version, archiveName: string): ManifestAsset {
-  const asset = getManifestAssetForVersion(version, archiveName)
+// Return the asset to download for a version. Prefer manifest metadata when available;
+// if an exact version is newer than the manifest, fall back to the release URL pattern.
+export async function getAssetForVersion(version: Version, archiveName: string): Promise<ManifestAsset> {
+  let manifest: VersionManifest | undefined
+  try {
+    manifest = await getVersionManifest()
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    core.warning(`Failed to download version manifest: ${message}. Falling back to the release asset URL pattern for ${version}`)
+    return buildReleaseAssetUrl(version, archiveName)
+  }
+
+  const asset = getManifestAssetForVersion(version, archiveName, manifest)
   if (asset) {
     return asset
   }
 
-  core.info(`Version ${version} is not in the bundled manifest; falling back to the release asset URL pattern`)
-  return {
-    downloadUrl: `${prekReleasesBaseUrl}/${normalizeVersion(version)}/${archiveName}`,
-    name: archiveName,
-    sha256: null,
-    size: 0
-  }
+  core.info(`Version ${version} is not in the version manifest; falling back to the release asset URL pattern`)
+  return buildReleaseAssetUrl(version, archiveName)
 }
 
-// Resolve `latest` and semver ranges from the bundled manifest only.
+// Resolve `latest` and semver ranges from the downloaded manifest only.
 export function resolveVersionFromManifest(
   versionInput: string,
-  manifest: VersionManifest = prekVersionManifest
+  manifest: VersionManifest
 ): Version {
   const normalizedInput = versionInput.trim() || 'latest'
   core.info(`Resolving prek version from input "${versionInput}"`)
@@ -73,7 +84,7 @@ export function resolveVersionFromManifest(
   if (normalizedInput === 'latest') {
     const latestRelease = manifest.find(release => !release.prerelease)
     if (!latestRelease) {
-      throw new Error('The bundled prek version manifest does not contain a stable release')
+      throw new Error('The prek version manifest does not contain a stable release')
     }
     core.info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`)
     return latestRelease.version
@@ -93,4 +104,29 @@ export function resolveVersionFromManifest(
 
   core.info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`)
   return rangeRelease.version
+}
+
+async function downloadVersionManifest(): Promise<VersionManifest> {
+  core.info(`Downloading version manifest from ${prekVersionManifestUrl}`)
+  const downloadedPath = await tc.downloadTool(prekVersionManifestUrl)
+  const rawManifest = await fs.readFile(downloadedPath, 'utf8')
+  return JSON.parse(rawManifest) as VersionManifest
+}
+
+async function getVersionManifest(): Promise<VersionManifest> {
+  versionManifestPromise ??= downloadVersionManifest()
+
+  try {
+    return await versionManifestPromise
+  } catch (error) {
+    versionManifestPromise = undefined
+    throw error
+  }
+}
+
+function buildReleaseAssetUrl(version: Version, archiveName: string): ManifestAsset {
+  return {
+    downloadUrl: `${prekReleasesBaseUrl}/${normalizeVersion(version)}/${archiveName}`,
+    name: archiveName
+  }
 }
