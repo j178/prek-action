@@ -72440,6 +72440,7 @@ async function restorePrekCache(workingDirectory) {
         const restoredKey = await cache.restoreCache(paths, primaryKey);
         if (restoredKey) {
             core.info(`Restored prek cache with key ${restoredKey}`);
+            core.saveState(types_1.CACHE_MATCHED_KEY_STATE, restoredKey);
         }
         else {
             core.info(`No cache found for key ${primaryKey}`);
@@ -72454,24 +72455,27 @@ async function restorePrekCache(workingDirectory) {
 }
 async function savePrekCache() {
     const primaryKey = core.getState(types_1.CACHE_KEY_STATE);
+    const matchedKey = core.getState(types_1.CACHE_MATCHED_KEY_STATE);
     const rawPaths = core.getState(types_1.CACHE_PATHS_STATE);
     if (!primaryKey || !rawPaths) {
         core.info('No cache state found, skipping cache save');
         return;
     }
+    if (primaryKey === matchedKey) {
+        core.info(`Cache hit occurred on the primary key ${primaryKey}, not saving cache.`);
+        return;
+    }
     const paths = JSON.parse(rawPaths);
     core.startGroup('Save prek cache');
     try {
-        await cache.saveCache(paths, primaryKey);
-        core.info(`Saved prek cache with key ${primaryKey}`);
+        const cacheId = await cache.saveCache(paths, primaryKey);
+        if (cacheId !== -1) {
+            core.info(`Saved prek cache with key ${primaryKey}`);
+        }
     }
     catch (error) {
-        const message = formatError(error);
-        if (message.includes('already exists')) {
-            core.info(`Cache with key ${primaryKey} already exists`);
-            return;
-        }
-        core.warning(`Failed to save cache: ${message}`);
+        // @actions/cache may already log non-fatal save failures and return -1.
+        core.warning(`Failed to save cache: ${formatError(error)}`);
     }
     finally {
         core.endGroup();
@@ -72575,8 +72579,9 @@ run().catch(error => {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PREK_CACHE_KEY_PREFIX = exports.CACHE_PATHS_STATE = exports.CACHE_KEY_STATE = void 0;
+exports.PREK_CACHE_KEY_PREFIX = exports.CACHE_PATHS_STATE = exports.CACHE_MATCHED_KEY_STATE = exports.CACHE_KEY_STATE = void 0;
 exports.CACHE_KEY_STATE = 'prek-cache-primary-key';
+exports.CACHE_MATCHED_KEY_STATE = 'prek-cache-matched-key';
 exports.CACHE_PATHS_STATE = 'prek-cache-paths';
 exports.PREK_CACHE_KEY_PREFIX = 'prek-v1';
 
