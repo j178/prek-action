@@ -9,12 +9,76 @@ test('resolveVersionFromManifest accepts an exact version with a leading v', () 
   assert.equal(resolveVersionFromManifest('v0.2.30'), '0.2.30')
 })
 
+test('resolveVersionFromManifest returns exact versions even when they are missing from the manifest', () => {
+  const manifest: VersionManifest = [
+    {
+      assets: [],
+      prerelease: false,
+      publishedAt: '2026-02-28T00:00:00Z',
+      version: toVersion('0.3.5')
+    }
+  ]
+
+  assert.equal(resolveVersionFromManifest('0.2.100', manifest), '0.2.100')
+})
+
 test('resolveVersionFromManifest resolves semver ranges from the bundled manifest', () => {
   assert.equal(resolveVersionFromManifest('0.2.x'), '0.2.30')
 })
 
 test('resolveVersionFromManifest resolves semver ranges from the bundled manifest', () => {
   assert.equal(resolveVersionFromManifest('<=0.3.4'), '0.3.4')
+})
+
+test('resolveVersionFromManifest resolves simple lower-bound ranges to the latest stable release', () => {
+  const manifest: VersionManifest = [
+    {
+      assets: [],
+      prerelease: false,
+      publishedAt: '2026-02-28T00:00:00Z',
+      version: toVersion('0.3.5')
+    },
+    {
+      assets: [],
+      prerelease: false,
+      publishedAt: '2026-02-27T00:00:00Z',
+      version: toVersion('0.3.4')
+    }
+  ]
+
+  assert.equal(resolveVersionFromManifest('>=0.3.0', manifest), '0.3.5')
+})
+
+test('resolveVersionFromManifest rejects simple lower-bound ranges when latest does not satisfy them', () => {
+  const manifest: VersionManifest = [
+    {
+      assets: [],
+      prerelease: false,
+      publishedAt: '2026-02-28T00:00:00Z',
+      version: toVersion('0.3.5')
+    }
+  ]
+
+  assert.throws(() => resolveVersionFromManifest('>0.3.5', manifest), /No prek release satisfies version range/)
+})
+
+test('resolveVersionFromManifest does not shortcut bounded ranges to the latest stable release', () => {
+  const manifest: VersionManifest = [
+    {
+      assets: [],
+      prerelease: false,
+      publishedAt: '2026-02-28T00:00:00Z',
+      version: toVersion('0.3.5')
+    },
+    {
+      assets: [],
+      prerelease: false,
+      publishedAt: '2026-02-27T00:00:00Z',
+      version: toVersion('0.3.4')
+    }
+  ]
+
+  assert.equal(resolveVersionFromManifest('>=0.3.0 <0.3.5', manifest), '0.3.4')
 })
 
 test('resolveVersionFromManifest ignores prereleases even when they appear first', () => {
@@ -45,7 +109,7 @@ test('resolveVersionFromManifest ignores prereleases even when they appear first
 
 test('resolveVersionFromManifest rejects invalid and unsatisfied ranges', () => {
   assert.throws(() => resolveVersionFromManifest('hello world'))
-  assert.throws(() => resolveVersionFromManifest('>9.9.9'))
+  assert.throws(() => resolveVersionFromManifest('<0.0.1'))
 })
 
 test('getInputs enables verbose logs by default and allows opting out', () => {

@@ -41,8 +41,9 @@ export function resolveVersionFromManifest(
 ): Version {
   const normalizedInput = versionInput.trim() || 'latest'
   core.info(`Resolving prek version from input "${versionInput}"`)
+  const latestRelease = manifest.find(release => !release.prerelease)
+
   if (normalizedInput === 'latest') {
-    const latestRelease = manifest.find(release => !release.prerelease)
     if (!latestRelease) {
       throw new Error('The bundled prek version manifest does not contain a stable release')
     }
@@ -50,20 +51,24 @@ export function resolveVersionFromManifest(
     return latestRelease.version
   }
 
-  const exactVersion = semver.valid(normalizedInput)
+  const exactVersion = semver.valid(toVersion(normalizedInput))
   if (exactVersion) {
     const version = exactVersion as Version
-    const exactRelease = manifest.find(candidate => candidate.version === version)
-    if (!exactRelease) {
-      throw new Error(`prek version ${version} was not found in the bundled version manifest`)
-    }
-    core.info(`Resolved exact version "${normalizedInput}" to ${exactRelease.version}`)
-    return exactRelease.version
+    core.info(`Resolved exact version "${normalizedInput}" to ${version}`)
+    return version
   }
 
   const range = semver.validRange(normalizedInput)
   if (!range) {
     throw new Error(`Invalid prek-version input: ${versionInput}`)
+  }
+
+  if (latestRelease && isSimpleUpdateToLatestRange(normalizedInput, range)) {
+    if (!semver.satisfies(latestRelease.version, range)) {
+      throw new Error(`No prek release satisfies version range: ${versionInput}`)
+    }
+    core.info(`Resolved lower-bound range "${normalizedInput}" to latest stable release ${latestRelease.version}`)
+    return latestRelease.version
   }
 
   const rangeRelease = manifest.find(
@@ -75,4 +80,17 @@ export function resolveVersionFromManifest(
 
   core.info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`)
   return rangeRelease.version
+}
+
+function isSimpleUpdateToLatestRange(versionInput: string, range: string): boolean {
+  if (!versionInput.includes('>') || versionInput.includes(',') || versionInput.includes('||')) {
+    return false
+  }
+
+  const parsedRange = new semver.Range(range)
+  return (
+    parsedRange.set.length === 1 &&
+    parsedRange.set[0].length > 0 &&
+    parsedRange.set[0].every(comparator => comparator.operator === '>' || comparator.operator === '>=')
+  )
 }
