@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: j178/prek-action@v1
+      - uses: j178/prek-action@v2
 ```
 
 `prek` is always invoked as:
@@ -24,12 +24,12 @@ prek run --show-diff-on-failure --color=always <extra-args>
 
 ## Version Tags
 
-Major and minor tags are moving tags. For example, `v1` and `v1.1` are not fixed releases:
+Major and minor tags are moving tags. For example, `v2` and `v2.0` are not fixed releases:
 
-- `v1` always points to the latest `v1.x.y` release
-- `v1.1` always points to the latest `v1.1.y` release
+- `v2` always points to the latest `v2.x.y` release
+- `v2.0` always points to the latest `v2.0.y` release
 
-For a stable reference, pin to a specific release tag such as `v1.2.3`, or pin to a commit SHA.
+For a stable reference, pin to a specific release tag such as `v2.0.0`, or pin to a commit SHA.
 
 ## Inputs
 
@@ -58,7 +58,7 @@ Install and run against all files:
 ```yaml
 steps:
   - uses: actions/checkout@v6
-  - uses: j178/prek-action@v1
+  - uses: j178/prek-action@v2
 ```
 
 Pass extra arguments:
@@ -66,7 +66,7 @@ Pass extra arguments:
 ```yaml
 steps:
   - uses: actions/checkout@v6
-  - uses: j178/prek-action@v1
+  - uses: j178/prek-action@v2
     with:
       extra-args: '--all-files --directory packages/'
 ```
@@ -76,7 +76,7 @@ Pin a specific `prek` version:
 ```yaml
 steps:
   - uses: actions/checkout@v6
-  - uses: j178/prek-action@v1
+  - uses: j178/prek-action@v2
     with:
       prek-version: '0.2.30'
 ```
@@ -86,7 +86,7 @@ Resolve a semver range:
 ```yaml
 steps:
   - uses: actions/checkout@v6
-  - uses: j178/prek-action@v1
+  - uses: j178/prek-action@v2
     with:
       prek-version: '0.3.x'
 ```
@@ -96,7 +96,7 @@ Install only:
 ```yaml
 steps:
   - uses: actions/checkout@v6
-  - uses: j178/prek-action@v1
+  - uses: j178/prek-action@v2
     with:
       install-only: true
   - run: prek run --show-diff-on-failure --color=always --all-files
@@ -107,7 +107,7 @@ Disable verbose log output after the run:
 ```yaml
 steps:
   - uses: actions/checkout@v6
-  - uses: j178/prek-action@v1
+  - uses: j178/prek-action@v2
     with:
       show-verbose-logs: false
 ```
