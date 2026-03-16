@@ -32,6 +32,7 @@ jobs:
         run: npm ci
 
       - name: Refresh bundled prek release manifest
+        id: refresh
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: npm run update-version-manifest
@@ -65,6 +66,9 @@ jobs:
           commit-message: Update prek version manifest
           delete-branch: true
           token: ${{ github.token }}
-          title: Update prek version manifest
+          title: ${{ steps.refresh.outputs.pr_title }}
           body: |
             Refreshes the bundled prek release manifest and rebuilt action bundles.
+
+            Added releases:
+            ${{ steps.refresh.outputs.added_versions_markdown }}
