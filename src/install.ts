@@ -5,7 +5,7 @@ import {createReadStream} from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 
-import {getManifestAssetForVersion} from './manifest'
+import {getAssetForVersion} from './manifest'
 import type {ManifestAsset, ReleaseAsset, Version} from './types'
 
 // Install a specific bare prek version, preferring the GitHub Actions tool cache when available.
@@ -25,20 +25,24 @@ export async function installPrek(version: Version): Promise<string> {
     core.info(
       `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`
     )
-    const manifestAsset = getManifestAssetForVersion(version, asset.archiveName)
+    const manifestAsset = getAssetForVersion(version, asset.archiveName)
     core.info(`Downloading prek from ${manifestAsset.downloadUrl}`)
     const archivePath = await tc.downloadTool(manifestAsset.downloadUrl)
+
     core.info(`Downloaded archive to ${archivePath}`)
     await verifyDownloadChecksum(archivePath, manifestAsset, version)
+
     const extractedPath =
       asset.archiveType === 'zip' ? await tc.extractZip(archivePath) : await tc.extractTar(archivePath)
     core.info(`Extracted ${asset.archiveType} archive to ${extractedPath}`)
+
     const binaryPath = await getBinaryPath(extractedPath, asset)
     if (process.platform !== 'win32') {
       await fs.chmod(binaryPath, 0o755)
     }
     const toolPath = await tc.cacheFile(binaryPath, asset.binaryName, 'prek', version, toolArch)
     core.info(`Cached prek binary at ${toolPath}`)
+
     core.addPath(toolPath)
     return toolPath
   } finally {

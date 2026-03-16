@@ -7,12 +7,11 @@ import {pruneCache, runPrek, showVerboseLogs} from './prek'
 
 async function run(): Promise<void> {
   const inputs = getInputs()
-  core.info(
-    `Resolved action inputs: prek-version="${inputs.prekVersion}", install-only=${inputs.installOnly}, working-directory="${inputs.workingDirectory}"`
-  )
 
+  core.startGroup('Resolving prek version')
   const version = await resolveVersion(inputs.prekVersion, inputs.token)
   core.info(`Using prek ${version}`)
+  core.endGroup()
   core.setOutput('prek-version', normalizeVersion(version))
 
   await installPrek(version)
