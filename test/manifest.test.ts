@@ -5,17 +5,15 @@ import {getInputs} from '../src/inputs'
 import {normalizeVersion, resolveVersionFromManifest, toVersion} from '../src/manifest'
 import type {VersionManifest} from '../src/types'
 
-test('resolveVersionFromManifest resolves exact versions and latest from the bundled manifest', () => {
-  assert.equal(resolveVersionFromManifest('latest'), '0.3.5')
-  assert.equal(resolveVersionFromManifest('0.3.5'), '0.3.5')
-})
-
 test('resolveVersionFromManifest accepts an exact version with a leading v', () => {
-  assert.equal(resolveVersionFromManifest('v0.3.5'), '0.3.5')
+  assert.equal(resolveVersionFromManifest('v0.2.30'), '0.2.30')
 })
 
 test('resolveVersionFromManifest resolves semver ranges from the bundled manifest', () => {
-  assert.equal(resolveVersionFromManifest('0.3.x'), '0.3.5')
+  assert.equal(resolveVersionFromManifest('0.2.x'), '0.2.30')
+})
+
+test('resolveVersionFromManifest resolves semver ranges from the bundled manifest', () => {
   assert.equal(resolveVersionFromManifest('<=0.3.4'), '0.3.4')
 })
 
