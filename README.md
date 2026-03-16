@@ -39,8 +39,8 @@ For a stable reference, pin to a specific release tag such as `v1.2.3`, or pin t
 | `extra_args` | Deprecated alias for `extra-args` | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
 | `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
-| `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
+| `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `token` | Unused; retained for backward compatibility | No | `${{ github.token }}` |
 
 ## Outputs
@@ -79,7 +79,7 @@ steps:
       prek-version: '0.2.30'
 ```
 
-Resolve a semver range from the bundled release manifest:
+Resolve a semver range:
 
 ```yaml
 steps:
@@ -109,7 +109,6 @@ steps:
     with:
       show-verbose-logs: false
 ```
-
 ## Requirements
 
 The target repository needs a `prek` or pre-commit configuration file:

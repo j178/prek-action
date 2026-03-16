@@ -24,8 +24,6 @@ export type ReleaseAsset = {
 export type ManifestAsset = {
   downloadUrl: string
   name: string
-  sha256: string | null
-  size: number
 }
 
 export type ManifestRelease = {
