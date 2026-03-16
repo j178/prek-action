@@ -3,6 +3,9 @@ export const CACHE_MATCHED_KEY_STATE = 'prek-cache-matched-key'
 export const CACHE_PATHS_STATE = 'prek-cache-paths'
 export const PREK_CACHE_KEY_PREFIX = 'prek-v1'
 
+export type Version = string & {readonly __brand: 'Version'}
+export type NormalizedVersion = `v${string}`
+
 export type Inputs = {
   extraArgs: string
   installOnly: boolean
@@ -19,7 +22,6 @@ export type ReleaseAsset = {
 }
 
 export type ManifestAsset = {
-  contentType: string
   downloadUrl: string
   name: string
   sha256: string | null
@@ -28,14 +30,9 @@ export type ManifestAsset = {
 
 export type ManifestRelease = {
   assets: ManifestAsset[]
-  draft: boolean
   prerelease: boolean
   publishedAt: string
-  tag: string
-  version: string
+  version: Version
 }
 
-export type VersionManifest = {
-  releases: ManifestRelease[]
-  source: string
-}
+export type VersionManifest = ManifestRelease[]

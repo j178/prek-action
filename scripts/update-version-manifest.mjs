@@ -11,13 +11,9 @@ const excludedArchiveNames = new Set(['prek-npm-package.tar.gz'])
 async function run() {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || ''
   const releases = await fetchAllReleases(token)
-  const manifest = {
-    releases,
-    source: releasesApiUrl
-  }
 
   await mkdir(path.dirname(manifestPath), {recursive: true})
-  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
+  await writeFile(manifestPath, `${JSON.stringify(releases, null, 2)}\n`)
   console.log(`Wrote ${releases.length} prek releases to ${manifestPath}`)
 }
 
@@ -40,7 +36,7 @@ async function fetchAllReleases(token) {
 
     for (const release of pageReleases) {
       const version = semver.valid(release.tag_name)
-      if (!version || semver.lt(version, minimumSupportedVersion)) {
+      if (!version || semver.lt(version, minimumSupportedVersion) || release.draft) {
         continue
       }
 
@@ -49,17 +45,14 @@ async function fetchAllReleases(token) {
           ? release.assets
               .filter(asset => isInstallableArchive(asset.name))
               .map(asset => ({
-                contentType: asset.content_type,
                 downloadUrl: asset.browser_download_url,
                 name: asset.name,
                 sha256: normalizeDigest(asset.digest),
                 size: asset.size
               }))
           : [],
-        draft: Boolean(release.draft),
         prerelease: Boolean(release.prerelease),
         publishedAt: release.published_at || release.created_at || '',
-        tag: release.tag_name,
         version
       })
     }
