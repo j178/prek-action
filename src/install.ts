@@ -6,12 +6,12 @@ import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 
 import {getManifestAssetForVersion} from './manifest'
-import type {ManifestAsset, ReleaseAsset} from './types'
+import type {ManifestAsset, ReleaseAsset, Version} from './types'
 
-export async function installPrek(version: string): Promise<string> {
-  const toolVersion = version.replace(/^v/, '')
+// Install a specific bare prek version, preferring the GitHub Actions tool cache when available.
+export async function installPrek(version: Version): Promise<string> {
   const toolArch = getToolCacheArchFor(process.arch)
-  const cachedTool = tc.find('prek', toolVersion, toolArch)
+  const cachedTool = tc.find('prek', version, toolArch)
 
   core.startGroup(`Installing prek ${version}`)
   try {
@@ -37,7 +37,7 @@ export async function installPrek(version: string): Promise<string> {
     if (process.platform !== 'win32') {
       await fs.chmod(binaryPath, 0o755)
     }
-    const toolPath = await tc.cacheFile(binaryPath, asset.binaryName, 'prek', toolVersion, toolArch)
+    const toolPath = await tc.cacheFile(binaryPath, asset.binaryName, 'prek', version, toolArch)
     core.info(`Cached prek binary at ${toolPath}`)
     core.addPath(toolPath)
     return toolPath
@@ -46,6 +46,7 @@ export async function installPrek(version: string): Promise<string> {
   }
 }
 
+// Translate the current runner platform/arch into the expected release archive and executable names.
 export function getReleaseAssetFor(platform: NodeJS.Platform, arch: NodeJS.Architecture): ReleaseAsset {
   const binaryName = platform === 'win32' ? 'prek.exe' : 'prek'
   const target = getRustTargetFor(platform, arch)
@@ -120,6 +121,7 @@ export async function getBinaryPath(rootDir: string, asset: ReleaseAsset): Promi
     return binaryPath
   }
 
+  // Tarball releases unpack into a top-level target directory that contains the binary.
   const [entry] = await fs.readdir(rootDir)
   if (!entry) {
     throw new Error(`Extracted archive is empty: ${rootDir}`)
@@ -133,7 +135,7 @@ export async function getBinaryPath(rootDir: string, asset: ReleaseAsset): Promi
 async function verifyDownloadChecksum(
   archivePath: string,
   asset: ManifestAsset,
-  version: string
+  version: Version
 ): Promise<void> {
   const result = await validateDownloadedChecksum(archivePath, asset)
   if (result === 'missing') {
@@ -159,6 +161,7 @@ export async function validateDownloadedChecksum(
   return 'matched'
 }
 
+// Stream the archive through SHA-256 hashing to avoid loading the whole file into memory.
 export async function hashFile(filePath: string): Promise<string> {
   const hash = crypto.createHash('sha256')
 

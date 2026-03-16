@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 
 import type {Inputs} from './types'
 
+// Parse and normalize action inputs, including the legacy `extra_args` alias.
 export function getInputs(): Inputs {
   const showVerboseLogsInput = core.getInput('show-verbose-logs')
   return {
