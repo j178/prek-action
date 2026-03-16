@@ -24,10 +24,10 @@ prek run --show-diff-on-failure --color=always <extra-args>
 
 ## Version Tags
 
-The major tag (`v1`) and minor tag (`v1.2`) are moving tags updated on each stable release:
+Major and minor tags are moving tags. For example, `v1` and `v1.1` are not fixed releases:
 
 - `v1` always points to the latest `v1.x.y` release
-- `v1.2` always points to the latest `v1.2.y` release
+- `v1.1` always points to the latest `v1.1.y` release
 
 For a stable reference, pin to a specific release tag such as `v1.2.3`, or pin to a commit SHA.
 
