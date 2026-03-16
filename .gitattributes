@@ -1,2 +1,4 @@
+* text=auto eol=lf
+
 dist/** linguist-generated=true
 src/version-manifest.json linguist-generated=true
