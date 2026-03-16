@@ -1,7 +1,108 @@
 [
   {
+    "assets": [
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-aarch64-apple-darwin.tar.gz",
+        "name": "prek-aarch64-apple-darwin.tar.gz",
+        "sha256": "50535d4fb3a0fd05f137bbdae6f8ffde17615949bd282817e3aa5755dd8d8d4c",
+        "size": 4875526
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-aarch64-pc-windows-msvc.zip",
+        "name": "prek-aarch64-pc-windows-msvc.zip",
+        "sha256": "25deb159d13e5d3c2c19c365cf9866c6ff142d5b2bbb91ac1c5c632cd48657da",
+        "size": 4740834
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-aarch64-unknown-linux-gnu.tar.gz",
+        "name": "prek-aarch64-unknown-linux-gnu.tar.gz",
+        "sha256": "9177a1057af690fbbd8c12d129880e1388559344070ee155a006733790e06e44",
+        "size": 5111855
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-aarch64-unknown-linux-musl.tar.gz",
+        "name": "prek-aarch64-unknown-linux-musl.tar.gz",
+        "sha256": "0cf6d013c981a56465757dc7ff0fd3a9ceace27d7f0a792f435d1be79b790236",
+        "size": 5102545
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-arm-unknown-linux-musleabihf.tar.gz",
+        "name": "prek-arm-unknown-linux-musleabihf.tar.gz",
+        "sha256": "c35b61c52602f0c768f0695524e6ceff3a9e776aa07bb05fc5e25ef88fcecf36",
+        "size": 4902575
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-armv7-unknown-linux-gnueabihf.tar.gz",
+        "name": "prek-armv7-unknown-linux-gnueabihf.tar.gz",
+        "sha256": "7c03703554618969dc0c0bc32bb2c3e6fb0e6fa404558e9d1d2a1a98190b3154",
+        "size": 4835962
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-armv7-unknown-linux-musleabihf.tar.gz",
+        "name": "prek-armv7-unknown-linux-musleabihf.tar.gz",
+        "sha256": "a71682c492021201acea6e5002c05d67b946e281f8e31e5cf6e0b04c69b472fd",
+        "size": 4801001
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-i686-pc-windows-msvc.zip",
+        "name": "prek-i686-pc-windows-msvc.zip",
+        "sha256": "0f0bf7e7b0987bc355bc7674102fe904856060302956dc31eaa530bc2ed53bb8",
+        "size": 4556579
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-i686-unknown-linux-gnu.tar.gz",
+        "name": "prek-i686-unknown-linux-gnu.tar.gz",
+        "sha256": "8457cbc704a541c4c65f3caccc8917782279085c41569bf6a6388e4eccf2750f",
+        "size": 5270138
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-i686-unknown-linux-musl.tar.gz",
+        "name": "prek-i686-unknown-linux-musl.tar.gz",
+        "sha256": "c21f0b46bd4b711ed3da9b0be7b7dcb8a8b662dd12912acb978e36d3982d5203",
+        "size": 5125820
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-riscv64gc-unknown-linux-gnu.tar.gz",
+        "name": "prek-riscv64gc-unknown-linux-gnu.tar.gz",
+        "sha256": "3262928c98f958f57059a8fba8943932555de0662660241b3539df2133bfdc9e",
+        "size": 5007797
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-s390x-unknown-linux-gnu.tar.gz",
+        "name": "prek-s390x-unknown-linux-gnu.tar.gz",
+        "sha256": "2663d7c4975e240b3b5110a9a4ee2efb522716af65e5ba092548262499dc7479",
+        "size": 6200462
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-x86_64-apple-darwin.tar.gz",
+        "name": "prek-x86_64-apple-darwin.tar.gz",
+        "sha256": "0ef3ec3dd4429a5d9e2ebe1b65b37319b5611be3d688a86813aa3004761c4db3",
+        "size": 5346124
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-x86_64-pc-windows-msvc.zip",
+        "name": "prek-x86_64-pc-windows-msvc.zip",
+        "sha256": "71d02992997e3fc7a3cf1877febf385bc299cdbe397d1b7b2e57f8bc3d0a14e8",
+        "size": 4903640
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-x86_64-unknown-linux-gnu.tar.gz",
+        "name": "prek-x86_64-unknown-linux-gnu.tar.gz",
+        "sha256": "b035f8c5fc2361a0ca6e729ff111ebc790c3e50a204d1d4e2b47b97cd073ec14",
+        "size": 5533799
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.6/prek-x86_64-unknown-linux-musl.tar.gz",
+        "name": "prek-x86_64-unknown-linux-musl.tar.gz",
+        "sha256": "942564ccc9c342d317294fec7b7a77aa24ec71136e3439b15cddb62e49f76899",
+        "size": 5639551
+      }
+    ],
     "prerelease": false,
-    "publishedAt": "2026-03-09T10:37:11Z",
+    "publishedAt": "2026-03-16T08:33:44Z",
+    "version": "0.3.6"
+  },
+  {
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.5/prek-aarch64-apple-darwin.tar.gz",
@@ -100,11 +201,11 @@
         "size": 5621520
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-03-09T10:37:11Z",
     "version": "0.3.5"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-02-28T03:48:48Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.4/prek-aarch64-apple-darwin.tar.gz",
@@ -203,11 +304,11 @@
         "size": 4858035
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-02-28T03:48:48Z",
     "version": "0.3.4"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-02-15T13:35:13Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.3/prek-aarch64-apple-darwin.tar.gz",
@@ -306,11 +407,11 @@
         "size": 4853086
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-02-15T13:35:13Z",
     "version": "0.3.3"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-02-06T13:51:28Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.2/prek-aarch64-apple-darwin.tar.gz",
@@ -409,11 +510,11 @@
         "size": 4816073
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-02-06T13:51:28Z",
     "version": "0.3.2"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-01-31T13:27:20Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.1/prek-aarch64-apple-darwin.tar.gz",
@@ -512,11 +613,11 @@
         "size": 4482120
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-01-31T13:27:20Z",
     "version": "0.3.1"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-01-22T04:01:22Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.3.0/prek-aarch64-apple-darwin.tar.gz",
@@ -615,11 +716,11 @@
         "size": 4522413
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-01-22T04:01:22Z",
     "version": "0.3.0"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-01-18T13:24:25Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.30/prek-aarch64-apple-darwin.tar.gz",
@@ -718,11 +819,11 @@
         "size": 4467595
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-01-18T13:24:25Z",
     "version": "0.2.30"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-01-16T11:41:01Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.29/prek-aarch64-apple-darwin.tar.gz",
@@ -821,11 +922,11 @@
         "size": 5788926
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-01-16T11:41:01Z",
     "version": "0.2.29"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-01-13T15:13:53Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.28/prek-aarch64-apple-darwin.tar.gz",
@@ -924,11 +1025,11 @@
         "size": 5060318
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-01-13T15:13:53Z",
     "version": "0.2.28"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2026-01-07T14:24:10Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.27/prek-aarch64-apple-darwin.tar.gz",
@@ -1027,11 +1128,11 @@
         "size": 5062602
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2026-01-07T14:24:10Z",
     "version": "0.2.27"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-12-26T16:48:43Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.25/prek-aarch64-apple-darwin.tar.gz",
@@ -1142,11 +1243,11 @@
         "size": 5051913
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-12-26T16:48:43Z",
     "version": "0.2.25"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-12-23T04:00:48Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.24/prek-aarch64-apple-darwin.tar.gz",
@@ -1257,11 +1358,11 @@
         "size": 5045598
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-12-23T04:00:48Z",
     "version": "0.2.24"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-12-20T05:35:51Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.23/prek-aarch64-apple-darwin.tar.gz",
@@ -1372,11 +1473,11 @@
         "size": 5046227
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-12-20T05:35:51Z",
     "version": "0.2.23"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-12-13T12:59:11Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.22/prek-aarch64-apple-darwin.tar.gz",
@@ -1487,11 +1588,11 @@
         "size": 5045024
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-12-13T12:59:11Z",
     "version": "0.2.22"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-12-09T05:22:44Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.21/prek-aarch64-apple-darwin.tar.gz",
@@ -1602,11 +1703,11 @@
         "size": 5040297
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-12-09T05:22:44Z",
     "version": "0.2.21"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-12-08T09:26:24Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.20/prek-aarch64-apple-darwin.tar.gz",
@@ -1717,11 +1818,11 @@
         "size": 5057320
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-12-08T09:26:24Z",
     "version": "0.2.20"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-11-26T09:28:08Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.19/prek-aarch64-apple-darwin.tar.gz",
@@ -1832,11 +1933,11 @@
         "size": 4908981
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-11-26T09:28:08Z",
     "version": "0.2.19"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-11-21T12:54:16Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.18/prek-aarch64-apple-darwin.tar.gz",
@@ -1947,11 +2048,11 @@
         "size": 4916553
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-11-21T12:54:16Z",
     "version": "0.2.18"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-11-18T15:18:40Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.17/prek-aarch64-apple-darwin.tar.gz",
@@ -2062,11 +2163,11 @@
         "size": 4894965
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-11-18T15:18:40Z",
     "version": "0.2.17"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-11-18T10:03:06Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.16/prek-aarch64-apple-darwin.tar.gz",
@@ -2177,11 +2278,11 @@
         "size": 5053730
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-11-18T10:03:06Z",
     "version": "0.2.16"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-11-17T10:50:56Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.15/prek-aarch64-apple-darwin.tar.gz",
@@ -2292,11 +2393,11 @@
         "size": 4942865
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-11-17T10:50:56Z",
     "version": "0.2.15"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-11-14T15:21:21Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.14/prek-aarch64-apple-darwin.tar.gz",
@@ -2407,11 +2508,11 @@
         "size": 4883289
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-11-14T15:21:21Z",
     "version": "0.2.14"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-11-04T14:17:36Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.13/prek-aarch64-apple-darwin.tar.gz",
@@ -2522,11 +2623,11 @@
         "size": 4874403
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-11-04T14:17:36Z",
     "version": "0.2.13"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-10-27T12:23:24Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.12/prek-aarch64-apple-darwin.tar.gz",
@@ -2637,11 +2738,11 @@
         "size": 4829782
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-10-27T12:23:24Z",
     "version": "0.2.12"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-10-24T12:27:53Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.11/prek-aarch64-apple-darwin.tar.gz",
@@ -2752,11 +2853,11 @@
         "size": 4811014
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-10-24T12:27:53Z",
     "version": "0.2.11"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-10-18T13:00:46Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.10/prek-aarch64-apple-darwin.tar.gz",
@@ -2867,11 +2968,11 @@
         "size": 4800021
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-10-18T13:00:46Z",
     "version": "0.2.10"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-10-16T10:56:56Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.9/prek-aarch64-apple-darwin.tar.gz",
@@ -2982,11 +3083,11 @@
         "size": 4782611
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-10-16T10:56:56Z",
     "version": "0.2.9"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-10-14T07:27:55Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.8/prek-aarch64-apple-darwin.tar.gz",
@@ -3097,11 +3198,11 @@
         "size": 4768523
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-10-14T07:27:55Z",
     "version": "0.2.8"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-10-10T14:26:29Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.5/prek-aarch64-apple-darwin.tar.gz",
@@ -3212,11 +3313,11 @@
         "size": 4762696
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-10-10T14:26:29Z",
     "version": "0.2.5"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-10-07T09:15:40Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.4/prek-aarch64-apple-darwin.tar.gz",
@@ -3327,11 +3428,11 @@
         "size": 4748845
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-10-07T09:15:40Z",
     "version": "0.2.4"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-09-29T09:00:00Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.3/prek-aarch64-apple-darwin.tar.gz",
@@ -3442,11 +3543,11 @@
         "size": 4739675
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-09-29T09:00:00Z",
     "version": "0.2.3"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-09-26T15:09:36Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.2/prek-aarch64-apple-darwin.tar.gz",
@@ -3557,11 +3658,11 @@
         "size": 4737754
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-09-26T15:09:36Z",
     "version": "0.2.2"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-09-15T15:14:53Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.1/prek-aarch64-apple-darwin.tar.gz",
@@ -3672,11 +3773,11 @@
         "size": 4709163
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-09-15T15:14:53Z",
     "version": "0.2.1"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-09-14T04:53:37Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0/prek-aarch64-apple-darwin.tar.gz",
@@ -3787,11 +3888,11 @@
         "size": 4703547
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-09-14T04:53:37Z",
     "version": "0.2.0"
   },
   {
-    "prerelease": true,
-    "publishedAt": "2025-09-11T03:00:17Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.5/prek-aarch64-apple-darwin.tar.gz",
@@ -3902,11 +4003,11 @@
         "size": 6196061
       }
     ],
+    "prerelease": true,
+    "publishedAt": "2025-09-11T03:00:17Z",
     "version": "0.2.0-alpha.5"
   },
   {
-    "prerelease": true,
-    "publishedAt": "2025-09-09T16:53:05Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.4/prek-aarch64-apple-darwin.tar.gz",
@@ -4017,11 +4118,11 @@
         "size": 6182141
       }
     ],
+    "prerelease": true,
+    "publishedAt": "2025-09-09T16:53:05Z",
     "version": "0.2.0-alpha.4"
   },
   {
-    "prerelease": true,
-    "publishedAt": "2025-09-08T07:32:06Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.3/prek-aarch64-apple-darwin.tar.gz",
@@ -4132,11 +4233,11 @@
         "size": 6174884
       }
     ],
+    "prerelease": true,
+    "publishedAt": "2025-09-08T07:32:06Z",
     "version": "0.2.0-alpha.3"
   },
   {
-    "prerelease": true,
-    "publishedAt": "2025-09-07T08:09:43Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.2/prek-aarch64-apple-darwin.tar.gz",
@@ -4247,11 +4348,11 @@
         "size": 6170757
       }
     ],
+    "prerelease": true,
+    "publishedAt": "2025-09-07T08:09:43Z",
     "version": "0.2.0-alpha.2"
   },
   {
-    "prerelease": true,
-    "publishedAt": "2025-09-07T07:32:09Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.2.0-alpha.1/prek-aarch64-apple-darwin.tar.gz",
@@ -4362,11 +4463,11 @@
         "size": 6170261
       }
     ],
+    "prerelease": true,
+    "publishedAt": "2025-09-07T07:32:09Z",
     "version": "0.2.0-alpha.1"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-09-03T12:09:40Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.6/prek-aarch64-apple-darwin.tar.gz",
@@ -4477,11 +4578,11 @@
         "size": 5911154
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-09-03T12:09:40Z",
     "version": "0.1.6"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-09-01T18:57:58Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.5/prek-aarch64-apple-darwin.tar.gz",
@@ -4592,11 +4693,11 @@
         "size": 5919056
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-09-01T18:57:58Z",
     "version": "0.1.5"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-26T16:27:41Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.4/prek-aarch64-apple-darwin.tar.gz",
@@ -4707,11 +4808,11 @@
         "size": 6184883
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-26T16:27:41Z",
     "version": "0.1.4"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-25T09:44:12Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.3/prek-aarch64-apple-darwin.tar.gz",
@@ -4822,11 +4923,11 @@
         "size": 6186615
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-25T09:44:12Z",
     "version": "0.1.3"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-21T04:12:19Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.2/prek-aarch64-apple-darwin.tar.gz",
@@ -4937,11 +5038,11 @@
         "size": 6067447
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-21T04:12:19Z",
     "version": "0.1.2"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-20T11:27:18Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.1.1/prek-aarch64-apple-darwin.tar.gz",
@@ -5052,11 +5153,11 @@
         "size": 6072252
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-20T11:27:18Z",
     "version": "0.1.1"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-18T15:10:47Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.29/prek-aarch64-apple-darwin.tar.gz",
@@ -5167,11 +5268,11 @@
         "size": 5964933
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-18T15:10:47Z",
     "version": "0.0.29"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-18T06:54:46Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.28/prek-aarch64-apple-darwin.tar.gz",
@@ -5198,11 +5299,11 @@
         "size": 5877233
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-18T06:54:46Z",
     "version": "0.0.28"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-17T10:22:19Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.27/prek-aarch64-apple-darwin.tar.gz",
@@ -5229,11 +5330,11 @@
         "size": 5863658
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-17T10:22:19Z",
     "version": "0.0.27"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-16T04:04:57Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.26/prek-aarch64-apple-darwin.tar.gz",
@@ -5260,11 +5361,11 @@
         "size": 5861673
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-16T04:04:57Z",
     "version": "0.0.26"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-14T16:24:18Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.25/prek-aarch64-apple-darwin.tar.gz",
@@ -5291,11 +5392,11 @@
         "size": 5861125
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-14T16:24:18Z",
     "version": "0.0.25"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-11T11:44:18Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.24/prek-aarch64-apple-darwin.tar.gz",
@@ -5322,11 +5423,11 @@
         "size": 5396117
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-11T11:44:18Z",
     "version": "0.0.24"
   },
   {
-    "prerelease": false,
-    "publishedAt": "2025-08-08T15:39:05Z",
     "assets": [
       {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.0.23/prek-aarch64-apple-darwin.tar.gz",
@@ -5353,6 +5454,8 @@
         "size": 5228645
       }
     ],
+    "prerelease": false,
+    "publishedAt": "2025-08-08T15:39:05Z",
     "version": "0.0.23"
   }
 ]
