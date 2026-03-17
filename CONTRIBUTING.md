@@ -19,7 +19,7 @@ Compile TypeScript:
 npm run build
 ```
 
-Bundle the action entrypoints for GitHub Actions:
+Bundle the action `dist/` entrypoints for GitHub Actions:
 
 ```bash
 npm run bundle
@@ -30,7 +30,7 @@ That command produces:
 - `dist/index.js` for the main action
 - `dist/post/index.js` for the post-step cache save
 
-The bundled files must be committed, because GitHub Actions consumers run the checked-in `dist/` output directly.
+The generated `dist/` files must be committed, because GitHub Actions consumers run the checked-in `dist/` output directly.
 
 ## Test
 
@@ -40,7 +40,7 @@ Run the unit tests:
 npm test
 ```
 
-This compiles the test files to `.test-build/` and runs them with Node's built-in test runner.
+This runs the TypeScript tests directly with Jest via `ts-jest`.
 
 ## Validate
 
@@ -52,7 +52,7 @@ npm run bundle
 git diff --stat
 ```
 
-`git diff` should only show the source and generated bundle changes you intend to release.
+`git diff` should only show the source and generated `dist/` changes you intend to release.
 
 ## Release
 
