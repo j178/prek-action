@@ -40,7 +40,7 @@ Run the unit tests:
 npm test
 ```
 
-This runs the TypeScript tests directly with Jest via `ts-jest`.
+This runs the TypeScript tests directly with Vitest.
 
 ## Validate
 
