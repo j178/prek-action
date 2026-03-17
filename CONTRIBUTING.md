@@ -27,8 +27,8 @@ npm run bundle
 
 That command produces:
 
-- `dist/index.js` for the main action
-- `dist/post/index.js` for the post-step cache save
+- `dist/index.cjs` for the main action
+- `dist/post/index.cjs` for the post-step cache save
 
 The generated `dist/` files must be committed, because GitHub Actions consumers run the checked-in `dist/` output directly.
 

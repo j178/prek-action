@@ -5,13 +5,14 @@ import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
 let mockInfos: string[] = []
 let mockCacheDir = '/tmp/prek-cache'
 
-const mockExec = jest.fn<
-  (
-    commandLine: string,
-    args?: string[],
-    options?: { listeners?: { stdout?: (data: Buffer) => void } },
-  ) => Promise<number>
->()
+const mockExec =
+  jest.fn<
+    (
+      commandLine: string,
+      args?: string[],
+      options?: { listeners?: { stdout?: (data: Buffer) => void } },
+    ) => Promise<number>
+  >()
 
 jest.unstable_mockModule('@actions/core', () => ({
   info: jest.fn((message: string) => {

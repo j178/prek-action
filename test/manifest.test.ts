@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
-import type { Version } from '../src/types'
-import type { VersionManifest } from '../src/types'
+import type { Version, VersionManifest } from '../src/types'
 
 let mockInputs: Record<string, string> = {}
 

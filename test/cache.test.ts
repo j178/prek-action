@@ -11,15 +11,17 @@ let mockSavedStateEntries: Array<[string, string]> = []
 let mockCacheDir = path.join(os.homedir(), '.cache', 'prek')
 let mockGlobFiles: string[] = []
 
-const mockRestoreCache = jest.fn<(paths: string[], primaryKey: string) => Promise<string | undefined>>()
+const mockRestoreCache =
+  jest.fn<(paths: string[], primaryKey: string) => Promise<string | undefined>>()
 const mockSaveCache = jest.fn<(paths: string[], primaryKey: string) => Promise<number>>()
-const mockExec = jest.fn<
-  (
-    commandLine: string,
-    args?: string[],
-    options?: { listeners?: { stdout?: (data: Buffer) => void } },
-  ) => Promise<number>
->()
+const mockExec =
+  jest.fn<
+    (
+      commandLine: string,
+      args?: string[],
+      options?: { listeners?: { stdout?: (data: Buffer) => void } },
+    ) => Promise<number>
+  >()
 
 jest.unstable_mockModule('@actions/cache', () => ({
   restoreCache: mockRestoreCache,
@@ -155,7 +157,9 @@ test('savePrekCache skips saving on an exact cache hit', async () => {
   await savePrekCache()
 
   expect(mockSaveCache).not.toHaveBeenCalled()
-  expect(mockInfos).toEqual([`Cache hit occurred on the primary key ${primaryKey}, not saving cache.`])
+  expect(mockInfos).toEqual([
+    `Cache hit occurred on the primary key ${primaryKey}, not saving cache.`,
+  ])
   expect(mockWarnings).toEqual([])
 })
 
