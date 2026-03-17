@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "bundle": "node scripts/build-dist.mjs",
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "test": "vitest run",
     "update-known-versions": "node scripts/update-known-versions.mjs"
   },
   "engines": {
@@ -25,12 +25,10 @@
     "string-argv": "^0.3.2"
   },
   "devDependencies": {
-    "@jest/globals": "^30.2.0",
     "@types/node": "^24.0.0",
     "@types/semver": "^7.7.1",
     "esbuild": "^0.25.10",
-    "jest": "^30.2.0",
-    "ts-jest": "^29.4.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   }
 }
