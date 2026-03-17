@@ -51105,12 +51105,12 @@ function formatError(error) {
     return error instanceof Error ? error.message : String(error);
 }
 async function restorePrekCache(workingDirectory) {
+    core.startGroup('Restore prek cache');
     const cacheDir = await (0, prek_1.getPrekCacheDir)();
     const paths = [cacheDir];
     const primaryKey = await buildCacheKey(workingDirectory);
     core.saveState(types_1.CACHE_KEY_STATE, primaryKey);
     core.saveState(types_1.CACHE_PATHS_STATE, JSON.stringify(paths));
-    core.startGroup('Restore prek cache');
     try {
         const restoredKey = await cache.restoreCache(paths, primaryKey);
         if (restoredKey) {

@@ -17,13 +17,14 @@ function formatError(error: unknown): string {
 }
 
 export async function restorePrekCache(workingDirectory: string): Promise<void> {
+  core.startGroup('Restore prek cache')
+
   const cacheDir = await getPrekCacheDir()
   const paths = [cacheDir]
   const primaryKey = await buildCacheKey(workingDirectory)
   core.saveState(CACHE_KEY_STATE, primaryKey)
   core.saveState(CACHE_PATHS_STATE, JSON.stringify(paths))
 
-  core.startGroup('Restore prek cache')
   try {
     const restoredKey = await cache.restoreCache(paths, primaryKey)
     if (restoredKey) {
