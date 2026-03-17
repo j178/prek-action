@@ -72418,20 +72418,20 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.restorePrekCache = restorePrekCache;
 exports.savePrekCache = savePrekCache;
-exports.getCachePaths = getCachePaths;
 const cache = __importStar(__nccwpck_require__(5116));
 const core = __importStar(__nccwpck_require__(37484));
 const glob = __importStar(__nccwpck_require__(47206));
 const crypto = __importStar(__nccwpck_require__(77598));
 const fs = __importStar(__nccwpck_require__(51455));
-const os = __importStar(__nccwpck_require__(48161));
 const path = __importStar(__nccwpck_require__(76760));
+const prek_1 = __nccwpck_require__(50241);
 const types_1 = __nccwpck_require__(16141);
 function formatError(error) {
     return error instanceof Error ? error.message : String(error);
 }
 async function restorePrekCache(workingDirectory) {
-    const paths = getCachePaths();
+    const cacheDir = await (0, prek_1.getPrekCacheDir)();
+    const paths = [cacheDir];
     const primaryKey = await buildCacheKey(workingDirectory);
     core.saveState(types_1.CACHE_KEY_STATE, primaryKey);
     core.saveState(types_1.CACHE_PATHS_STATE, JSON.stringify(paths));
@@ -72481,19 +72481,12 @@ async function savePrekCache() {
         core.endGroup();
     }
 }
-function getCachePaths() {
-    if (process.platform === 'win32') {
-        const localAppData = process.env['LOCALAPPDATA'] || path.join(os.homedir(), 'AppData', 'Local');
-        return [path.join(localAppData, 'prek')];
-    }
-    return [path.join(os.homedir(), '.cache', 'prek')];
-}
 async function buildCacheKey(workingDirectory) {
     const normalizedWorkingDirectory = path.resolve(workingDirectory);
     const hash = await hashConfigFiles(normalizedWorkingDirectory);
     const pythonLocation = process.env['pythonLocation'] || '';
     const runnerOs = process.env['RUNNER_OS'] || process.platform;
-    const runnerArch = process.env['RUNNER_ARCH'] || os.arch();
+    const runnerArch = process.env['RUNNER_ARCH'] || process.arch;
     return `${types_1.PREK_CACHE_KEY_PREFIX}|${runnerOs}|${runnerArch}|${pythonLocation}|${hash}`;
 }
 async function hashConfigFiles(workingDirectory) {
@@ -72569,6 +72562,163 @@ async function run() {
 run().catch(error => {
     core.warning(error instanceof Error ? error.message : String(error));
 });
+
+
+/***/ }),
+
+/***/ 50241:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.runPrek = runPrek;
+exports.showVerboseLogs = showVerboseLogs;
+exports.pruneCache = pruneCache;
+exports.getPrekCacheDir = getPrekCacheDir;
+const core = __importStar(__nccwpck_require__(37484));
+const exec = __importStar(__nccwpck_require__(95236));
+const fs = __importStar(__nccwpck_require__(51455));
+const os = __importStar(__nccwpck_require__(48161));
+const path = __importStar(__nccwpck_require__(76760));
+const string_argv_1 = __nccwpck_require__(41024);
+function formatError(error) {
+    return error instanceof Error ? error.message : String(error);
+}
+async function runPrek(workingDirectory, extraArgs) {
+    const args = ['run', '--show-diff-on-failure', '--color=always', ...(0, string_argv_1.parseArgsStringToArgv)(extraArgs)];
+    return exec.exec('prek', args, {
+        cwd: workingDirectory,
+        ignoreReturnCode: true
+    });
+}
+async function showVerboseLogs() {
+    core.startGroup('Prek verbose logs');
+    try {
+        const cacheDir = await getPrekCacheDir();
+        const logPath = path.join(cacheDir, 'prek.log');
+        try {
+            const log = await fs.readFile(logPath, 'utf8');
+            process.stdout.write(log);
+            if (!log.endsWith('\n')) {
+                process.stdout.write('\n');
+            }
+        }
+        catch {
+            core.info(`No prek log file found at ${logPath}`);
+        }
+    }
+    finally {
+        core.endGroup();
+    }
+}
+async function pruneCache() {
+    core.startGroup('Pruning prek cache');
+    try {
+        const code = await exec.exec('prek', ['cache', 'gc', '-v'], {
+            ignoreReturnCode: true
+        });
+        if (code !== 0) {
+            core.info('Failed to prune prek cache');
+        }
+    }
+    finally {
+        core.endGroup();
+    }
+}
+async function getPrekCacheDir() {
+    let output = '';
+    let code;
+    try {
+        code = await exec.exec('prek', ['cache', 'dir', '--no-log-file'], {
+            ignoreReturnCode: true,
+            silent: true,
+            listeners: {
+                stdout: (data) => {
+                    output += data.toString();
+                }
+            }
+        });
+    }
+    catch (error) {
+        core.info(`Failed to query prek cache dir: ${formatError(error)}`);
+        return getDefaultPrekCacheDir();
+    }
+    if (code === 0) {
+        const trimmed = output.trim();
+        if (trimmed) {
+            core.info(`Using prek cache dir ${trimmed}`);
+            return trimmed;
+        }
+    }
+    return getDefaultPrekCacheDir();
+}
+// Guess the prek cache directory using the same resolution order as the prek
+// CLI itself (PREK_HOME, then platform cache dirs via the etcetera crate).
+//
+// This fallback exists because `prek cache dir` was added in v0.2.2 and
+// `--no-log-file` in v0.2.3, so the CLI probe fails on older versions.
+// Consider removing this (and dropping <v0.2.2 from the version manifest)
+// once those versions are no longer in use.
+function getDefaultPrekCacheDir() {
+    // PREK_HOME is used as-is (no /prek suffix), matching prek's own behavior.
+    const prekHome = process.env['PREK_HOME'];
+    if (prekHome) {
+        const fallback = prekHome.startsWith('~/')
+            ? path.join(os.homedir(), prekHome.slice(2))
+            : prekHome;
+        core.info(`Falling back to default prek cache dir ${fallback}`);
+        return fallback;
+    }
+    if (process.platform === 'win32') {
+        const localAppData = process.env['LOCALAPPDATA'] || path.join(os.homedir(), 'AppData', 'Local');
+        const fallback = path.join(localAppData, 'prek');
+        core.info(`Falling back to default prek cache dir ${fallback}`);
+        return fallback;
+    }
+    const xdgCacheHome = process.env['XDG_CACHE_HOME'];
+    if (xdgCacheHome && path.isAbsolute(xdgCacheHome)) {
+        const fallback = path.join(xdgCacheHome, 'prek');
+        core.info(`Falling back to default prek cache dir ${fallback}`);
+        return fallback;
+    }
+    const fallback = path.join(os.homedir(), '.cache', 'prek');
+    core.info(`Falling back to default prek cache dir ${fallback}`);
+    return fallback;
+}
 
 
 /***/ }),
@@ -115286,6 +115436,59 @@ function randomUUID() {
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (0);
+
+
+/***/ }),
+
+/***/ 41024:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+exports.__esModule = true;
+exports.parseArgsStringToArgv = void 0;
+function parseArgsStringToArgv(value, env, file) {
+    // ([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*) Matches nested quotes until the first space outside of quotes
+    // [^\s'"]+ or Match if not a space ' or "
+    // (['"])([^\5]*?)\5 or Match "quoted text" without quotes
+    // `\3` and `\5` are a backreference to the quote style (' or ") captured
+    var myRegexp = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi;
+    var myString = value;
+    var myArray = [];
+    if (env) {
+        myArray.push(env);
+    }
+    if (file) {
+        myArray.push(file);
+    }
+    var match;
+    do {
+        // Each call to exec returns the next regex match as an array
+        match = myRegexp.exec(myString);
+        if (match !== null) {
+            // Index 1 in the array is the captured group if it exists
+            // Index 0 is the matched text, which we use if no captured group exists
+            myArray.push(firstString(match[1], match[6], match[0]));
+        }
+    } while (match !== null);
+    return myArray;
+}
+exports["default"] = parseArgsStringToArgv;
+exports.parseArgsStringToArgv = parseArgsStringToArgv;
+// Accepts any number of arguments, and returns the first one that is a string
+// (even an empty string)
+function firstString() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
+    for (var i = 0; i < args.length; i++) {
+        var arg = args[i];
+        if (typeof arg === "string") {
+            return arg;
+        }
+    }
+}
 
 
 /***/ }),
