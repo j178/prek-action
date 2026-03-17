@@ -1,8 +1,7 @@
-import assert from 'node:assert/strict'
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import test from 'node:test'
+import { expect, test } from '@jest/globals'
 import {
   getBinaryPath,
   getReleaseAssetFor,
@@ -16,25 +15,25 @@ import { toVersion } from '../src/manifest'
 const testVersion = toVersion('1.2.3')
 
 test('getRustTargetFor maps supported runners to prek release targets', () => {
-  assert.equal(getRustTargetFor('linux', 'x64'), 'x86_64-unknown-linux-gnu')
-  assert.equal(getRustTargetFor('linux', 'arm64'), 'aarch64-unknown-linux-gnu')
-  assert.equal(getRustTargetFor('darwin', 'x64'), 'x86_64-apple-darwin')
-  assert.equal(getRustTargetFor('darwin', 'arm64'), 'aarch64-apple-darwin')
-  assert.equal(getRustTargetFor('win32', 'x64'), 'x86_64-pc-windows-msvc')
+  expect(getRustTargetFor('linux', 'x64')).toBe('x86_64-unknown-linux-gnu')
+  expect(getRustTargetFor('linux', 'arm64')).toBe('aarch64-unknown-linux-gnu')
+  expect(getRustTargetFor('darwin', 'x64')).toBe('x86_64-apple-darwin')
+  expect(getRustTargetFor('darwin', 'arm64')).toBe('aarch64-apple-darwin')
+  expect(getRustTargetFor('win32', 'x64')).toBe('x86_64-pc-windows-msvc')
 })
 
 test('getRustTargetFor rejects unsupported platform and arch combinations', () => {
-  assert.throws(() => getRustTargetFor('freebsd', 'x64'))
-  assert.throws(() => getRustTargetFor('darwin', 'ia32'))
+  expect(() => getRustTargetFor('freebsd', 'x64')).toThrow()
+  expect(() => getRustTargetFor('darwin', 'ia32')).toThrow()
 })
 
 test('getReleaseAssetFor builds the expected archive and binary names', () => {
-  assert.deepEqual(getReleaseAssetFor('linux', 'x64'), {
+  expect(getReleaseAssetFor('linux', 'x64')).toEqual({
     archiveName: 'prek-x86_64-unknown-linux-gnu.tar.gz',
     archiveType: 'tar.gz',
     binaryName: 'prek',
   })
-  assert.deepEqual(getReleaseAssetFor('win32', 'x64'), {
+  expect(getReleaseAssetFor('win32', 'x64')).toEqual({
     archiveName: 'prek-x86_64-pc-windows-msvc.zip',
     archiveType: 'zip',
     binaryName: 'prek.exe',
@@ -42,11 +41,11 @@ test('getReleaseAssetFor builds the expected archive and binary names', () => {
 })
 
 test('getToolCacheArchFor maps Node architectures to tool-cache values', () => {
-  assert.equal(getToolCacheArchFor('x64'), 'x64')
-  assert.equal(getToolCacheArchFor('arm64'), 'arm64')
-  assert.equal(getToolCacheArchFor('ia32'), 'x86')
-  assert.equal(getToolCacheArchFor('arm'), 'arm')
-  assert.equal(getToolCacheArchFor('s390x'), 's390x')
+  expect(getToolCacheArchFor('x64')).toBe('x64')
+  expect(getToolCacheArchFor('arm64')).toBe('arm64')
+  expect(getToolCacheArchFor('ia32')).toBe('x86')
+  expect(getToolCacheArchFor('arm')).toBe('arm')
+  expect(getToolCacheArchFor('s390x')).toBe('s390x')
 })
 
 test('getBinaryPath resolves the nested tar.gz archive layout', async () => {
@@ -61,7 +60,7 @@ test('getBinaryPath resolves the nested tar.gz archive layout', async () => {
     archiveType: 'tar.gz',
     binaryName: 'prek',
   })
-  assert.equal(resolved, expected)
+  expect(resolved).toBe(expected)
 })
 
 test('getBinaryPath resolves the zip archive layout directly', async () => {
@@ -74,7 +73,7 @@ test('getBinaryPath resolves the zip archive layout directly', async () => {
     archiveType: 'zip',
     binaryName: 'prek.exe',
   })
-  assert.equal(resolved, expected)
+  expect(resolved).toBe(expected)
 })
 
 test('validateDownloadedChecksum accepts a digest found in the known checksum set', async () => {
@@ -82,19 +81,19 @@ test('validateDownloadedChecksum accepts a digest found in the known checksum se
   const archivePath = path.join(rootDir, 'prek.tar.gz')
   await fs.writeFile(archivePath, 'binary')
 
-  const result = await validateDownloadedChecksum(
-    archivePath,
-    {
-      downloadUrl: 'https://example.invalid/prek.tar.gz',
-      name: 'prek.tar.gz',
-    },
-    testVersion,
-    new Map([
-      ['1.2.3:prek.tar.gz', '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd'],
-    ]),
-  )
-
-  assert.equal(result, 'matched')
+  await expect(
+    validateDownloadedChecksum(
+      archivePath,
+      {
+        downloadUrl: 'https://example.invalid/prek.tar.gz',
+        name: 'prek.tar.gz',
+      },
+      testVersion,
+      new Map([
+        ['1.2.3:prek.tar.gz', '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd'],
+      ]),
+    ),
+  ).resolves.toBe('matched')
 })
 
 test('validateDownloadedChecksum reports missing when no checksum is known for the asset', async () => {
@@ -102,17 +101,17 @@ test('validateDownloadedChecksum reports missing when no checksum is known for t
   const archivePath = path.join(rootDir, 'prek.tar.gz')
   await fs.writeFile(archivePath, 'binary')
 
-  const result = await validateDownloadedChecksum(
-    archivePath,
-    {
-      downloadUrl: 'https://example.invalid/prek.tar.gz',
-      name: 'prek.tar.gz',
-    },
-    testVersion,
-    new Map(),
-  )
-
-  assert.equal(result, 'missing')
+  await expect(
+    validateDownloadedChecksum(
+      archivePath,
+      {
+        downloadUrl: 'https://example.invalid/prek.tar.gz',
+        name: 'prek.tar.gz',
+      },
+      testVersion,
+      new Map(),
+    ),
+  ).resolves.toBe('missing')
 })
 
 test('validateDownloadedChecksum throws on checksum mismatch', async () => {
@@ -120,7 +119,7 @@ test('validateDownloadedChecksum throws on checksum mismatch', async () => {
   const archivePath = path.join(rootDir, 'prek.tar.gz')
   await fs.writeFile(archivePath, 'binary')
 
-  await assert.rejects(
+  await expect(
     validateDownloadedChecksum(
       archivePath,
       {
@@ -130,8 +129,7 @@ test('validateDownloadedChecksum throws on checksum mismatch', async () => {
       testVersion,
       new Map([['1.2.3:prek.tar.gz', 'deadbeef']]),
     ),
-    /Checksum mismatch/,
-  )
+  ).rejects.toThrow(/Checksum mismatch/)
 })
 
 test('hashFile returns the sha256 digest for a file', async () => {
@@ -139,8 +137,7 @@ test('hashFile returns the sha256 digest for a file', async () => {
   const archivePath = path.join(rootDir, 'prek.tar.gz')
   await fs.writeFile(archivePath, 'binary')
 
-  assert.equal(
-    await hashFile(archivePath),
+  await expect(hashFile(archivePath)).resolves.toBe(
     '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd',
   )
 })

@@ -1,78 +1,67 @@
-import assert from 'node:assert/strict'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import test, { mock } from 'node:test'
-import * as core from '@actions/core'
-import * as exec from '@actions/exec'
-import { getPrekCacheDir } from '../src/prek'
+import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
+
+let mockInfos: string[] = []
+let mockCacheDir = '/tmp/prek-cache'
+
+const mockExec =
+  jest.fn<
+    (
+      commandLine: string,
+      args?: string[],
+      options?: { listeners?: { stdout?: (data: Buffer) => void } },
+    ) => Promise<number>
+  >()
+
+jest.unstable_mockModule('@actions/core', () => ({
+  info: jest.fn((message: string) => {
+    mockInfos.push(message)
+  }),
+}))
+
+jest.unstable_mockModule('@actions/exec', () => ({
+  exec: mockExec,
+}))
+
+const { getPrekCacheDir } = await import('../src/prek')
+
+beforeEach(() => {
+  mockInfos = []
+  mockCacheDir = '/tmp/prek-cache'
+  mockExec.mockReset()
+  mockExec.mockImplementation(async (_commandLine, _args, options) => {
+    options?.listeners?.stdout?.(Buffer.from(`${mockCacheDir}\n`))
+    return 0
+  })
+})
+
+afterEach(() => {
+  jest.clearAllMocks()
+})
 
 test('getPrekCacheDir prefers the CLI-reported path', async () => {
-  mock.restoreAll()
-  const infos: string[] = []
-  const warnings: string[] = []
-
-  mock.method(core, 'info', (message: string) => {
-    infos.push(message)
-  })
-  mock.method(core, 'warning', (message: string) => {
-    warnings.push(message)
-  })
-  mock.method(
-    exec,
-    'exec',
-    async (
-      _commandLine: string,
-      _args?: string[],
-      options?: { listeners?: { stdout?: (data: Buffer) => void } },
-    ) => {
-      options?.listeners?.stdout?.(Buffer.from('/tmp/prek-cache\n'))
-      return 0
-    },
-  )
-
-  try {
-    assert.equal(await getPrekCacheDir(), '/tmp/prek-cache')
-  } finally {
-    mock.restoreAll()
-  }
-
-  assert.deepEqual(infos, ['Using prek cache dir /tmp/prek-cache'])
-  assert.deepEqual(warnings, [])
+  await expect(getPrekCacheDir()).resolves.toBe('/tmp/prek-cache')
+  expect(mockInfos).toEqual(['Using prek cache dir /tmp/prek-cache'])
 })
 
 test('getPrekCacheDir falls back to PREK_HOME when the CLI probe fails', async () => {
-  mock.restoreAll()
   const originalEnv = { ...process.env }
-  const infos: string[] = []
-  const warnings: string[] = []
-
   const prekHome = path.join(os.tmpdir(), 'prek-action-prek-home')
   process.env.PREK_HOME = prekHome
-
-  mock.method(core, 'info', (message: string) => {
-    infos.push(message)
-  })
-  mock.method(core, 'warning', (message: string) => {
-    warnings.push(message)
-  })
-  mock.method(exec, 'exec', async () => 2)
+  mockExec.mockResolvedValue(2)
 
   try {
-    assert.equal(await getPrekCacheDir(), prekHome)
+    await expect(getPrekCacheDir()).resolves.toBe(prekHome)
   } finally {
     process.env = originalEnv
-    mock.restoreAll()
   }
 
-  assert.deepEqual(infos, [`Falling back to default prek cache dir ${prekHome}`])
-  assert.deepEqual(warnings, [])
+  expect(mockInfos).toEqual([`Falling back to default prek cache dir ${prekHome}`])
 })
 
 test('getPrekCacheDir falls back to XDG_CACHE_HOME/prek when CLI probe fails and PREK_HOME is unset', async () => {
-  mock.restoreAll()
   const originalEnv = { ...process.env }
-  const infos: string[] = []
-  const warnings: string[] = []
 
   delete process.env.PREK_HOME
   if (process.platform === 'win32') {
@@ -87,21 +76,13 @@ test('getPrekCacheDir falls back to XDG_CACHE_HOME/prek when CLI probe fails and
       ? path.join(process.env.LOCALAPPDATA || '', 'prek')
       : path.join(process.env.XDG_CACHE_HOME || '', 'prek')
 
-  mock.method(core, 'info', (message: string) => {
-    infos.push(message)
-  })
-  mock.method(core, 'warning', (message: string) => {
-    warnings.push(message)
-  })
-  mock.method(exec, 'exec', async () => 2)
+  mockExec.mockResolvedValue(2)
 
   try {
-    assert.equal(await getPrekCacheDir(), expected)
+    await expect(getPrekCacheDir()).resolves.toBe(expected)
   } finally {
     process.env = originalEnv
-    mock.restoreAll()
   }
 
-  assert.deepEqual(infos, [`Falling back to default prek cache dir ${expected}`])
-  assert.deepEqual(warnings, [])
+  expect(mockInfos).toEqual([`Falling back to default prek cache dir ${expected}`])
 })

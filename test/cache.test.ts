@@ -1,41 +1,60 @@
-import assert from 'node:assert/strict'
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import test, { mock } from 'node:test'
-import * as cache from '@actions/cache'
-import * as core from '@actions/core'
-import * as exec from '@actions/exec'
-import { restorePrekCache, savePrekCache } from '../src/cache'
+import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
 import { CACHE_KEY_STATE, CACHE_MATCHED_KEY_STATE, CACHE_PATHS_STATE } from '../src/types'
 
-type CoreMockState = {
-  infos: string[]
-  savedStateEntries: Array<[string, string]>
-  warnings: string[]
-}
+let mockState: Record<string, string> = {}
+let mockInfos: string[] = []
+let mockWarnings: string[] = []
+let mockSavedStateEntries: Array<[string, string]> = []
+let mockCacheDir = path.join(os.homedir(), '.cache', 'prek')
+let mockGlobFiles: string[] = []
 
-function setupCoreMocks(state: Record<string, string>): CoreMockState {
-  const infos: string[] = []
-  const warnings: string[] = []
-  const savedStateEntries: Array<[string, string]> = []
+const mockRestoreCache =
+  jest.fn<(paths: string[], primaryKey: string) => Promise<string | undefined>>()
+const mockSaveCache = jest.fn<(paths: string[], primaryKey: string) => Promise<number>>()
+const mockExec =
+  jest.fn<
+    (
+      commandLine: string,
+      args?: string[],
+      options?: { listeners?: { stdout?: (data: Buffer) => void } },
+    ) => Promise<number>
+  >()
 
-  mock.method(core, 'endGroup', () => {})
-  mock.method(core, 'getState', (name: string) => state[name] ?? '')
-  mock.method(core, 'info', (message: string) => {
-    infos.push(message)
-  })
-  mock.method(core, 'saveState', (name: string, value: string) => {
-    state[name] = value
-    savedStateEntries.push([name, value])
-  })
-  mock.method(core, 'startGroup', () => {})
-  mock.method(core, 'warning', (message: string) => {
-    warnings.push(message)
-  })
+jest.unstable_mockModule('@actions/cache', () => ({
+  restoreCache: mockRestoreCache,
+  saveCache: mockSaveCache,
+}))
 
-  return { infos, savedStateEntries, warnings }
-}
+jest.unstable_mockModule('@actions/core', () => ({
+  endGroup: jest.fn(),
+  getState: jest.fn((name: string) => mockState[name] ?? ''),
+  info: jest.fn((message: string) => {
+    mockInfos.push(message)
+  }),
+  saveState: jest.fn((name: string, value: string) => {
+    mockState[name] = value
+    mockSavedStateEntries.push([name, value])
+  }),
+  startGroup: jest.fn(),
+  warning: jest.fn((message: string) => {
+    mockWarnings.push(message)
+  }),
+}))
+
+jest.unstable_mockModule('@actions/exec', () => ({
+  exec: mockExec,
+}))
+
+jest.unstable_mockModule('@actions/glob', () => ({
+  create: jest.fn(async () => ({
+    glob: async () => mockGlobFiles,
+  })),
+}))
+
+const { restorePrekCache, savePrekCache } = await import('../src/cache')
 
 async function createWorkingDirectory(): Promise<string> {
   const workingDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-cache-test-'))
@@ -43,33 +62,42 @@ async function createWorkingDirectory(): Promise<string> {
   return workingDirectory
 }
 
+beforeEach(() => {
+  mockState = {}
+  mockInfos = []
+  mockWarnings = []
+  mockSavedStateEntries = []
+  mockCacheDir = path.join(os.homedir(), '.cache', 'prek')
+  mockGlobFiles = []
+
+  mockRestoreCache.mockReset()
+  mockRestoreCache.mockResolvedValue(undefined)
+
+  mockSaveCache.mockReset()
+  mockSaveCache.mockResolvedValue(123)
+
+  mockExec.mockReset()
+  mockExec.mockImplementation(async (_commandLine, _args, options) => {
+    options?.listeners?.stdout?.(Buffer.from(`${mockCacheDir}\n`))
+    return 0
+  })
+})
+
+afterEach(() => {
+  jest.clearAllMocks()
+})
+
 test('restorePrekCache saves the matched key when restoreCache hits the primary key', async () => {
-  mock.restoreAll()
   const originalEnv = { ...process.env }
-  const state: Record<string, string> = {}
-  const { infos, savedStateEntries, warnings } = setupCoreMocks(state)
   const workingDirectory = await createWorkingDirectory()
+  mockGlobFiles = [path.join(workingDirectory, 'prek.toml')]
 
   process.env.RUNNER_OS = 'Linux'
   process.env.RUNNER_ARCH = 'X64'
   process.env.pythonLocation = '/opt/python'
 
-  const expectedCacheDir = path.join(os.homedir(), '.cache', 'prek')
-  mock.method(
-    exec,
-    'exec',
-    async (
-      _commandLine: string,
-      _args?: string[],
-      options?: { listeners?: { stdout?: (data: Buffer) => void } },
-    ) => {
-      options?.listeners?.stdout?.(Buffer.from(`${expectedCacheDir}\n`))
-      return 0
-    },
-  )
-
   let restoreCall: { paths: string[]; primaryKey: string } | undefined
-  mock.method(cache, 'restoreCache', async (paths: string[], primaryKey: string) => {
+  mockRestoreCache.mockImplementation(async (paths: string[], primaryKey: string) => {
     restoreCall = { paths, primaryKey }
     return primaryKey
   })
@@ -78,162 +106,102 @@ test('restorePrekCache saves the matched key when restoreCache hits the primary 
     await restorePrekCache(workingDirectory)
   } finally {
     process.env = originalEnv
-    mock.restoreAll()
   }
 
-  assert.deepEqual(restoreCall?.paths, [path.join(os.homedir(), '.cache', 'prek')])
-  assert.equal(restoreCall?.primaryKey, state[CACHE_KEY_STATE])
-  assert.equal(state[CACHE_MATCHED_KEY_STATE], state[CACHE_KEY_STATE])
-  assert.equal(
-    state[CACHE_PATHS_STATE],
-    JSON.stringify([path.join(os.homedir(), '.cache', 'prek')]),
-  )
-  assert.deepEqual(
-    savedStateEntries.map(([name]) => name),
-    [CACHE_KEY_STATE, CACHE_PATHS_STATE, CACHE_MATCHED_KEY_STATE],
-  )
-  assert.deepEqual(infos, [
-    `Using prek cache dir ${expectedCacheDir}`,
-    `Restored prek cache with key ${state[CACHE_KEY_STATE]}`,
+  expect(restoreCall?.paths).toEqual([mockCacheDir])
+  expect(restoreCall?.primaryKey).toBe(mockState[CACHE_KEY_STATE])
+  expect(mockState[CACHE_MATCHED_KEY_STATE]).toBe(mockState[CACHE_KEY_STATE])
+  expect(mockState[CACHE_PATHS_STATE]).toBe(JSON.stringify([mockCacheDir]))
+  expect(mockSavedStateEntries.map(([name]) => name)).toEqual([
+    CACHE_KEY_STATE,
+    CACHE_PATHS_STATE,
+    CACHE_MATCHED_KEY_STATE,
   ])
-  assert.deepEqual(warnings, [])
+  expect(mockInfos).toEqual([
+    `Using prek cache dir ${mockCacheDir}`,
+    `Restored prek cache with key ${mockState[CACHE_KEY_STATE]}`,
+  ])
+  expect(mockWarnings).toEqual([])
 })
 
 test('restorePrekCache logs a cache miss without saving a matched key', async () => {
-  mock.restoreAll()
-  const state: Record<string, string> = {}
-  const { infos, warnings } = setupCoreMocks(state)
   const workingDirectory = await createWorkingDirectory()
+  mockGlobFiles = [path.join(workingDirectory, 'prek.toml')]
 
-  const expectedCacheDir = path.join(os.homedir(), '.cache', 'prek')
-  mock.method(
-    exec,
-    'exec',
-    async (
-      _commandLine: string,
-      _args?: string[],
-      options?: { listeners?: { stdout?: (data: Buffer) => void } },
-    ) => {
-      options?.listeners?.stdout?.(Buffer.from(`${expectedCacheDir}\n`))
-      return 0
-    },
-  )
-  mock.method(cache, 'restoreCache', async () => undefined)
+  await restorePrekCache(workingDirectory)
 
-  try {
-    await restorePrekCache(workingDirectory)
-  } finally {
-    mock.restoreAll()
-  }
-
-  assert.equal(state[CACHE_MATCHED_KEY_STATE], undefined)
-  assert.deepEqual(infos, [
-    `Using prek cache dir ${expectedCacheDir}`,
-    `No cache found for key ${state[CACHE_KEY_STATE]}`,
+  expect(mockState[CACHE_MATCHED_KEY_STATE]).toBeUndefined()
+  expect(mockInfos).toEqual([
+    `Using prek cache dir ${mockCacheDir}`,
+    `No cache found for key ${mockState[CACHE_KEY_STATE]}`,
   ])
-  assert.deepEqual(warnings, [])
+  expect(mockWarnings).toEqual([])
 })
 
 test('savePrekCache skips when no cache state was recorded', async () => {
-  mock.restoreAll()
-  const { infos, warnings } = setupCoreMocks({})
-  const saveCacheMock = mock.method(cache, 'saveCache', async () => 123)
+  await savePrekCache()
 
-  try {
-    await savePrekCache()
-  } finally {
-    mock.restoreAll()
-  }
-
-  assert.equal(saveCacheMock.mock.callCount(), 0)
-  assert.deepEqual(infos, ['No cache state found, skipping cache save'])
-  assert.deepEqual(warnings, [])
+  expect(mockSaveCache).not.toHaveBeenCalled()
+  expect(mockInfos).toEqual(['No cache state found, skipping cache save'])
+  expect(mockWarnings).toEqual([])
 })
 
 test('savePrekCache skips saving on an exact cache hit', async () => {
-  mock.restoreAll()
   const primaryKey = 'prek-v1|Linux|X64|/opt/python|hash'
-  const state = {
+  mockState = {
     [CACHE_KEY_STATE]: primaryKey,
     [CACHE_MATCHED_KEY_STATE]: primaryKey,
     [CACHE_PATHS_STATE]: JSON.stringify(['/tmp/prek-cache']),
   }
-  const { infos, warnings } = setupCoreMocks(state)
-  const saveCacheMock = mock.method(cache, 'saveCache', async () => 123)
 
-  try {
-    await savePrekCache()
-  } finally {
-    mock.restoreAll()
-  }
+  await savePrekCache()
 
-  assert.equal(saveCacheMock.mock.callCount(), 0)
-  assert.deepEqual(infos, [
+  expect(mockSaveCache).not.toHaveBeenCalled()
+  expect(mockInfos).toEqual([
     `Cache hit occurred on the primary key ${primaryKey}, not saving cache.`,
   ])
-  assert.deepEqual(warnings, [])
+  expect(mockWarnings).toEqual([])
 })
 
 test('savePrekCache treats a -1 cache id as a handled non-success path', async () => {
-  mock.restoreAll()
-  const state = {
+  mockState = {
     [CACHE_KEY_STATE]: 'prek-v1|Linux|X64|/opt/python|hash',
     [CACHE_MATCHED_KEY_STATE]: 'prek-v1|Linux|X64|/opt/python|older-hash',
     [CACHE_PATHS_STATE]: JSON.stringify(['/tmp/prek-cache']),
   }
-  const { infos, warnings } = setupCoreMocks(state)
-  const saveCacheMock = mock.method(cache, 'saveCache', async () => -1)
+  mockSaveCache.mockResolvedValue(-1)
 
-  try {
-    await savePrekCache()
-  } finally {
-    mock.restoreAll()
-  }
+  await savePrekCache()
 
-  assert.equal(saveCacheMock.mock.callCount(), 1)
-  assert.equal(saveCacheMock.mock.calls[0]?.arguments[1], state[CACHE_KEY_STATE])
-  assert.deepEqual(infos, [])
-  assert.deepEqual(warnings, [])
+  expect(mockSaveCache).toHaveBeenCalledTimes(1)
+  expect(mockSaveCache.mock.calls[0]?.[1]).toBe(mockState[CACHE_KEY_STATE])
+  expect(mockInfos).toEqual([])
+  expect(mockWarnings).toEqual([])
 })
 
 test('savePrekCache logs success when saveCache returns a cache id', async () => {
-  mock.restoreAll()
-  const state = {
+  mockState = {
     [CACHE_KEY_STATE]: 'prek-v1|Linux|X64|/opt/python|hash',
     [CACHE_MATCHED_KEY_STATE]: 'prek-v1|Linux|X64|/opt/python|older-hash',
     [CACHE_PATHS_STATE]: JSON.stringify(['/tmp/prek-cache']),
   }
-  const { infos, warnings } = setupCoreMocks(state)
-  mock.method(cache, 'saveCache', async () => 123)
 
-  try {
-    await savePrekCache()
-  } finally {
-    mock.restoreAll()
-  }
+  await savePrekCache()
 
-  assert.deepEqual(infos, [`Saved prek cache with key ${state[CACHE_KEY_STATE]}`])
-  assert.deepEqual(warnings, [])
+  expect(mockInfos).toEqual([`Saved prek cache with key ${mockState[CACHE_KEY_STATE]}`])
+  expect(mockWarnings).toEqual([])
 })
 
 test('savePrekCache warns when saveCache throws', async () => {
-  mock.restoreAll()
-  const state = {
+  mockState = {
     [CACHE_KEY_STATE]: 'prek-v1|Linux|X64|/opt/python|hash',
     [CACHE_MATCHED_KEY_STATE]: 'prek-v1|Linux|X64|/opt/python|older-hash',
     [CACHE_PATHS_STATE]: JSON.stringify(['/tmp/prek-cache']),
   }
-  const { infos, warnings } = setupCoreMocks(state)
-  mock.method(cache, 'saveCache', async () => {
-    throw new Error('boom')
-  })
+  mockSaveCache.mockRejectedValue(new Error('boom'))
 
-  try {
-    await savePrekCache()
-  } finally {
-    mock.restoreAll()
-  }
+  await savePrekCache()
 
-  assert.deepEqual(infos, [])
-  assert.deepEqual(warnings, ['Failed to save cache: boom'])
+  expect(mockInfos).toEqual([])
+  expect(mockWarnings).toEqual(['Failed to save cache: boom'])
 })
