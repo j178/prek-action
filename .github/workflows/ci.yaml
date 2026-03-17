@@ -11,6 +11,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  # renovate: datasource=npm depName=@biomejs/biome
+  BIOME_VERSION: 2.4.7
+
 jobs:
   prek:
     name: Prek
@@ -38,7 +42,7 @@ jobs:
       - name: Set up Biome
         uses: biomejs/setup-biome@a05c02a1304287da45f13648675a70d5841acdbc # v2
         with:
-          version: 2.4.7
+          version: ${{ env.BIOME_VERSION }}
       - name: Check formatting and linting
         run: npm run check-format
 
