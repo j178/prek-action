@@ -1,19 +1,24 @@
-import * as core from '@actions/core'
-import * as exec from '@actions/exec'
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import {parseArgsStringToArgv} from 'string-argv'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
+import { parseArgsStringToArgv } from 'string-argv'
 
 function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
 export async function runPrek(workingDirectory: string, extraArgs: string): Promise<number> {
-  const args = ['run', '--show-diff-on-failure', '--color=always', ...parseArgsStringToArgv(extraArgs)]
+  const args = [
+    'run',
+    '--show-diff-on-failure',
+    '--color=always',
+    ...parseArgsStringToArgv(extraArgs),
+  ]
   return exec.exec('prek', args, {
     cwd: workingDirectory,
-    ignoreReturnCode: true
+    ignoreReturnCode: true,
   })
 }
 
@@ -40,7 +45,7 @@ export async function pruneCache(): Promise<void> {
   core.startGroup('Pruning prek cache')
   try {
     const code = await exec.exec('prek', ['cache', 'gc', '-v'], {
-      ignoreReturnCode: true
+      ignoreReturnCode: true,
     })
     if (code !== 0) {
       core.info('Failed to prune prek cache')
@@ -56,12 +61,12 @@ export async function getPrekCacheDir(): Promise<string> {
   try {
     code = await exec.exec('prek', ['cache', 'dir', '--no-log-file'], {
       ignoreReturnCode: true,
-      silent: true,
       listeners: {
         stdout: (data: Buffer) => {
           output += data.toString()
-        }
-      }
+        },
+      },
+      silent: true,
     })
   } catch (error) {
     core.info(`Failed to query prek cache dir: ${formatError(error)}`)
@@ -88,7 +93,7 @@ export async function getPrekCacheDir(): Promise<string> {
 // once those versions are no longer in use.
 function getDefaultPrekCacheDir(): string {
   // PREK_HOME is used as-is (no /prek suffix), matching prek's own behavior.
-  const prekHome = process.env['PREK_HOME']
+  const prekHome = process.env.PREK_HOME
   if (prekHome) {
     const fallback = prekHome.startsWith('~/')
       ? path.join(os.homedir(), prekHome.slice(2))
@@ -98,13 +103,13 @@ function getDefaultPrekCacheDir(): string {
   }
 
   if (process.platform === 'win32') {
-    const localAppData = process.env['LOCALAPPDATA'] || path.join(os.homedir(), 'AppData', 'Local')
+    const localAppData = process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local')
     const fallback = path.join(localAppData, 'prek')
     core.info(`Falling back to default prek cache dir ${fallback}`)
     return fallback
   }
 
-  const xdgCacheHome = process.env['XDG_CACHE_HOME']
+  const xdgCacheHome = process.env.XDG_CACHE_HOME
   if (xdgCacheHome && path.isAbsolute(xdgCacheHome)) {
     const fallback = path.join(xdgCacheHome, 'prek')
     core.info(`Falling back to default prek cache dir ${fallback}`)

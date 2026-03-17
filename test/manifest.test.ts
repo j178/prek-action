@@ -1,37 +1,36 @@
-import test from 'node:test'
 import assert from 'node:assert/strict'
+import test from 'node:test'
 import * as tc from '@actions/tool-cache'
-
-import {getInputs} from '../src/inputs'
+import { getInputs } from '../src/inputs'
 import {
   getAssetForVersion,
   getManifestAssetForVersion,
   normalizeVersion,
   resolveVersion,
   resolveVersionFromManifest,
-  toVersion
+  toVersion,
 } from '../src/manifest'
-import type {VersionManifest} from '../src/types'
+import type { VersionManifest } from '../src/types'
 
 const stableManifest: VersionManifest = [
   {
     assets: [],
     prerelease: false,
     publishedAt: '2026-03-01T00:00:00Z',
-    version: toVersion('0.3.5')
+    version: toVersion('0.3.5'),
   },
   {
     assets: [],
     prerelease: false,
     publishedAt: '2026-02-28T00:00:00Z',
-    version: toVersion('0.3.4')
+    version: toVersion('0.3.4'),
   },
   {
     assets: [],
     prerelease: false,
     publishedAt: '2026-02-01T00:00:00Z',
-    version: toVersion('0.2.30')
-  }
+    version: toVersion('0.2.30'),
+  },
 ]
 
 test('resolveVersion accepts an exact version with a leading v', async () => {
@@ -48,18 +47,24 @@ test('resolveVersionFromManifest rejects exact versions that are missing from th
       assets: [],
       prerelease: false,
       publishedAt: '2026-02-28T00:00:00Z',
-      version: toVersion('0.3.5')
-    }
+      version: toVersion('0.3.5'),
+    },
   ]
 
-  assert.throws(() => resolveVersionFromManifest('0.2.100', manifest), /No prek release satisfies version range/)
+  assert.throws(
+    () => resolveVersionFromManifest('0.2.100', manifest),
+    /No prek release satisfies version range/,
+  )
 })
 
 test('getManifestAssetForVersion returns undefined for missing manifest versions', () => {
   const version = toVersion('0.2.100')
   const manifest: VersionManifest = []
 
-  assert.equal(getManifestAssetForVersion(version, 'prek-x86_64-unknown-linux-gnu.tar.gz', manifest), undefined)
+  assert.equal(
+    getManifestAssetForVersion(version, 'prek-x86_64-unknown-linux-gnu.tar.gz', manifest),
+    undefined,
+  )
 })
 
 test('getManifestAssetForVersion returns the manifest entry without checksum data', () => {
@@ -69,33 +74,40 @@ test('getManifestAssetForVersion returns the manifest entry without checksum dat
       assets: [
         {
           downloadUrl: 'https://example.invalid/prek.tar.gz',
-          name: 'prek-x86_64-unknown-linux-gnu.tar.gz'
-        }
+          name: 'prek-x86_64-unknown-linux-gnu.tar.gz',
+        },
       ],
       prerelease: false,
       publishedAt: '2026-03-01T00:00:00Z',
-      version
-    }
+      version,
+    },
   ]
 
-  assert.deepEqual(getManifestAssetForVersion(version, 'prek-x86_64-unknown-linux-gnu.tar.gz', manifest), {
-    downloadUrl: 'https://example.invalid/prek.tar.gz',
-    name: 'prek-x86_64-unknown-linux-gnu.tar.gz'
-  })
+  assert.deepEqual(
+    getManifestAssetForVersion(version, 'prek-x86_64-unknown-linux-gnu.tar.gz', manifest),
+    {
+      downloadUrl: 'https://example.invalid/prek.tar.gz',
+      name: 'prek-x86_64-unknown-linux-gnu.tar.gz',
+    },
+  )
 })
 
 test('getAssetForVersion falls back to the release URL pattern when manifest download fails', async () => {
-  const toolCache = tc as {downloadTool: typeof tc.downloadTool}
+  const toolCache = tc as { downloadTool: typeof tc.downloadTool }
   const originalDownloadTool = toolCache.downloadTool
   toolCache.downloadTool = async () => {
     throw new Error('manifest unavailable')
   }
 
   try {
-    assert.deepEqual(await getAssetForVersion(toVersion('0.2.100'), 'prek-x86_64-unknown-linux-gnu.tar.gz'), {
-      downloadUrl: 'https://github.com/j178/prek/releases/download/v0.2.100/prek-x86_64-unknown-linux-gnu.tar.gz',
-      name: 'prek-x86_64-unknown-linux-gnu.tar.gz'
-    })
+    assert.deepEqual(
+      await getAssetForVersion(toVersion('0.2.100'), 'prek-x86_64-unknown-linux-gnu.tar.gz'),
+      {
+        downloadUrl:
+          'https://github.com/j178/prek/releases/download/v0.2.100/prek-x86_64-unknown-linux-gnu.tar.gz',
+        name: 'prek-x86_64-unknown-linux-gnu.tar.gz',
+      },
+    )
   } finally {
     toolCache.downloadTool = originalDownloadTool
   }
@@ -115,14 +127,14 @@ test('resolveVersionFromManifest resolves bounded ranges from the manifest', () 
       assets: [],
       prerelease: false,
       publishedAt: '2026-02-28T00:00:00Z',
-      version: toVersion('0.3.5')
+      version: toVersion('0.3.5'),
     },
     {
       assets: [],
       prerelease: false,
       publishedAt: '2026-02-27T00:00:00Z',
-      version: toVersion('0.3.4')
-    }
+      version: toVersion('0.3.4'),
+    },
   ]
 
   assert.equal(resolveVersionFromManifest('>=0.3.0 <0.3.5', manifest), '0.3.4')
@@ -134,20 +146,20 @@ test('resolveVersionFromManifest ignores prereleases even when they appear first
       assets: [],
       prerelease: true,
       publishedAt: '2026-03-01T00:00:00Z',
-      version: toVersion('0.3.6-beta.1')
+      version: toVersion('0.3.6-beta.1'),
     },
     {
       assets: [],
       prerelease: false,
       publishedAt: '2026-02-28T00:00:00Z',
-      version: toVersion('0.3.5')
+      version: toVersion('0.3.5'),
     },
     {
       assets: [],
       prerelease: false,
       publishedAt: '2026-02-27T00:00:00Z',
-      version: toVersion('0.3.4')
-    }
+      version: toVersion('0.3.4'),
+    },
   ]
 
   assert.equal(resolveVersionFromManifest('latest', manifest), '0.3.5')
@@ -160,7 +172,7 @@ test('resolveVersionFromManifest rejects invalid and unsatisfied ranges', () => 
 })
 
 test('getInputs enables verbose logs by default and allows opting out', () => {
-  const originalEnv = {...process.env}
+  const originalEnv = { ...process.env }
   try {
     process.env['INPUT_INSTALL-ONLY'] = 'false'
     delete process.env['INPUT_SHOW-VERBOSE-LOGS']

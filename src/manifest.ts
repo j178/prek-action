@@ -1,11 +1,12 @@
+import * as fs from 'node:fs/promises'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
-import * as fs from 'node:fs/promises'
 import * as semver from 'semver'
-import type {ManifestAsset, NormalizedVersion, Version, VersionManifest} from './types'
+import type { ManifestAsset, NormalizedVersion, Version, VersionManifest } from './types'
 
 const prekReleasesBaseUrl = 'https://github.com/j178/prek/releases/download'
-const prekVersionManifestUrl = 'https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json'
+const prekVersionManifestUrl =
+  'https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json'
 // Cache the in-flight manifest download so version resolution and asset lookup share one request per process.
 let versionManifestPromise: Promise<VersionManifest> | undefined
 
@@ -37,7 +38,7 @@ export function toVersion(version: string): Version {
 export function getManifestAssetForVersion(
   version: Version,
   archiveName: string,
-  manifest: VersionManifest
+  manifest: VersionManifest,
 ): ManifestAsset | undefined {
   core.info(`Looking up asset ${archiveName} for ${version}`)
   const release = manifest.find(candidate => candidate.version === version)
@@ -47,20 +48,27 @@ export function getManifestAssetForVersion(
 
   const asset = release.assets.find(candidate => candidate.name === archiveName)
   if (!asset) {
-    throw new Error(`prek asset ${archiveName} was not found for ${release.version} in the version manifest`)
+    throw new Error(
+      `prek asset ${archiveName} was not found for ${release.version} in the version manifest`,
+    )
   }
   return asset
 }
 
 // Return the asset to download for a version. Prefer manifest metadata when available;
 // if an exact version is newer than the manifest, fall back to the release URL pattern.
-export async function getAssetForVersion(version: Version, archiveName: string): Promise<ManifestAsset> {
+export async function getAssetForVersion(
+  version: Version,
+  archiveName: string,
+): Promise<ManifestAsset> {
   let manifest: VersionManifest | undefined
   try {
     manifest = await getVersionManifest()
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    core.warning(`Failed to download version manifest: ${message}. Falling back to the release asset URL pattern for ${version}`)
+    core.warning(
+      `Failed to download version manifest: ${message}. Falling back to the release asset URL pattern for ${version}`,
+    )
     return buildReleaseAssetUrl(version, archiveName)
   }
 
@@ -69,14 +77,16 @@ export async function getAssetForVersion(version: Version, archiveName: string):
     return asset
   }
 
-  core.info(`Version ${version} is not in the version manifest; falling back to the release asset URL pattern`)
+  core.info(
+    `Version ${version} is not in the version manifest; falling back to the release asset URL pattern`,
+  )
   return buildReleaseAssetUrl(version, archiveName)
 }
 
 // Resolve `latest` and semver ranges from the downloaded manifest only.
 export function resolveVersionFromManifest(
   versionInput: string,
-  manifest: VersionManifest
+  manifest: VersionManifest,
 ): Version {
   const normalizedInput = versionInput.trim() || 'latest'
   core.info(`Resolving prek version from input "${versionInput}"`)
@@ -96,7 +106,7 @@ export function resolveVersionFromManifest(
   }
 
   const rangeRelease = manifest.find(
-    candidate => !candidate.prerelease && semver.satisfies(candidate.version, range)
+    candidate => !candidate.prerelease && semver.satisfies(candidate.version, range),
   )
   if (!rangeRelease) {
     throw new Error(`No prek release satisfies version range: ${versionInput}`)
@@ -127,6 +137,6 @@ async function getVersionManifest(): Promise<VersionManifest> {
 function buildReleaseAssetUrl(version: Version, archiveName: string): ManifestAsset {
   return {
     downloadUrl: `${prekReleasesBaseUrl}/${normalizeVersion(version)}/${archiveName}`,
-    name: archiveName
+    name: archiveName,
   }
 }

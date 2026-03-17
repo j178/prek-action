@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, 'dev-*']
+    branches: [main, "dev-*"]
 
 permissions: {}
 
@@ -12,13 +12,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint
+  prek:
+    name: Prek
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 24
+          package-manager-cache: false
       - name: Run prek
         uses: ./
 
@@ -35,6 +39,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Build
+        run: npm run build
       - name: Run unit tests
         run: npm test
 
@@ -72,12 +78,12 @@ jobs:
       - name: Test | ${{ matrix.os }} | extra-args
         uses: ./
         with:
-          extra-args: '--hook-stage pre-commit --verbose'
+          extra-args: "--hook-stage pre-commit --verbose"
 
       - name: Test | ${{ matrix.os }} | extra-args with CJK characters
         uses: ./
         with:
-          extra-args: '--files 中文'
+          extra-args: "--files 中文"
 
       - name: Test | ${{ matrix.os }} | extra-args with quoted string (with spaces)
         uses: ./
@@ -87,12 +93,12 @@ jobs:
       - name: Test | ${{ matrix.os }} | pin prek version
         uses: ./
         with:
-          prek-version: '0.2.30'
+          prek-version: "0.2.30"
 
       - name: Test | ${{ matrix.os }} | resolve prek semver range
         uses: ./
         with:
-          prek-version: '0.3.x'
+          prek-version: "0.3.x"
 
   ecosystem-cpython:
     name: "ecosystem | cpython"

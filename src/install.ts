@@ -1,13 +1,12 @@
-import * as core from '@actions/core'
-import * as tc from '@actions/tool-cache'
 import * as crypto from 'node:crypto'
-import {createReadStream} from 'node:fs'
+import { createReadStream } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-
-import {getAssetForVersion} from './manifest'
-import {knownChecksumsByAsset} from './known-checksums'
-import type {ManifestAsset, ReleaseAsset, Version} from './types'
+import * as core from '@actions/core'
+import * as tc from '@actions/tool-cache'
+import { knownChecksumsByAsset } from './known-checksums'
+import { getAssetForVersion } from './manifest'
+import type { ManifestAsset, ReleaseAsset, Version } from './types'
 
 // Install a specific bare prek version, preferring the GitHub Actions tool cache when available.
 export async function installPrek(version: Version): Promise<string> {
@@ -24,7 +23,7 @@ export async function installPrek(version: Version): Promise<string> {
 
     const asset = getReleaseAssetFor(process.platform, process.arch)
     core.info(
-      `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`
+      `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`,
     )
     const manifestAsset = await getAssetForVersion(version, asset.archiveName)
 
@@ -75,14 +74,17 @@ async function extractWindowsZipArchive(archivePath: string): Promise<string> {
 }
 
 // Translate the current runner platform/arch into the expected release archive and executable names.
-export function getReleaseAssetFor(platform: NodeJS.Platform, arch: NodeJS.Architecture): ReleaseAsset {
+export function getReleaseAssetFor(
+  platform: NodeJS.Platform,
+  arch: NodeJS.Architecture,
+): ReleaseAsset {
   const binaryName = platform === 'win32' ? 'prek.exe' : 'prek'
   const target = getRustTargetFor(platform, arch)
   const extension = platform === 'win32' ? 'zip' : 'tar.gz'
   return {
     archiveName: `prek-${target}.${extension}`,
     archiveType: extension,
-    binaryName
+    binaryName,
   }
 }
 
@@ -163,11 +165,13 @@ export async function getBinaryPath(rootDir: string, asset: ReleaseAsset): Promi
 async function verifyDownloadChecksum(
   archivePath: string,
   asset: ManifestAsset,
-  version: Version
+  version: Version,
 ): Promise<void> {
   const result = await validateDownloadedChecksum(archivePath, asset, version)
   if (result === 'missing') {
-    core.warning(`Checksum is not known for ${buildChecksumKey(version, asset.name)}; skipping verification for prek ${version}`)
+    core.warning(
+      `Checksum is not known for ${buildChecksumKey(version, asset.name)}; skipping verification for prek ${version}`,
+    )
     return
   }
 
@@ -178,7 +182,7 @@ export async function validateDownloadedChecksum(
   archivePath: string,
   asset: ManifestAsset,
   version: Version,
-  checksumMap: ReadonlyMap<string, string> = knownChecksumsByAsset
+  checksumMap: ReadonlyMap<string, string> = knownChecksumsByAsset,
 ): Promise<'matched' | 'missing'> {
   const expectedDigest = checksumMap.get(buildChecksumKey(version, asset.name))
   if (!expectedDigest) {
@@ -187,7 +191,9 @@ export async function validateDownloadedChecksum(
 
   const digest = await hashFile(archivePath)
   if (digest !== expectedDigest) {
-    throw new Error(`Checksum mismatch for ${asset.name}: expected ${expectedDigest}, received ${digest}`)
+    throw new Error(
+      `Checksum mismatch for ${asset.name}: expected ${expectedDigest}, received ${digest}`,
+    )
   }
 
   return 'matched'

@@ -1,12 +1,16 @@
-import * as cache from '@actions/cache'
-import * as core from '@actions/core'
-import * as glob from '@actions/glob'
 import * as crypto from 'node:crypto'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-
-import {getPrekCacheDir} from './prek'
-import {CACHE_KEY_STATE, CACHE_MATCHED_KEY_STATE, CACHE_PATHS_STATE, PREK_CACHE_KEY_PREFIX} from './types'
+import * as cache from '@actions/cache'
+import * as core from '@actions/core'
+import * as glob from '@actions/glob'
+import { getPrekCacheDir } from './prek'
+import {
+  CACHE_KEY_STATE,
+  CACHE_MATCHED_KEY_STATE,
+  CACHE_PATHS_STATE,
+  PREK_CACHE_KEY_PREFIX,
+} from './types'
 
 function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
@@ -67,9 +71,9 @@ export async function savePrekCache(): Promise<void> {
 async function buildCacheKey(workingDirectory: string): Promise<string> {
   const normalizedWorkingDirectory = path.resolve(workingDirectory)
   const hash = await hashConfigFiles(normalizedWorkingDirectory)
-  const pythonLocation = process.env['pythonLocation'] || ''
-  const runnerOs = process.env['RUNNER_OS'] || process.platform
-  const runnerArch = process.env['RUNNER_ARCH'] || process.arch
+  const pythonLocation = process.env.pythonLocation || ''
+  const runnerOs = process.env.RUNNER_OS || process.platform
+  const runnerArch = process.env.RUNNER_ARCH || process.arch
   return `${PREK_CACHE_KEY_PREFIX}|${runnerOs}|${runnerArch}|${pythonLocation}|${hash}`
 }
 
@@ -94,6 +98,6 @@ function getConfigPatterns(workingDirectory: string): string[] {
   return [
     path.join(workingDirectory, '**', 'prek.toml').replaceAll(path.sep, '/'),
     path.join(workingDirectory, '**', '.pre-commit-config.yaml').replaceAll(path.sep, '/'),
-    path.join(workingDirectory, '**', '.pre-commit-config.yml').replaceAll(path.sep, '/')
+    path.join(workingDirectory, '**', '.pre-commit-config.yml').replaceAll(path.sep, '/'),
   ]
 }

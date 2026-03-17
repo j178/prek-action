@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {savePrekCache} from './cache'
+import { savePrekCache } from './cache'
 
 async function run(): Promise<void> {
   await savePrekCache()

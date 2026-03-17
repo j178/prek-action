@@ -1,6 +1,5 @@
 import * as core from '@actions/core'
-
-import type {Inputs} from './types'
+import type { Inputs } from './types'
 
 // Parse and normalize action inputs, including the legacy `extra_args` alias.
 export function getInputs(): Inputs {
@@ -11,6 +10,6 @@ export function getInputs(): Inputs {
     prekVersion: core.getInput('prek-version') || 'latest',
     showVerboseLogs: showVerboseLogsInput === '' ? true : core.getBooleanInput('show-verbose-logs'),
     token: core.getInput('token'),
-    workingDirectory: core.getInput('working-directory') || '.'
+    workingDirectory: core.getInput('working-directory') || '.',
   }
 }
