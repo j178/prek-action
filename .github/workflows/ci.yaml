@@ -11,10 +11,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-env:
-  # renovate: datasource=npm depName=@biomejs/biome
-  BIOME_VERSION: 2.4.7
-
 jobs:
   prek:
     name: Prek
@@ -23,28 +19,12 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - name: Run prek
-        uses: ./
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 24
-          cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Set up Biome
-        uses: biomejs/setup-biome@a05c02a1304287da45f13648675a70d5841acdbc # v2
-        with:
-          version: ${{ env.BIOME_VERSION }}
-      - name: Check formatting and linting
-        run: npm run check-format
+          package-manager-cache: false
+      - name: Run prek
+        uses: ./
 
   unit-test:
     name: Unit tests
