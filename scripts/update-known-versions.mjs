@@ -1,4 +1,4 @@
-import {appendFile, mkdir, readFile, writeFile} from 'node:fs/promises'
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import semver from 'semver'
 
@@ -13,11 +13,13 @@ async function run() {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || ''
   const previousReleases = await readExistingManifest()
   const previousVersions = new Set(previousReleases.map(release => release.version))
-  const {checksumsByAsset, releases} = await fetchAllReleases(token)
-  const addedVersions = releases.map(release => release.version).filter(version => !previousVersions.has(version))
+  const { checksumsByAsset, releases } = await fetchAllReleases(token)
+  const addedVersions = releases
+    .map(release => release.version)
+    .filter(version => !previousVersions.has(version))
 
   await writeFile(manifestPath, `${JSON.stringify(releases, null, 2)}\n`)
-  await mkdir(path.dirname(checksumsPath), {recursive: true})
+  await mkdir(path.dirname(checksumsPath), { recursive: true })
   await writeFile(checksumsPath, renderKnownChecksumsFile(checksumsByAsset))
   console.log(`Wrote ${releases.length} prek releases to ${manifestPath}`)
   console.log(`Wrote ${checksumsByAsset.size} known checksums to ${checksumsPath}`)
@@ -48,10 +50,12 @@ async function fetchAllReleases(token) {
   for (let page = 1; ; page += 1) {
     const url = `${releasesApiUrl}?per_page=100&page=${page}`
     const response = await fetch(url, {
-      headers: buildHeaders(token)
+      headers: buildHeaders(token),
     })
     if (!response.ok) {
-      throw new Error(`GitHub API request failed for ${url}: ${response.status} ${response.statusText}`)
+      throw new Error(
+        `GitHub API request failed for ${url}: ${response.status} ${response.statusText}`,
+      )
     }
 
     const pageReleases = await response.json()
@@ -76,7 +80,7 @@ async function fetchAllReleases(token) {
 
               return {
                 downloadUrl: asset.browser_download_url,
-                name: asset.name
+                name: asset.name,
               }
             })
         : []
@@ -85,7 +89,7 @@ async function fetchAllReleases(token) {
         assets,
         prerelease: Boolean(release.prerelease),
         publishedAt: release.published_at || release.created_at || '',
-        version
+        version,
       })
     }
 
@@ -96,14 +100,14 @@ async function fetchAllReleases(token) {
 
   return {
     checksumsByAsset,
-    releases: releases.sort(compareReleasesDesc)
+    releases: releases.sort(compareReleasesDesc),
   }
 }
 
 function buildHeaders(token) {
   const headers = {
     Accept: 'application/vnd.github+json',
-    'User-Agent': 'prek-action-known-versions-updater'
+    'User-Agent': 'prek-action-known-versions-updater',
   }
   if (token) {
     headers.Authorization = `Bearer ${token}`
@@ -128,7 +132,10 @@ function isInstallableArchive(name) {
 }
 
 function compareReleasesDesc(left, right) {
-  return semver.rcompare(left.version, right.version) || right.publishedAt.localeCompare(left.publishedAt)
+  return (
+    semver.rcompare(left.version, right.version) ||
+    right.publishedAt.localeCompare(left.publishedAt)
+  )
 }
 
 function renderKnownChecksumsFile(checksumsByAsset) {
@@ -165,13 +172,13 @@ async function writeOutputs(addedVersions) {
 
   await appendFile(
     outputPath,
-    [
+    `${[
       `added_versions=${addedVersions.join(',')}`,
       `pr_title=${prTitle}`,
       'added_versions_markdown<<EOF',
       addedVersionsMarkdown,
-      'EOF'
-    ].join('\n') + '\n'
+      'EOF',
+    ].join('\n')}\n`,
   )
 }
 
