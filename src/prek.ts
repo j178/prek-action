@@ -1,10 +1,9 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as fs from 'node:fs/promises'
+import * as os from 'node:os'
 import * as path from 'node:path'
 import {parseArgsStringToArgv} from 'string-argv'
-
-import {getCachePaths} from './cache'
 
 function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
@@ -51,7 +50,7 @@ export async function pruneCache(): Promise<void> {
   }
 }
 
-async function getPrekCacheDir(): Promise<string> {
+export async function getPrekCacheDir(): Promise<string> {
   let output = ''
   let code: number
   try {
@@ -66,7 +65,7 @@ async function getPrekCacheDir(): Promise<string> {
     })
   } catch (error) {
     core.info(`Failed to query prek cache dir: ${formatError(error)}`)
-    return getCachePaths()[0]
+    return getDefaultPrekCacheDir()
   }
 
   if (code === 0) {
@@ -77,7 +76,42 @@ async function getPrekCacheDir(): Promise<string> {
     }
   }
 
-  const fallback = getCachePaths()[0]
+  return getDefaultPrekCacheDir()
+}
+
+// Guess the prek cache directory using the same resolution order as the prek
+// CLI itself (PREK_HOME, then platform cache dirs via the etcetera crate).
+//
+// This fallback exists because `prek cache dir` was added in v0.2.2 and
+// `--no-log-file` in v0.2.3, so the CLI probe fails on older versions.
+// Consider removing this (and dropping <v0.2.2 from the version manifest)
+// once those versions are no longer in use.
+function getDefaultPrekCacheDir(): string {
+  // PREK_HOME is used as-is (no /prek suffix), matching prek's own behavior.
+  const prekHome = process.env['PREK_HOME']
+  if (prekHome) {
+    const fallback = prekHome.startsWith('~/')
+      ? path.join(os.homedir(), prekHome.slice(2))
+      : prekHome
+    core.info(`Falling back to default prek cache dir ${fallback}`)
+    return fallback
+  }
+
+  if (process.platform === 'win32') {
+    const localAppData = process.env['LOCALAPPDATA'] || path.join(os.homedir(), 'AppData', 'Local')
+    const fallback = path.join(localAppData, 'prek')
+    core.info(`Falling back to default prek cache dir ${fallback}`)
+    return fallback
+  }
+
+  const xdgCacheHome = process.env['XDG_CACHE_HOME']
+  if (xdgCacheHome && path.isAbsolute(xdgCacheHome)) {
+    const fallback = path.join(xdgCacheHome, 'prek')
+    core.info(`Falling back to default prek cache dir ${fallback}`)
+    return fallback
+  }
+
+  const fallback = path.join(os.homedir(), '.cache', 'prek')
   core.info(`Falling back to default prek cache dir ${fallback}`)
   return fallback
 }

@@ -6,6 +6,7 @@ import * as path from 'node:path'
 
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 
 import {restorePrekCache, savePrekCache} from '../src/cache'
 import {CACHE_KEY_STATE, CACHE_MATCHED_KEY_STATE, CACHE_PATHS_STATE} from '../src/types'
@@ -55,6 +56,20 @@ test('restorePrekCache saves the matched key when restoreCache hits the primary 
   process.env['RUNNER_ARCH'] = 'X64'
   process.env['pythonLocation'] = '/opt/python'
 
+  const expectedCacheDir = path.join(os.homedir(), '.cache', 'prek')
+  mock.method(
+    exec,
+    'exec',
+    async (
+      _commandLine: string,
+      _args?: string[],
+      options?: {listeners?: {stdout?: (data: Buffer) => void}}
+    ) => {
+      options?.listeners?.stdout?.(Buffer.from(`${expectedCacheDir}\n`))
+      return 0
+    }
+  )
+
   let restoreCall: {paths: string[]; primaryKey: string} | undefined
   mock.method(cache, 'restoreCache', async (paths: string[], primaryKey: string) => {
     restoreCall = {paths, primaryKey}
@@ -76,7 +91,10 @@ test('restorePrekCache saves the matched key when restoreCache hits the primary 
     savedStateEntries.map(([name]) => name),
     [CACHE_KEY_STATE, CACHE_PATHS_STATE, CACHE_MATCHED_KEY_STATE]
   )
-  assert.deepEqual(infos, [`Restored prek cache with key ${state[CACHE_KEY_STATE]}`])
+  assert.deepEqual(infos, [
+    `Using prek cache dir ${expectedCacheDir}`,
+    `Restored prek cache with key ${state[CACHE_KEY_STATE]}`
+  ])
   assert.deepEqual(warnings, [])
 })
 
@@ -86,6 +104,19 @@ test('restorePrekCache logs a cache miss without saving a matched key', async ()
   const {infos, warnings} = setupCoreMocks(state)
   const workingDirectory = await createWorkingDirectory()
 
+  const expectedCacheDir = path.join(os.homedir(), '.cache', 'prek')
+  mock.method(
+    exec,
+    'exec',
+    async (
+      _commandLine: string,
+      _args?: string[],
+      options?: {listeners?: {stdout?: (data: Buffer) => void}}
+    ) => {
+      options?.listeners?.stdout?.(Buffer.from(`${expectedCacheDir}\n`))
+      return 0
+    }
+  )
   mock.method(cache, 'restoreCache', async () => undefined)
 
   try {
@@ -95,8 +126,10 @@ test('restorePrekCache logs a cache miss without saving a matched key', async ()
   }
 
   assert.equal(state[CACHE_MATCHED_KEY_STATE], undefined)
-  assert.equal(infos.length, 1)
-  assert.equal(infos[0], `No cache found for key ${state[CACHE_KEY_STATE]}`)
+  assert.deepEqual(infos, [
+    `Using prek cache dir ${expectedCacheDir}`,
+    `No cache found for key ${state[CACHE_KEY_STATE]}`
+  ])
   assert.deepEqual(warnings, [])
 })
 

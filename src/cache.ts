@@ -3,9 +3,9 @@ import * as core from '@actions/core'
 import * as glob from '@actions/glob'
 import * as crypto from 'node:crypto'
 import * as fs from 'node:fs/promises'
-import * as os from 'node:os'
 import * as path from 'node:path'
 
+import {getPrekCacheDir} from './prek'
 import {CACHE_KEY_STATE, CACHE_MATCHED_KEY_STATE, CACHE_PATHS_STATE, PREK_CACHE_KEY_PREFIX} from './types'
 
 function formatError(error: unknown): string {
@@ -13,7 +13,8 @@ function formatError(error: unknown): string {
 }
 
 export async function restorePrekCache(workingDirectory: string): Promise<void> {
-  const paths = getCachePaths()
+  const cacheDir = await getPrekCacheDir()
+  const paths = [cacheDir]
   const primaryKey = await buildCacheKey(workingDirectory)
   core.saveState(CACHE_KEY_STATE, primaryKey)
   core.saveState(CACHE_PATHS_STATE, JSON.stringify(paths))
@@ -63,20 +64,12 @@ export async function savePrekCache(): Promise<void> {
   }
 }
 
-export function getCachePaths(): string[] {
-  if (process.platform === 'win32') {
-    const localAppData = process.env['LOCALAPPDATA'] || path.join(os.homedir(), 'AppData', 'Local')
-    return [path.join(localAppData, 'prek')]
-  }
-  return [path.join(os.homedir(), '.cache', 'prek')]
-}
-
 async function buildCacheKey(workingDirectory: string): Promise<string> {
   const normalizedWorkingDirectory = path.resolve(workingDirectory)
   const hash = await hashConfigFiles(normalizedWorkingDirectory)
   const pythonLocation = process.env['pythonLocation'] || ''
   const runnerOs = process.env['RUNNER_OS'] || process.platform
-  const runnerArch = process.env['RUNNER_ARCH'] || os.arch()
+  const runnerArch = process.env['RUNNER_ARCH'] || process.arch
   return `${PREK_CACHE_KEY_PREFIX}|${runnerOs}|${runnerArch}|${pythonLocation}|${hash}`
 }
 
