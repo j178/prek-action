@@ -35,9 +35,36 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 | `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, `latest`, or `latest-known` | No | `latest` |
 | `sha256` | SHA-256 checksum of the release archive; overrides the bundled checksum | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
+| `version-file` | Path to a file containing the `prek` version to install. Supports `.tool-versions`, `mise.toml`, `uv.lock`, `pyproject.toml`, `requirements*.txt`, and `package.json` | No | |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `cache` | Cache the prek environment between workflow runs | No | `true` |
+
+## Version Resolution
+
+`prek-action` resolves the version to install in this order:
+
+1. `prek-version` when it is set to anything other than `latest`
+2. `version-file`
+3. Auto-detected `.tool-versions`
+4. Latest stable release from the version manifest
+
+Auto-detection checks `working-directory` first, then `GITHUB_WORKSPACE` when it is different.
+
+`version-file` is explicit and fails hard when the file does not exist, is malformed, or does not contain a `prek` version. It cannot be combined with an explicit `prek-version`. Relative `version-file` paths are resolved from `working-directory`.
+
+`minimum_prek_version` in `prek.toml` or pre-commit YAML remains a runtime constraint enforced by `prek` itself. It is not used as an action-level version source.
+
+Supported `version-file` formats:
+
+| File | Extracted value |
+| --- | --- |
+| `.tool-versions` | `prek <version>` |
+| `mise.toml` | `[tools].prek` or `[tools.prek].version` |
+| `uv.lock` | `[[package]] name = "prek"` version |
+| `pyproject.toml` | `[tool.prek].version`, `[dependency-groups]`, or `[project.optional-dependencies]` |
+| `requirements*.txt` | `prek==X.Y.Z` or other supported PEP 508 specifiers |
+| `package.json` | `dependencies["@j178/prek"]` or `devDependencies["@j178/prek"]` |
 
 ## Outputs
 
@@ -111,6 +138,30 @@ steps:
   - uses: j178/prek-action@1382ad72dea72f9d53832f2bcb65b3e87a947204 # v3.0.1
     with:
       prek-version: '0.3.x'
+```
+
+### Auto-detect from `.tool-versions`
+
+```yaml
+steps:
+  - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+  - uses: j178/prek-action@1382ad72dea72f9d53832f2bcb65b3e87a947204 # v3.0.1
+```
+
+With a repository `.tool-versions` entry such as:
+
+```text
+prek 0.3.5
+```
+
+### Use an explicit `version-file`
+
+```yaml
+steps:
+  - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+  - uses: j178/prek-action@1382ad72dea72f9d53832f2bcb65b3e87a947204 # v3.0.1
+    with:
+      version-file: uv.lock
 ```
 
 ### Install only

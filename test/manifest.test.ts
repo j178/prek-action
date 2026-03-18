@@ -7,6 +7,7 @@ const mockContext = vi.hoisted(() => ({
 }))
 
 const toolkitMocks = vi.hoisted(() => ({
+  debug: vi.fn(),
   downloadTool: vi.fn<() => Promise<string>>(),
   info: vi.fn(),
   warning: vi.fn(),
@@ -17,6 +18,7 @@ vi.mock('node:fs/promises', () => ({
 }))
 
 vi.mock('@actions/core', () => ({
+  debug: toolkitMocks.debug,
   info: toolkitMocks.info,
   warning: toolkitMocks.warning,
 }))

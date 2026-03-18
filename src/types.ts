@@ -14,6 +14,7 @@ export type Inputs = {
   prekVersion: string
   sha256: string
   showVerboseLogs: boolean
+  versionFile?: string
   workingDirectory: string
 }
 
