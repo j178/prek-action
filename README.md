@@ -35,13 +35,13 @@ For a stable reference, pin to a specific release tag such as `v1.2.3`, or pin t
 
 | Input | Description | Required | Default |
 | --- | --- | --- | --- |
-| `cache` | Cache the prek environment between workflow runs | No | `true` |
 | `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
 | `extra_args` | Deprecated alias for `extra-args` | No | |
-| `install-only` | Install `prek` but skip `prek run` | No | `false` |
 | `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
+| `install-only` | Install `prek` but skip `prek run` | No | `false` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
+| `cache` | Cache the prek environment between workflow runs | No | `true` |
 | `token` | Deprecated and unused; retained for backward compatibility | No | `''` |
 
 ## Outputs
