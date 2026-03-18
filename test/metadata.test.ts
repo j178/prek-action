@@ -2,7 +2,7 @@ import * as fs from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 
 async function readActionYaml(): Promise<string> {
-  return fs.readFile(new URL('../action.yaml', import.meta.url), 'utf8')
+  return fs.readFile(new URL('../action.yml', import.meta.url), 'utf8')
 }
 
 describe('action metadata', () => {
