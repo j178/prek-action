@@ -37,17 +37,44 @@ For a stable reference, pin to a specific release tag such as `v2.0.0`, or pin t
 | --- | --- | --- | --- |
 | `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
 | `extra_args` | Deprecated alias for `extra-args` | No | |
-| `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
+| `cache` | Cache the prek environment between workflow runs | No | `true` |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
+| `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
+| `version-file` | Path to a file containing the `prek` version to install. Supports `.tool-versions`, `mise.toml`, `uv.lock`, `pyproject.toml`, `requirements*.txt`, and `package.json` | No | |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
-| `cache` | Cache the prek environment between workflow runs | No | `true` |
 | `token` | Deprecated and unused; retained for backward compatibility | No | `''` |
+
+## Version Resolution
+
+`prek-action` resolves the version to install in this order:
+
+1. `prek-version` when it is set to anything other than `latest`
+2. `version-file`
+3. Auto-detected `.tool-versions`
+4. Latest stable release from the version manifest
+
+Auto-detection checks `working-directory` first, then `GITHUB_WORKSPACE` when it is different.
+
+`version-file` is explicit and fails hard when the file does not exist, is malformed, or does not contain a `prek` version. It cannot be combined with an explicit `prek-version`. Relative `version-file` paths are resolved from `working-directory`.
+
+`minimum_prek_version` in `prek.toml` or pre-commit YAML remains a runtime constraint enforced by `prek` itself. It is not used as an action-level version source.
+
+Supported `version-file` formats:
+
+| File | Extracted value |
+| --- | --- |
+| `.tool-versions` | `prek <version>` |
+| `mise.toml` | `[tools].prek` or `[tools.prek].version` |
+| `uv.lock` | `[[package]] name = "prek"` version |
+| `pyproject.toml` | `[tool.prek].version`, `[dependency-groups]`, or `[project.optional-dependencies]` |
+| `requirements*.txt` | `prek==X.Y.Z` or other supported PEP 508 specifiers |
+| `package.json` | `dependencies["@j178/prek"]` or `devDependencies["@j178/prek"]` |
 
 ## Outputs
 
-| Output | Description |
-| --- | --- |
+| Output         | Description                                                   |
+| -------------- | ------------------------------------------------------------- |
 | `prek-version` | The resolved `prek` version, normalized to a `v`-prefixed tag |
 | `cache-hit` | Whether the restored prek cache exactly matched the computed primary cache key |
 
@@ -68,7 +95,7 @@ steps:
   - uses: actions/checkout@v6
   - uses: j178/prek-action@v2
     with:
-      extra-args: '--all-files --directory packages/'
+      extra-args: "--all-files --directory packages/"
 ```
 
 Pin a specific `prek` version:
@@ -78,7 +105,7 @@ steps:
   - uses: actions/checkout@v6
   - uses: j178/prek-action@v2
     with:
-      prek-version: '0.2.30'
+      prek-version: "0.2.30"
 ```
 
 Resolve a semver range:
@@ -88,7 +115,31 @@ steps:
   - uses: actions/checkout@v6
   - uses: j178/prek-action@v2
     with:
-      prek-version: '0.3.x'
+      prek-version: "0.3.x"
+```
+
+Auto-detect from `.tool-versions`:
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
+  - uses: j178/prek-action@v2
+```
+
+With a repository `.tool-versions` entry such as:
+
+```text
+prek 0.3.5
+```
+
+Use an explicit `version-file`:
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
+  - uses: j178/prek-action@v2
+    with:
+      version-file: uv.lock
 ```
 
 Install only:
@@ -111,6 +162,7 @@ steps:
     with:
       show-verbose-logs: false
 ```
+
 ## Requirements
 
 The target repository needs a `prek` or pre-commit configuration file:
