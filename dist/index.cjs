@@ -62065,13 +62065,12 @@ function getConfigPatterns(workingDirectory) {
 function getInputs() {
   const legacyExtraArgs = getInput("extra_args");
   const modernExtraArgs = getInput("extra-args");
-  const showVerboseLogsInput = getInput("show-verbose-logs");
   return {
     cache: getBooleanInput("cache"),
     extraArgs: legacyExtraArgs || modernExtraArgs,
     installOnly: getBooleanInput("install-only"),
     prekVersion: getInput("prek-version") || "latest",
-    showVerboseLogs: showVerboseLogsInput === "" ? true : getBooleanInput("show-verbose-logs"),
+    showVerboseLogs: getBooleanInput("show-verbose-logs"),
     workingDirectory: getInput("working-directory") || "."
   };
 }
