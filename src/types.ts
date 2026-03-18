@@ -11,7 +11,6 @@ export type Inputs = {
   installOnly: boolean
   prekVersion: string
   showVerboseLogs: boolean
-  token: string
   workingDirectory: string
 }
 

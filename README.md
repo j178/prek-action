@@ -41,13 +41,14 @@ For a stable reference, pin to a specific release tag such as `v1.2.3`, or pin t
 | `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
-| `token` | Unused; retained for backward compatibility | No | `${{ github.token }}` |
+| `token` | Deprecated and unused; retained for backward compatibility | No | `''` |
 
 ## Outputs
 
 | Output | Description |
 | --- | --- |
 | `prek-version` | The resolved `prek` version, normalized to a `v`-prefixed tag |
+| `cache-hit` | Whether the restored prek cache exactly matched the computed primary cache key |
 
 ## Examples
 

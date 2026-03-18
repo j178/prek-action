@@ -12,7 +12,7 @@ let versionManifestPromise: Promise<VersionManifest> | undefined
 
 // Resolve user input to a bare version. Exact versions pass through directly; ranges and `latest`
 // are resolved from the downloaded version manifest.
-export async function resolveVersion(versionInput: string, _token: string): Promise<Version> {
+export async function resolveVersion(versionInput: string): Promise<Version> {
   const normalizedInput = versionInput.trim() || 'latest'
   const exactVersion = semver.valid(toVersion(normalizedInput))
   if (exactVersion) {

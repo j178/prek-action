@@ -28,6 +28,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // node_modules/tunnel/lib/tunnel.js
 var require_tunnel = __commonJS({
@@ -26988,6 +26989,13 @@ var require_commonjs2 = __commonJS({
     } });
   }
 });
+
+// src/main.ts
+var main_exports = {};
+__export(main_exports, {
+  run: () => run
+});
+module.exports = __toCommonJS(main_exports);
 
 // node_modules/@actions/core/lib/command.js
 var os = __toESM(require("os"), 1);
@@ -61925,11 +61933,13 @@ async function restorePrekCache(workingDirectory) {
   const primaryKey = await buildCacheKey(workingDirectory);
   saveState(CACHE_KEY_STATE, primaryKey);
   saveState(CACHE_PATHS_STATE, JSON.stringify(paths));
+  let matchedKey;
   try {
     const restoredKey = await restoreCache(paths, primaryKey);
     if (restoredKey) {
       info(`Restored prek cache with key ${restoredKey}`);
       saveState(CACHE_MATCHED_KEY_STATE, restoredKey);
+      matchedKey = restoredKey;
     } else {
       info(`No cache found for key ${primaryKey}`);
     }
@@ -61938,6 +61948,7 @@ async function restorePrekCache(workingDirectory) {
   } finally {
     endGroup();
   }
+  return { matchedKey, primaryKey };
 }
 async function buildCacheKey(workingDirectory) {
   const normalizedWorkingDirectory = path13.resolve(workingDirectory);
@@ -61972,13 +61983,14 @@ function getConfigPatterns(workingDirectory) {
 
 // src/inputs.ts
 function getInputs() {
+  const legacyExtraArgs = getInput("extra_args");
+  const modernExtraArgs = getInput("extra-args");
   const showVerboseLogsInput = getInput("show-verbose-logs");
   return {
-    extraArgs: getInput("extra_args") || getInput("extra-args") || "--all-files",
+    extraArgs: legacyExtraArgs || modernExtraArgs,
     installOnly: getBooleanInput("install-only"),
     prekVersion: getInput("prek-version") || "latest",
     showVerboseLogs: showVerboseLogsInput === "" ? true : getBooleanInput("show-verbose-logs"),
-    token: getInput("token"),
     workingDirectory: getInput("working-directory") || "."
   };
 }
@@ -63281,7 +63293,7 @@ var semver4 = __toESM(require_semver2(), 1);
 var prekReleasesBaseUrl = "https://github.com/j178/prek/releases/download";
 var prekVersionManifestUrl = "https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json";
 var versionManifestPromise;
-async function resolveVersion(versionInput, _token) {
+async function resolveVersion(versionInput) {
   const normalizedInput = versionInput.trim() || "latest";
   const exactVersion = semver4.valid(toVersion(normalizedInput));
   if (exactVersion) {
@@ -63549,12 +63561,13 @@ async function hashFile(filePath) {
 async function run() {
   const inputs = getInputs();
   startGroup("Resolving prek version");
-  const version3 = await resolveVersion(inputs.prekVersion, inputs.token);
+  const version3 = await resolveVersion(inputs.prekVersion);
   info(`Using prek ${version3}`);
   endGroup();
   setOutput("prek-version", normalizeVersion(version3));
   await installPrek(version3);
-  await restorePrekCache(inputs.workingDirectory);
+  const { matchedKey, primaryKey } = await restorePrekCache(inputs.workingDirectory);
+  setOutput("cache-hit", String(matchedKey === primaryKey));
   if (inputs.installOnly) {
     info("Skipping prek run because install-only=true");
     return;
@@ -63574,8 +63587,17 @@ async function run() {
     setFailed(`prek exited with code ${exitCode}`);
   }
 }
-run().catch((error2) => {
-  setFailed(error2 instanceof Error ? error2.message : String(error2));
+function isMainModule() {
+  return typeof require !== "undefined" && typeof module !== "undefined" && require.main === module;
+}
+if (isMainModule()) {
+  void run().catch((error2) => {
+    setFailed(error2 instanceof Error ? error2.message : String(error2));
+  });
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  run
 });
 /*! Bundled license information:
 
