@@ -53,8 +53,13 @@ export async function savePrekCache(): Promise<void> {
   const primaryKey = core.getState(CACHE_KEY_STATE)
   const matchedKey = core.getState(CACHE_MATCHED_KEY_STATE)
   const rawPaths = core.getState(CACHE_PATHS_STATE)
+
   if (!primaryKey || !rawPaths) {
-    core.info('No cache state found, skipping cache save')
+    // restorePrekCache() is the only place that records cache state. When
+    // caching is disabled, the post step lands here and intentionally no-ops.
+    core.info(
+      'No cache state found, skipping cache save (cache disabled or restore step did not run)',
+    )
     return
   }
 

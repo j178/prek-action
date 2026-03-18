@@ -61987,6 +61987,7 @@ function getInputs() {
   const modernExtraArgs = getInput("extra-args");
   const showVerboseLogsInput = getInput("show-verbose-logs");
   return {
+    cache: getBooleanInput("cache"),
     extraArgs: legacyExtraArgs || modernExtraArgs,
     installOnly: getBooleanInput("install-only"),
     prekVersion: getInput("prek-version") || "latest",
@@ -63566,8 +63567,13 @@ async function run() {
   endGroup();
   setOutput("prek-version", normalizeVersion(version3));
   await installPrek(version3);
-  const { matchedKey, primaryKey } = await restorePrekCache(inputs.workingDirectory);
-  setOutput("cache-hit", String(matchedKey === primaryKey));
+  if (inputs.cache) {
+    const { matchedKey, primaryKey } = await restorePrekCache(inputs.workingDirectory);
+    setOutput("cache-hit", String(matchedKey === primaryKey));
+  } else {
+    info("Caching disabled via cache=false; skipping cache restore");
+    setOutput("cache-hit", "false");
+  }
   if (inputs.installOnly) {
     info("Skipping prek run because install-only=true");
     return;

@@ -61541,7 +61541,9 @@ async function savePrekCache() {
   const matchedKey = getState(CACHE_MATCHED_KEY_STATE);
   const rawPaths = getState(CACHE_PATHS_STATE);
   if (!primaryKey || !rawPaths) {
-    info("No cache state found, skipping cache save");
+    info(
+      "No cache state found, skipping cache save (cache disabled or restore step did not run)"
+    );
     return;
   }
   if (primaryKey === matchedKey) {
