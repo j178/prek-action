@@ -28,7 +28,7 @@ describe('getInputs', () => {
   beforeEach(() => {
     vi.resetModules()
     vi.clearAllMocks()
-    mockContext.inputs = { cache: 'true', 'install-only': 'false' }
+    mockContext.inputs = { cache: 'true', 'install-only': 'false', 'show-verbose-logs': 'true' }
     mockContext.warnings = []
   })
 
