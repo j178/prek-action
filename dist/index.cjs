@@ -61982,33 +61982,17 @@ function getConfigPatterns(workingDirectory) {
 }
 
 // src/inputs.ts
-var legacyExtraArgsEnvVar = "INPUT_EXTRA_ARGS";
-var modernExtraArgsEnvVar = "INPUT_EXTRA-ARGS";
 function getInputs() {
   const legacyExtraArgs = getInput("extra_args");
   const modernExtraArgs = getInput("extra-args");
   const showVerboseLogsInput = getInput("show-verbose-logs");
-  const hasLegacyExtraArgs = process.env[legacyExtraArgsEnvVar] !== void 0;
-  const hasModernExtraArgs = process.env[modernExtraArgsEnvVar] !== void 0;
-  if (hasLegacyExtraArgs) {
-    warning("The extra_args input is deprecated. Use extra-args instead.");
-  }
   return {
-    extraArgs: resolveExtraArgs(legacyExtraArgs, modernExtraArgs, hasModernExtraArgs),
+    extraArgs: legacyExtraArgs || modernExtraArgs,
     installOnly: getBooleanInput("install-only"),
     prekVersion: getInput("prek-version") || "latest",
     showVerboseLogs: showVerboseLogsInput === "" ? true : getBooleanInput("show-verbose-logs"),
     workingDirectory: getInput("working-directory") || "."
   };
-}
-function resolveExtraArgs(legacyExtraArgs, modernExtraArgs, hasModernExtraArgs) {
-  if (legacyExtraArgs !== "") {
-    return legacyExtraArgs;
-  }
-  if (hasModernExtraArgs) {
-    return modernExtraArgs;
-  }
-  return modernExtraArgs || "--all-files";
 }
 
 // src/install.ts
