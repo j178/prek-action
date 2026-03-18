@@ -5,17 +5,18 @@ import { installPrek } from './install'
 import { normalizeVersion, resolveVersion } from './manifest'
 import { pruneCache, runPrek, showVerboseLogs } from './prek'
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   const inputs = getInputs()
 
   core.startGroup('Resolving prek version')
-  const version = await resolveVersion(inputs.prekVersion, inputs.token)
+  const version = await resolveVersion(inputs.prekVersion)
   core.info(`Using prek ${version}`)
   core.endGroup()
   core.setOutput('prek-version', normalizeVersion(version))
 
   await installPrek(version)
-  await restorePrekCache(inputs.workingDirectory)
+  const { matchedKey, primaryKey } = await restorePrekCache(inputs.workingDirectory)
+  core.setOutput('cache-hit', String(matchedKey === primaryKey))
 
   if (inputs.installOnly) {
     core.info('Skipping prek run because install-only=true')
@@ -39,6 +40,12 @@ async function run(): Promise<void> {
   }
 }
 
-run().catch(error => {
-  core.setFailed(error instanceof Error ? error.message : String(error))
-})
+function isMainModule(): boolean {
+  return typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module
+}
+
+if (isMainModule()) {
+  void run().catch(error => {
+    core.setFailed(error instanceof Error ? error.message : String(error))
+  })
+}

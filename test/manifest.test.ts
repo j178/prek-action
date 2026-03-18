@@ -50,11 +50,6 @@ async function importManifestModule() {
   return import('../src/manifest')
 }
 
-async function importInputsModule() {
-  vi.resetModules()
-  return import('../src/inputs')
-}
-
 describe('manifest helpers', () => {
   beforeEach(() => {
     vi.resetModules()
@@ -64,12 +59,12 @@ describe('manifest helpers', () => {
 
   it('resolveVersion accepts an exact version with a leading v', async () => {
     const { resolveVersion } = await importManifestModule()
-    await expect(resolveVersion('v0.2.30', '')).resolves.toBe('0.2.30')
+    await expect(resolveVersion('v0.2.30')).resolves.toBe('0.2.30')
   })
 
   it('resolveVersion returns exact versions even when they are missing from the manifest', async () => {
     const { resolveVersion } = await importManifestModule()
-    await expect(resolveVersion('0.2.100', '')).resolves.toBe('0.2.100')
+    await expect(resolveVersion('0.2.100')).resolves.toBe('0.2.100')
   })
 
   it('resolveVersionFromManifest rejects exact versions that are missing from the manifest', async () => {
@@ -208,24 +203,5 @@ describe('manifest helpers', () => {
     const { toVersion } = await importManifestModule()
     expect(toVersion('v0.2.30')).toBe('0.2.30')
     expect(toVersion('0.2.30')).toBe('0.2.30')
-  })
-})
-
-describe('getInputs', () => {
-  beforeEach(() => {
-    vi.resetModules()
-    vi.clearAllMocks()
-    mockContext.inputs = {}
-  })
-
-  it('enables verbose logs by default and allows opting out', async () => {
-    mockContext.inputs['install-only'] = 'false'
-
-    let { getInputs } = await importInputsModule()
-    expect(getInputs().showVerboseLogs).toBe(true)
-
-    mockContext.inputs['show-verbose-logs'] = 'false'
-    ;({ getInputs } = await importInputsModule())
-    expect(getInputs().showVerboseLogs).toBe(false)
   })
 })

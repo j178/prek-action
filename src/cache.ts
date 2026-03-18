@@ -12,11 +12,16 @@ import {
   PREK_CACHE_KEY_PREFIX,
 } from './types'
 
+export type RestorePrekCacheResult = {
+  matchedKey?: string
+  primaryKey: string
+}
+
 function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
-export async function restorePrekCache(workingDirectory: string): Promise<void> {
+export async function restorePrekCache(workingDirectory: string): Promise<RestorePrekCacheResult> {
   core.startGroup('Restore prek cache')
 
   const cacheDir = await getPrekCacheDir()
@@ -25,11 +30,13 @@ export async function restorePrekCache(workingDirectory: string): Promise<void> 
   core.saveState(CACHE_KEY_STATE, primaryKey)
   core.saveState(CACHE_PATHS_STATE, JSON.stringify(paths))
 
+  let matchedKey: string | undefined
   try {
     const restoredKey = await cache.restoreCache(paths, primaryKey)
     if (restoredKey) {
       core.info(`Restored prek cache with key ${restoredKey}`)
       core.saveState(CACHE_MATCHED_KEY_STATE, restoredKey)
+      matchedKey = restoredKey
     } else {
       core.info(`No cache found for key ${primaryKey}`)
     }
@@ -38,6 +45,8 @@ export async function restorePrekCache(workingDirectory: string): Promise<void> 
   } finally {
     core.endGroup()
   }
+
+  return { matchedKey, primaryKey }
 }
 
 export async function savePrekCache(): Promise<void> {
