@@ -20,7 +20,7 @@ export async function run(): Promise<void> {
     const { matchedKey, primaryKey } = await restorePrekCache(inputs.workingDirectory)
     core.setOutput('cache-hit', String(matchedKey === primaryKey))
   } else {
-    core.info('Caching is disabled')
+    core.info('Caching disabled via cache=false; skipping cache restore')
     core.setOutput('cache-hit', 'false')
   }
 

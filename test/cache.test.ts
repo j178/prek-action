@@ -157,7 +157,9 @@ describe('savePrekCache', () => {
     await savePrekCache()
 
     expect(toolkitMocks.saveCache).not.toHaveBeenCalled()
-    expect(mockContext.telemetry.infos).toEqual(['No cache state found, skipping cache save'])
+    expect(mockContext.telemetry.infos).toEqual([
+      'No cache state found, skipping cache save (cache disabled or restore step did not run)',
+    ])
     expect(mockContext.telemetry.warnings).toEqual([])
   })
 
