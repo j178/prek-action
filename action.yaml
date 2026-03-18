@@ -9,6 +9,10 @@ inputs:
     description: Options to pass to `prek run` (deprecated, use extra-args)
     deprecationMessage: The extra_args input has been renamed to extra-args. Update your workflow.
     required: false
+  cache:
+    description: Whether to cache the prek environment between workflow runs
+    required: false
+    default: "true"
   install-only:
     description: Only install prek, do not run it
     required: false

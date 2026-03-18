@@ -67,6 +67,7 @@ async function importMainModule() {
 function resetMockContext(): void {
   mockContext.failures = []
   mockContext.inputs = {
+    cache: true,
     extraArgs: '--all-files',
     installOnly: false,
     prekVersion: 'latest',
@@ -96,6 +97,22 @@ describe('run', () => {
       ['prek-version', 'v0.3.6'],
       ['cache-hit', 'true'],
     ])
+    expect(mockContext.failures).toEqual([])
+  })
+
+  it('skips cache restore and sets cache-hit=false when cache is disabled', async () => {
+    mockContext.inputs.cache = false
+
+    const { run } = await importMainModule()
+
+    await run()
+
+    expect(dependencyMocks.restorePrekCache).not.toHaveBeenCalled()
+    expect(mockContext.outputs).toEqual([
+      ['prek-version', 'v0.3.6'],
+      ['cache-hit', 'false'],
+    ])
+    expect(dependencyMocks.runPrek).toHaveBeenCalled()
     expect(mockContext.failures).toEqual([])
   })
 

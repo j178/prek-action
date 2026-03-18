@@ -15,8 +15,14 @@ export async function run(): Promise<void> {
   core.setOutput('prek-version', normalizeVersion(version))
 
   await installPrek(version)
-  const { matchedKey, primaryKey } = await restorePrekCache(inputs.workingDirectory)
-  core.setOutput('cache-hit', String(matchedKey === primaryKey))
+
+  if (inputs.cache) {
+    const { matchedKey, primaryKey } = await restorePrekCache(inputs.workingDirectory)
+    core.setOutput('cache-hit', String(matchedKey === primaryKey))
+  } else {
+    core.info('Caching is disabled')
+    core.setOutput('cache-hit', 'false')
+  }
 
   if (inputs.installOnly) {
     core.info('Skipping prek run because install-only=true')

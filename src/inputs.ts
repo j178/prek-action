@@ -8,6 +8,7 @@ export function getInputs(): Inputs {
   const showVerboseLogsInput = core.getInput('show-verbose-logs')
 
   return {
+    cache: core.getBooleanInput('cache'),
     extraArgs: legacyExtraArgs || modernExtraArgs,
     installOnly: core.getBooleanInput('install-only'),
     prekVersion: core.getInput('prek-version') || 'latest',

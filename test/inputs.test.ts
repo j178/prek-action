@@ -28,7 +28,7 @@ describe('getInputs', () => {
   beforeEach(() => {
     vi.resetModules()
     vi.clearAllMocks()
-    mockContext.inputs = {}
+    mockContext.inputs = { cache: 'true', 'install-only': 'false' }
     mockContext.warnings = []
   })
 
@@ -73,6 +73,15 @@ describe('getInputs', () => {
     const inputs = getInputs() as Record<string, unknown>
 
     expect('token' in inputs).toBe(false)
+  })
+
+  it('enables cache by default and allows opting out', async () => {
+    let { getInputs } = await importInputsModule()
+    expect(getInputs().cache).toBe(true)
+
+    mockContext.inputs.cache = 'false'
+    ;({ getInputs } = await importInputsModule())
+    expect(getInputs().cache).toBe(false)
   })
 
   it('enables verbose logs by default and allows opting out', async () => {

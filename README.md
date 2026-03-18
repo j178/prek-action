@@ -35,6 +35,7 @@ For a stable reference, pin to a specific release tag such as `v1.2.3`, or pin t
 
 | Input | Description | Required | Default |
 | --- | --- | --- | --- |
+| `cache` | Cache the prek environment between workflow runs | No | `true` |
 | `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
 | `extra_args` | Deprecated alias for `extra-args` | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
