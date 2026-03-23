@@ -1,18 +1,73 @@
 import * as fs from 'node:fs/promises'
+import * as path from 'node:path'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as semver from 'semver'
 import type { ManifestAsset, NormalizedVersion, Version, VersionManifest } from './types'
+import { detectVersion } from './version/auto'
+import {
+  normalizeVersion,
+  resolveVersionFromManifest as resolveVersionFromManifestWithManifest,
+} from './version/constraints'
+import { resolveVersionFile } from './version/version-file'
 
 const prekReleasesBaseUrl = 'https://github.com/j178/prek/releases/download'
 const prekVersionManifestUrl =
   'https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json'
+
 // Cache the in-flight manifest download so version resolution and asset lookup share one request per process.
 let versionManifestPromise: Promise<VersionManifest> | undefined
 
-// Resolve user input to a bare version. Exact versions pass through directly; ranges and `latest`
-// are resolved from the downloaded version manifest.
-export async function resolveVersion(versionInput: string): Promise<Version> {
+type ResolveOptions = {
+  prekVersion: string
+  versionFile?: string
+  workingDirectory?: string
+}
+
+export async function resolveVersion(
+  options: ResolveOptions | string,
+  manifest?: VersionManifest,
+): Promise<Version> {
+  const normalizedOptions = typeof options === 'string' ? { prekVersion: options } : options
+  const { prekVersion, versionFile, workingDirectory = '.' } = normalizedOptions
+  const normalizedInput = prekVersion.trim() || 'latest'
+
+  if (normalizedInput !== 'latest' && versionFile) {
+    throw new Error(
+      'Cannot specify both prek-version and version-file inputs. ' +
+        'Use one or the other to avoid ambiguity.',
+    )
+  }
+
+  if (normalizedInput !== 'latest') {
+    return resolveVersionInput(normalizedInput, manifest)
+  }
+
+  const resolvedWorkingDirectory = resolveWorkingDirectory(workingDirectory)
+  if (versionFile) {
+    const resolvedPath = path.isAbsolute(versionFile)
+      ? versionFile
+      : path.resolve(resolvedWorkingDirectory, versionFile)
+    const detected = await resolveVersionFile(resolvedPath)
+    core.info(`Resolved prek version "${detected.version}" from version-file: ${detected.source}`)
+    return resolveVersionInput(detected.version, manifest)
+  }
+
+  const repoRoot = resolveRepoRoot()
+  const detected = await detectVersion(resolvedWorkingDirectory, repoRoot)
+  if (detected) {
+    core.info(`Auto-detected prek version "${detected.version}" from ${detected.source}`)
+    return resolveVersionInput(detected.version, manifest)
+  }
+
+  core.info('No version source found (no version-file or .tool-versions); defaulting to latest')
+  return resolveVersionInput('latest', manifest)
+}
+
+async function resolveVersionInput(
+  versionInput: string,
+  manifest?: VersionManifest,
+): Promise<Version> {
   const normalizedInput = versionInput.trim() || 'latest'
   const exactVersion = semver.valid(toVersion(normalizedInput))
   if (exactVersion) {
@@ -21,13 +76,24 @@ export async function resolveVersion(versionInput: string): Promise<Version> {
     return version
   }
 
-  return resolveVersionFromManifest(versionInput, await getVersionManifest())
+  return resolveVersionFromManifest(versionInput, manifest ?? (await getVersionManifest()))
 }
 
-// Internal code uses bare semver strings; GitHub-facing tags still need a leading v.
-export function normalizeVersion(version: string | Version | NormalizedVersion): NormalizedVersion {
-  return `v${version.replace(/^v/, '')}` as NormalizedVersion
+function resolveRepoRoot(): string | undefined {
+  const repoRoot = process.env.GITHUB_WORKSPACE
+  return repoRoot ? path.resolve(repoRoot) : undefined
 }
+
+function resolveWorkingDirectory(workingDirectory: string): string {
+  if (path.isAbsolute(workingDirectory)) {
+    return workingDirectory
+  }
+
+  const repoRoot = resolveRepoRoot()
+  return repoRoot ? path.resolve(repoRoot, workingDirectory) : path.resolve(workingDirectory)
+}
+
+export { normalizeVersion }
 
 export function toVersion(version: string): Version {
   return version.replace(/^v/, '') as Version
@@ -83,37 +149,11 @@ export async function getAssetForVersion(
   return buildReleaseAssetUrl(version, archiveName)
 }
 
-// Resolve `latest` and semver ranges from the downloaded manifest only.
 export function resolveVersionFromManifest(
   versionInput: string,
   manifest: VersionManifest,
 ): Version {
-  const normalizedInput = versionInput.trim() || 'latest'
-  core.info(`Resolving prek version from input "${versionInput}"`)
-
-  if (normalizedInput === 'latest') {
-    const latestRelease = manifest.find(release => !release.prerelease)
-    if (!latestRelease) {
-      throw new Error('The prek version manifest does not contain a stable release')
-    }
-    core.info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`)
-    return latestRelease.version
-  }
-
-  const range = semver.validRange(normalizedInput)
-  if (!range) {
-    throw new Error(`Invalid prek-version input: ${versionInput}`)
-  }
-
-  const rangeRelease = manifest.find(
-    candidate => !candidate.prerelease && semver.satisfies(candidate.version, range),
-  )
-  if (!rangeRelease) {
-    throw new Error(`No prek release satisfies version range: ${versionInput}`)
-  }
-
-  core.info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`)
-  return rangeRelease.version
+  return resolveVersionFromManifestWithManifest(versionInput, manifest)
 }
 
 async function downloadVersionManifest(): Promise<VersionManifest> {
@@ -140,3 +180,5 @@ function buildReleaseAssetUrl(version: Version, archiveName: string): ManifestAs
     name: archiveName,
   }
 }
+
+export type { NormalizedVersion }

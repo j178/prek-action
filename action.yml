@@ -21,6 +21,13 @@ inputs:
     description: Version or semver range of prek to install (for example `0.2.1`, `0.3.x`, `<=1.0.0`, or `latest`)
     required: false
     default: "latest"
+  version-file:
+    description: >-
+      Path to a file containing the prek version to install.
+      Supports: .tool-versions, mise.toml, uv.lock, pyproject.toml, requirements*.txt, package.json.
+      Cannot be combined with an explicit prek-version.
+    required: false
+    default: ""
   show-verbose-logs:
     description: Whether to print the prek verbose log after `prek run`
     required: false

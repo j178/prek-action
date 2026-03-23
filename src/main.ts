@@ -9,7 +9,14 @@ export async function run(): Promise<void> {
   const inputs = getInputs()
 
   core.startGroup('Resolving prek version')
-  const version = await resolveVersion(inputs.prekVersion)
+  core.info(
+    `Inputs: prek-version="${inputs.prekVersion}", version-file="${inputs.versionFile ?? ''}", working-directory="${inputs.workingDirectory}"`,
+  )
+  const version = await resolveVersion({
+    prekVersion: inputs.prekVersion,
+    versionFile: inputs.versionFile,
+    workingDirectory: inputs.workingDirectory,
+  })
   core.info(`Using prek ${version}`)
   core.endGroup()
   core.setOutput('prek-version', normalizeVersion(version))
