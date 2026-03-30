@@ -169,7 +169,7 @@ async function verifyDownloadChecksum(
 ): Promise<void> {
   const result = await validateDownloadedChecksum(archivePath, asset, version)
   if (result === 'missing') {
-    core.warning(
+    core.debug(
       `Checksum is not known for ${buildChecksumKey(version, asset.name)}; skipping verification for prek ${version}`,
     )
     return
