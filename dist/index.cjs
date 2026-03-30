@@ -63617,7 +63617,7 @@ async function getBinaryPath(rootDir, asset) {
 async function verifyDownloadChecksum(archivePath, asset, version3) {
   const result = await validateDownloadedChecksum(archivePath, asset, version3);
   if (result === "missing") {
-    warning(
+    debug(
       `Checksum is not known for ${buildChecksumKey(version3, asset.name)}; skipping verification for prek ${version3}`
     );
     return;
