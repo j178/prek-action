@@ -7,6 +7,6 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
   - repo: https://github.com/biomejs/pre-commit
-    rev: v2.4.7
+    rev: v2.4.10
     hooks:
       - id: biome-check
