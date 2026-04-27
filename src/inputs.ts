@@ -11,6 +11,7 @@ export function getInputs(): Inputs {
     installOnly: core.getBooleanInput('install-only'),
     prekVersion: core.getInput('prek-version') || 'latest',
     showVerboseLogs: core.getBooleanInput('show-verbose-logs'),
+    versionFile: core.getInput('version-file') || undefined,
     workingDirectory: core.getInput('working-directory') || '.',
   }
 }

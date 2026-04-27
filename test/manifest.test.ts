@@ -6,6 +6,7 @@ const mockContext = vi.hoisted(() => ({
 }))
 
 const toolkitMocks = vi.hoisted(() => ({
+  debug: vi.fn(),
   downloadTool: vi.fn<() => Promise<string>>(),
   getBooleanInput: vi.fn((name: string) => (mockContext.inputs[name] ?? '') === 'true'),
   getInput: vi.fn((name: string) => mockContext.inputs[name] ?? ''),
@@ -14,6 +15,7 @@ const toolkitMocks = vi.hoisted(() => ({
 }))
 
 vi.mock('@actions/core', () => ({
+  debug: toolkitMocks.debug,
   getBooleanInput: toolkitMocks.getBooleanInput,
   getInput: toolkitMocks.getInput,
   info: toolkitMocks.info,
@@ -79,7 +81,7 @@ describe('manifest helpers', () => {
     ]
 
     expect(() => resolveVersionFromManifest('0.2.100', manifest)).toThrow(
-      /No prek release satisfies version range/,
+      /not found in the version manifest|version manifest may be stale/i,
     )
   })
 

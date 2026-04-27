@@ -964,7 +964,7 @@ var require_util = __commonJS({
     var net = require("node:net");
     var { Blob: Blob2 } = require("node:buffer");
     var nodeUtil = require("node:util");
-    var { stringify } = require("node:querystring");
+    var { stringify: stringify2 } = require("node:querystring");
     var { EventEmitter: EE } = require("node:events");
     var { InvalidArgumentError } = require_errors();
     var { headerNameLowerCasedRecord } = require_constants();
@@ -1024,7 +1024,7 @@ var require_util = __commonJS({
       if (url2.includes("?") || url2.includes("#")) {
         throw new Error('Query params cannot be passed when url already contains "?" or "#".');
       }
-      const stringified = stringify(queryParams);
+      const stringified = stringify2(queryParams);
       if (stringified) {
         url2 += "?" + stringified;
       }
@@ -1069,14 +1069,14 @@ var require_util = __commonJS({
         }
         const port = url2.port != null ? url2.port : url2.protocol === "https:" ? 443 : 80;
         let origin = url2.origin != null ? url2.origin : `${url2.protocol || ""}//${url2.hostname || ""}:${port}`;
-        let path16 = url2.path != null ? url2.path : `${url2.pathname || ""}${url2.search || ""}`;
+        let path21 = url2.path != null ? url2.path : `${url2.pathname || ""}${url2.search || ""}`;
         if (origin[origin.length - 1] === "/") {
           origin = origin.slice(0, origin.length - 1);
         }
-        if (path16 && path16[0] !== "/") {
-          path16 = `/${path16}`;
+        if (path21 && path21[0] !== "/") {
+          path21 = `/${path21}`;
         }
-        return new URL(`${origin}${path16}`);
+        return new URL(`${origin}${path21}`);
       }
       if (!isHttpOrHttpsPrefixed(url2.origin || url2.protocol)) {
         throw new InvalidArgumentError("Invalid URL protocol: the URL must start with `http:` or `https:`.");
@@ -1527,39 +1527,39 @@ var require_diagnostics = __commonJS({
       });
       diagnosticsChannel.channel("undici:client:sendHeaders").subscribe((evt) => {
         const {
-          request: { method, path: path16, origin }
+          request: { method, path: path21, origin }
         } = evt;
-        debuglog("sending request to %s %s/%s", method, origin, path16);
+        debuglog("sending request to %s %s/%s", method, origin, path21);
       });
       diagnosticsChannel.channel("undici:request:headers").subscribe((evt) => {
         const {
-          request: { method, path: path16, origin },
+          request: { method, path: path21, origin },
           response: { statusCode }
         } = evt;
         debuglog(
           "received response to %s %s/%s - HTTP %d",
           method,
           origin,
-          path16,
+          path21,
           statusCode
         );
       });
       diagnosticsChannel.channel("undici:request:trailers").subscribe((evt) => {
         const {
-          request: { method, path: path16, origin }
+          request: { method, path: path21, origin }
         } = evt;
-        debuglog("trailers received from %s %s/%s", method, origin, path16);
+        debuglog("trailers received from %s %s/%s", method, origin, path21);
       });
       diagnosticsChannel.channel("undici:request:error").subscribe((evt) => {
         const {
-          request: { method, path: path16, origin },
+          request: { method, path: path21, origin },
           error: error2
         } = evt;
         debuglog(
           "request to %s %s/%s errored - %s",
           method,
           origin,
-          path16,
+          path21,
           error2.message
         );
       });
@@ -1608,9 +1608,9 @@ var require_diagnostics = __commonJS({
         });
         diagnosticsChannel.channel("undici:client:sendHeaders").subscribe((evt) => {
           const {
-            request: { method, path: path16, origin }
+            request: { method, path: path21, origin }
           } = evt;
-          debuglog("sending request to %s %s/%s", method, origin, path16);
+          debuglog("sending request to %s %s/%s", method, origin, path21);
         });
       }
       diagnosticsChannel.channel("undici:websocket:open").subscribe((evt) => {
@@ -1673,7 +1673,7 @@ var require_request = __commonJS({
     var kHandler = /* @__PURE__ */ Symbol("handler");
     var Request = class {
       constructor(origin, {
-        path: path16,
+        path: path21,
         method,
         body: body2,
         headers,
@@ -1688,11 +1688,11 @@ var require_request = __commonJS({
         expectContinue,
         servername
       }, handler) {
-        if (typeof path16 !== "string") {
+        if (typeof path21 !== "string") {
           throw new InvalidArgumentError("path must be a string");
-        } else if (path16[0] !== "/" && !(path16.startsWith("http://") || path16.startsWith("https://")) && method !== "CONNECT") {
+        } else if (path21[0] !== "/" && !(path21.startsWith("http://") || path21.startsWith("https://")) && method !== "CONNECT") {
           throw new InvalidArgumentError("path must be an absolute URL or start with a slash");
-        } else if (invalidPathRegex.test(path16)) {
+        } else if (invalidPathRegex.test(path21)) {
           throw new InvalidArgumentError("invalid request path");
         }
         if (typeof method !== "string") {
@@ -1758,7 +1758,7 @@ var require_request = __commonJS({
         this.completed = false;
         this.aborted = false;
         this.upgrade = upgrade || null;
-        this.path = query ? buildURL(path16, query) : path16;
+        this.path = query ? buildURL(path21, query) : path21;
         this.origin = origin;
         this.idempotent = idempotent == null ? method === "HEAD" || method === "GET" : idempotent;
         this.blocking = blocking == null ? false : blocking;
@@ -2076,9 +2076,9 @@ var require_dispatcher_base = __commonJS({
       }
       close(callback) {
         if (callback === void 0) {
-          return new Promise((resolve3, reject) => {
+          return new Promise((resolve5, reject) => {
             this.close((err, data) => {
-              return err ? reject(err) : resolve3(data);
+              return err ? reject(err) : resolve5(data);
             });
           });
         }
@@ -2116,12 +2116,12 @@ var require_dispatcher_base = __commonJS({
           err = null;
         }
         if (callback === void 0) {
-          return new Promise((resolve3, reject) => {
+          return new Promise((resolve5, reject) => {
             this.destroy(err, (err2, data) => {
               return err2 ? (
                 /* istanbul ignore next: should never error */
                 reject(err2)
-              ) : resolve3(data);
+              ) : resolve5(data);
             });
           });
         }
@@ -3426,7 +3426,7 @@ var require_data_url = __commonJS({
       const buffer3 = Buffer.from(data, "base64");
       return new Uint8Array(buffer3.buffer, buffer3.byteOffset, buffer3.byteLength);
     }
-    function collectAnHTTPQuotedString(input, position, extractValue) {
+    function collectAnHTTPQuotedString(input, position, extractValue2) {
       const positionStart = position.position;
       let value = "";
       assert4(input[position.position] === '"');
@@ -3454,7 +3454,7 @@ var require_data_url = __commonJS({
           break;
         }
       }
-      if (extractValue) {
+      if (extractValue2) {
         return value;
       }
       return input.slice(positionStart, position.position);
@@ -4388,8 +4388,8 @@ var require_util2 = __commonJS({
     function createDeferredPromise() {
       let res;
       let rej;
-      const promise = new Promise((resolve3, reject) => {
-        res = resolve3;
+      const promise = new Promise((resolve5, reject) => {
+        res = resolve5;
         rej = reject;
       });
       return { promise, resolve: res, reject: rej };
@@ -6277,7 +6277,7 @@ var require_client_h1 = __commonJS({
       return method !== "GET" && method !== "HEAD" && method !== "OPTIONS" && method !== "TRACE" && method !== "CONNECT";
     }
     function writeH1(client, request) {
-      const { method, path: path16, host, upgrade, blocking, reset } = request;
+      const { method, path: path21, host, upgrade, blocking, reset } = request;
       let { body: body2, headers, contentLength: contentLength2 } = request;
       const expectsPayload = method === "PUT" || method === "POST" || method === "PATCH" || method === "QUERY" || method === "PROPFIND" || method === "PROPPATCH";
       if (util6.isFormDataLike(body2)) {
@@ -6343,7 +6343,7 @@ var require_client_h1 = __commonJS({
       if (blocking) {
         socket[kBlocking] = true;
       }
-      let header = `${method} ${path16} HTTP/1.1\r
+      let header = `${method} ${path21} HTTP/1.1\r
 `;
       if (typeof host === "string") {
         header += `host: ${host}\r
@@ -6530,12 +6530,12 @@ upgrade: ${upgrade}\r
           cb();
         }
       }
-      const waitForDrain = () => new Promise((resolve3, reject) => {
+      const waitForDrain = () => new Promise((resolve5, reject) => {
         assert4(callback === null);
         if (socket[kError]) {
           reject(socket[kError]);
         } else {
-          callback = resolve3;
+          callback = resolve5;
         }
       });
       socket.on("close", onDrain).on("drain", onDrain);
@@ -6869,7 +6869,7 @@ var require_client_h2 = __commonJS({
     }
     function writeH2(client, request) {
       const session = client[kHTTP2Session];
-      const { method, path: path16, host, upgrade, expectContinue, signal, headers: reqHeaders } = request;
+      const { method, path: path21, host, upgrade, expectContinue, signal, headers: reqHeaders } = request;
       let { body: body2 } = request;
       if (upgrade) {
         util6.errorRequest(client, request, new Error("Upgrade not supported for H2"));
@@ -6936,7 +6936,7 @@ var require_client_h2 = __commonJS({
         });
         return true;
       }
-      headers[HTTP2_HEADER_PATH] = path16;
+      headers[HTTP2_HEADER_PATH] = path21;
       headers[HTTP2_HEADER_SCHEME] = "https";
       const expectsPayload = method === "PUT" || method === "POST" || method === "PATCH";
       if (body2 && typeof body2.read === "function") {
@@ -7172,12 +7172,12 @@ var require_client_h2 = __commonJS({
           cb();
         }
       }
-      const waitForDrain = () => new Promise((resolve3, reject) => {
+      const waitForDrain = () => new Promise((resolve5, reject) => {
         assert4(callback === null);
         if (socket[kError]) {
           reject(socket[kError]);
         } else {
-          callback = resolve3;
+          callback = resolve5;
         }
       });
       h2stream.on("close", onDrain).on("drain", onDrain);
@@ -7289,9 +7289,9 @@ var require_redirect_handler = __commonJS({
           return this.handler.onHeaders(statusCode, headers, resume, statusText);
         }
         const { origin, pathname, search } = util6.parseURL(new URL(this.location, this.opts.origin && new URL(this.opts.path, this.opts.origin)));
-        const path16 = search ? `${pathname}${search}` : pathname;
+        const path21 = search ? `${pathname}${search}` : pathname;
         this.opts.headers = cleanRequestHeaders(this.opts.headers, statusCode === 303, this.opts.origin !== origin);
-        this.opts.path = path16;
+        this.opts.path = path21;
         this.opts.origin = origin;
         this.opts.maxRedirections = 0;
         this.opts.query = null;
@@ -7654,16 +7654,16 @@ var require_client = __commonJS({
         return this[kNeedDrain] < 2;
       }
       async [kClose]() {
-        return new Promise((resolve3) => {
+        return new Promise((resolve5) => {
           if (this[kSize]) {
-            this[kClosedResolve] = resolve3;
+            this[kClosedResolve] = resolve5;
           } else {
-            resolve3(null);
+            resolve5(null);
           }
         });
       }
       async [kDestroy](err) {
-        return new Promise((resolve3) => {
+        return new Promise((resolve5) => {
           const requests = this[kQueue].splice(this[kPendingIdx]);
           for (let i = 0; i < requests.length; i++) {
             const request = requests[i];
@@ -7674,7 +7674,7 @@ var require_client = __commonJS({
               this[kClosedResolve]();
               this[kClosedResolve] = null;
             }
-            resolve3(null);
+            resolve5(null);
           };
           if (this[kHTTPContext]) {
             this[kHTTPContext].destroy(err, callback);
@@ -7725,7 +7725,7 @@ var require_client = __commonJS({
         });
       }
       try {
-        const socket = await new Promise((resolve3, reject) => {
+        const socket = await new Promise((resolve5, reject) => {
           client[kConnector]({
             host,
             hostname,
@@ -7737,7 +7737,7 @@ var require_client = __commonJS({
             if (err) {
               reject(err);
             } else {
-              resolve3(socket2);
+              resolve5(socket2);
             }
           });
         });
@@ -8073,8 +8073,8 @@ var require_pool_base = __commonJS({
         if (this[kQueue].isEmpty()) {
           await Promise.all(this[kClients].map((c) => c.close()));
         } else {
-          await new Promise((resolve3) => {
-            this[kClosedResolve] = resolve3;
+          await new Promise((resolve5) => {
+            this[kClosedResolve] = resolve5;
           });
         }
       }
@@ -8525,10 +8525,10 @@ var require_proxy_agent = __commonJS({
         };
         const {
           origin,
-          path: path16 = "/",
+          path: path21 = "/",
           headers = {}
         } = opts;
-        opts.path = origin + path16;
+        opts.path = origin + path21;
         if (!("host" in headers) && !("Host" in headers)) {
           const { host } = new URL3(origin);
           headers.host = host;
@@ -9289,7 +9289,7 @@ var require_readable = __commonJS({
         if (this._readableState.closeEmitted) {
           return null;
         }
-        return await new Promise((resolve3, reject) => {
+        return await new Promise((resolve5, reject) => {
           if (this[kContentLength] > limit) {
             this.destroy(new AbortError5());
           }
@@ -9302,7 +9302,7 @@ var require_readable = __commonJS({
             if (signal?.aborted) {
               reject(signal.reason ?? new AbortError5());
             } else {
-              resolve3(null);
+              resolve5(null);
             }
           }).on("error", noop).on("data", function(chunk) {
             limit -= chunk.length;
@@ -9321,7 +9321,7 @@ var require_readable = __commonJS({
     }
     async function consume(stream3, type) {
       assert4(!stream3[kConsume]);
-      return new Promise((resolve3, reject) => {
+      return new Promise((resolve5, reject) => {
         if (isUnusable(stream3)) {
           const rState = stream3._readableState;
           if (rState.destroyed && rState.closeEmitted === false) {
@@ -9338,7 +9338,7 @@ var require_readable = __commonJS({
             stream3[kConsume] = {
               type,
               stream: stream3,
-              resolve: resolve3,
+              resolve: resolve5,
               reject,
               length: 0,
               body: []
@@ -9408,18 +9408,18 @@ var require_readable = __commonJS({
       return buffer3;
     }
     function consumeEnd(consume2) {
-      const { type, body: body2, resolve: resolve3, stream: stream3, length } = consume2;
+      const { type, body: body2, resolve: resolve5, stream: stream3, length } = consume2;
       try {
         if (type === "text") {
-          resolve3(chunksDecode(body2, length));
+          resolve5(chunksDecode(body2, length));
         } else if (type === "json") {
-          resolve3(JSON.parse(chunksDecode(body2, length)));
+          resolve5(JSON.parse(chunksDecode(body2, length)));
         } else if (type === "arrayBuffer") {
-          resolve3(chunksConcat(body2, length).buffer);
+          resolve5(chunksConcat(body2, length).buffer);
         } else if (type === "blob") {
-          resolve3(new Blob(body2, { type: stream3[kContentType] }));
+          resolve5(new Blob(body2, { type: stream3[kContentType] }));
         } else if (type === "bytes") {
-          resolve3(chunksConcat(body2, length));
+          resolve5(chunksConcat(body2, length));
         }
         consumeFinish(consume2);
       } catch (err) {
@@ -9676,9 +9676,9 @@ var require_api_request = __commonJS({
     };
     function request(opts, callback) {
       if (callback === void 0) {
-        return new Promise((resolve3, reject) => {
+        return new Promise((resolve5, reject) => {
           request.call(this, opts, (err, data) => {
-            return err ? reject(err) : resolve3(data);
+            return err ? reject(err) : resolve5(data);
           });
         });
       }
@@ -9901,9 +9901,9 @@ var require_api_stream = __commonJS({
     };
     function stream3(opts, factory, callback) {
       if (callback === void 0) {
-        return new Promise((resolve3, reject) => {
+        return new Promise((resolve5, reject) => {
           stream3.call(this, opts, factory, (err, data) => {
-            return err ? reject(err) : resolve3(data);
+            return err ? reject(err) : resolve5(data);
           });
         });
       }
@@ -10188,9 +10188,9 @@ var require_api_upgrade = __commonJS({
     };
     function upgrade(opts, callback) {
       if (callback === void 0) {
-        return new Promise((resolve3, reject) => {
+        return new Promise((resolve5, reject) => {
           upgrade.call(this, opts, (err, data) => {
-            return err ? reject(err) : resolve3(data);
+            return err ? reject(err) : resolve5(data);
           });
         });
       }
@@ -10282,9 +10282,9 @@ var require_api_connect = __commonJS({
     };
     function connect(opts, callback) {
       if (callback === void 0) {
-        return new Promise((resolve3, reject) => {
+        return new Promise((resolve5, reject) => {
           connect.call(this, opts, (err, data) => {
-            return err ? reject(err) : resolve3(data);
+            return err ? reject(err) : resolve5(data);
           });
         });
       }
@@ -10449,20 +10449,20 @@ var require_mock_utils = __commonJS({
       }
       return true;
     }
-    function safeUrl(path16) {
-      if (typeof path16 !== "string") {
-        return path16;
+    function safeUrl(path21) {
+      if (typeof path21 !== "string") {
+        return path21;
       }
-      const pathSegments = path16.split("?");
+      const pathSegments = path21.split("?");
       if (pathSegments.length !== 2) {
-        return path16;
+        return path21;
       }
       const qp = new URLSearchParams(pathSegments.pop());
       qp.sort();
       return [...pathSegments, qp.toString()].join("?");
     }
-    function matchKey(mockDispatch2, { path: path16, method, body: body2, headers }) {
-      const pathMatch = matchValue(mockDispatch2.path, path16);
+    function matchKey(mockDispatch2, { path: path21, method, body: body2, headers }) {
+      const pathMatch = matchValue(mockDispatch2.path, path21);
       const methodMatch = matchValue(mockDispatch2.method, method);
       const bodyMatch = typeof mockDispatch2.body !== "undefined" ? matchValue(mockDispatch2.body, body2) : true;
       const headersMatch = matchHeaders(mockDispatch2, headers);
@@ -10484,7 +10484,7 @@ var require_mock_utils = __commonJS({
     function getMockDispatch(mockDispatches, key) {
       const basePath = key.query ? buildURL(key.path, key.query) : key.path;
       const resolvedPath = typeof basePath === "string" ? safeUrl(basePath) : basePath;
-      let matchedMockDispatches = mockDispatches.filter(({ consumed }) => !consumed).filter(({ path: path16 }) => matchValue(safeUrl(path16), resolvedPath));
+      let matchedMockDispatches = mockDispatches.filter(({ consumed }) => !consumed).filter(({ path: path21 }) => matchValue(safeUrl(path21), resolvedPath));
       if (matchedMockDispatches.length === 0) {
         throw new MockNotMatchedError(`Mock dispatch not matched for path '${resolvedPath}'`);
       }
@@ -10522,9 +10522,9 @@ var require_mock_utils = __commonJS({
       }
     }
     function buildKey(opts) {
-      const { path: path16, method, body: body2, headers, query } = opts;
+      const { path: path21, method, body: body2, headers, query } = opts;
       return {
-        path: path16,
+        path: path21,
         method,
         body: body2,
         headers,
@@ -10987,10 +10987,10 @@ var require_pending_interceptors_formatter = __commonJS({
       }
       format(pendingInterceptors) {
         const withPrettyHeaders = pendingInterceptors.map(
-          ({ method, path: path16, data: { statusCode }, persist, times, timesInvoked, origin }) => ({
+          ({ method, path: path21, data: { statusCode }, persist, times, timesInvoked, origin }) => ({
             Method: method,
             Origin: origin,
-            Path: path16,
+            Path: path21,
             "Status code": statusCode,
             Persistent: persist ? PERSISTENT : NOT_PERSISTENT,
             Invocations: timesInvoked,
@@ -14146,7 +14146,7 @@ var require_fetch = __commonJS({
       function dispatch({ body: body2 }) {
         const url2 = requestCurrentURL(request);
         const agent = fetchParams.controller.dispatcher;
-        return new Promise((resolve3, reject) => agent.dispatch(
+        return new Promise((resolve5, reject) => agent.dispatch(
           {
             path: url2.pathname + url2.search,
             origin: url2.origin,
@@ -14222,7 +14222,7 @@ var require_fetch = __commonJS({
                 }
               }
               const onError = this.onError.bind(this);
-              resolve3({
+              resolve5({
                 status,
                 statusText,
                 headersList,
@@ -14268,7 +14268,7 @@ var require_fetch = __commonJS({
               for (let i = 0; i < rawHeaders.length; i += 2) {
                 headersList.append(bufferToLowerCasedHeaderName(rawHeaders[i]), rawHeaders[i + 1].toString("latin1"), true);
               }
-              resolve3({
+              resolve5({
                 status,
                 statusText: STATUS_CODES[status],
                 headersList,
@@ -15871,9 +15871,9 @@ var require_util6 = __commonJS({
         }
       }
     }
-    function validateCookiePath(path16) {
-      for (let i = 0; i < path16.length; ++i) {
-        const code = path16.charCodeAt(i);
+    function validateCookiePath(path21) {
+      for (let i = 0; i < path21.length; ++i) {
+        const code = path21.charCodeAt(i);
         if (code < 32 || // exclude CTLs (0-31)
         code === 127 || // DEL
         code === 59) {
@@ -15921,7 +15921,7 @@ var require_util6 = __commonJS({
         throw new Error("Invalid cookie max-age");
       }
     }
-    function stringify(cookie) {
+    function stringify2(cookie) {
       if (cookie.name.length === 0) {
         return null;
       }
@@ -15975,7 +15975,7 @@ var require_util6 = __commonJS({
       validateCookiePath,
       validateCookieValue,
       toIMFDate,
-      stringify
+      stringify: stringify2
     };
   }
 });
@@ -16125,7 +16125,7 @@ var require_cookies = __commonJS({
   "node_modules/undici/lib/web/cookies/index.js"(exports2, module2) {
     "use strict";
     var { parseSetCookie } = require_parse();
-    var { stringify } = require_util6();
+    var { stringify: stringify2 } = require_util6();
     var { webidl } = require_webidl();
     var { Headers: Headers2 } = require_headers();
     function getCookies(headers) {
@@ -16168,7 +16168,7 @@ var require_cookies = __commonJS({
       webidl.argumentLengthCheck(arguments, 2, "setCookie");
       webidl.brandCheck(headers, Headers2, { strict: false });
       cookie = webidl.converters.Cookie(cookie);
-      const str = stringify(cookie);
+      const str = stringify2(cookie);
       if (str) {
         headers.append("Set-Cookie", str);
       }
@@ -17907,8 +17907,8 @@ var require_util8 = __commonJS({
       return true;
     }
     function delay4(ms) {
-      return new Promise((resolve3) => {
-        setTimeout(resolve3, ms).unref();
+      return new Promise((resolve5) => {
+        setTimeout(resolve5, ms).unref();
       });
     }
     module2.exports = {
@@ -18513,11 +18513,11 @@ var require_undici = __commonJS({
           if (typeof opts.path !== "string") {
             throw new InvalidArgumentError("invalid opts.path");
           }
-          let path16 = opts.path;
+          let path21 = opts.path;
           if (!opts.path.startsWith("/")) {
-            path16 = `/${path16}`;
+            path21 = `/${path21}`;
           }
-          url2 = new URL(util6.parseOrigin(url2).origin + path16);
+          url2 = new URL(util6.parseOrigin(url2).origin + path21);
         } else {
           if (!opts) {
             opts = typeof url2 === "object" ? url2 : {};
@@ -18813,7 +18813,7 @@ var require_minimatch = __commonJS({
   "node_modules/minimatch/minimatch.js"(exports2, module2) {
     module2.exports = minimatch2;
     minimatch2.Minimatch = Minimatch2;
-    var path16 = (function() {
+    var path21 = (function() {
       try {
         return require("path");
       } catch (e) {
@@ -18821,7 +18821,7 @@ var require_minimatch = __commonJS({
     })() || {
       sep: "/"
     };
-    minimatch2.sep = path16.sep;
+    minimatch2.sep = path21.sep;
     var GLOBSTAR = minimatch2.GLOBSTAR = Minimatch2.GLOBSTAR = {};
     var expand = require_brace_expansion();
     var plTypes = {
@@ -18910,8 +18910,8 @@ var require_minimatch = __commonJS({
       assertValidPattern(pattern);
       if (!options) options = {};
       pattern = pattern.trim();
-      if (!options.allowWindowsEscape && path16.sep !== "/") {
-        pattern = pattern.split(path16.sep).join("/");
+      if (!options.allowWindowsEscape && path21.sep !== "/") {
+        pattern = pattern.split(path21.sep).join("/");
       }
       this.options = options;
       this.maxGlobstarRecursion = options.maxGlobstarRecursion !== void 0 ? options.maxGlobstarRecursion : 200;
@@ -19000,9 +19000,9 @@ var require_minimatch = __commonJS({
         throw new TypeError("pattern is too long");
       }
     };
-    Minimatch2.prototype.parse = parse2;
+    Minimatch2.prototype.parse = parse4;
     var SUBPARSE = {};
-    function parse2(pattern, isSub) {
+    function parse4(pattern, isSub) {
       assertValidPattern(pattern);
       var options = this.options;
       if (pattern === "**") {
@@ -19282,8 +19282,8 @@ var require_minimatch = __commonJS({
       if (this.empty) return f === "";
       if (f === "/" && partial) return true;
       var options = this.options;
-      if (path16.sep !== "/") {
-        f = f.split(path16.sep).join("/");
+      if (path21.sep !== "/") {
+        f = f.split(path21.sep).join("/");
       }
       f = f.split(slashSplit);
       this.debug(this.pattern, "split", f);
@@ -19938,7 +19938,7 @@ var require_parse2 = __commonJS({
   "node_modules/semver/functions/parse.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var parse2 = (version3, options, throwErrors = false) => {
+    var parse4 = (version3, options, throwErrors = false) => {
       if (version3 instanceof SemVer) {
         return version3;
       }
@@ -19951,7 +19951,7 @@ var require_parse2 = __commonJS({
         throw er;
       }
     };
-    module2.exports = parse2;
+    module2.exports = parse4;
   }
 });
 
@@ -19959,12 +19959,12 @@ var require_parse2 = __commonJS({
 var require_valid = __commonJS({
   "node_modules/semver/functions/valid.js"(exports2, module2) {
     "use strict";
-    var parse2 = require_parse2();
-    var valid3 = (version3, options) => {
-      const v = parse2(version3, options);
+    var parse4 = require_parse2();
+    var valid4 = (version3, options) => {
+      const v = parse4(version3, options);
       return v ? v.version : null;
     };
-    module2.exports = valid3;
+    module2.exports = valid4;
   }
 });
 
@@ -19972,9 +19972,9 @@ var require_valid = __commonJS({
 var require_clean = __commonJS({
   "node_modules/semver/functions/clean.js"(exports2, module2) {
     "use strict";
-    var parse2 = require_parse2();
+    var parse4 = require_parse2();
     var clean3 = (version3, options) => {
-      const s = parse2(version3.trim().replace(/^[=v]+/, ""), options);
+      const s = parse4(version3.trim().replace(/^[=v]+/, ""), options);
       return s ? s.version : null;
     };
     module2.exports = clean3;
@@ -20009,10 +20009,10 @@ var require_inc = __commonJS({
 var require_diff = __commonJS({
   "node_modules/semver/functions/diff.js"(exports2, module2) {
     "use strict";
-    var parse2 = require_parse2();
+    var parse4 = require_parse2();
     var diff = (version1, version22) => {
-      const v1 = parse2(version1, null, true);
-      const v2 = parse2(version22, null, true);
+      const v1 = parse4(version1, null, true);
+      const v2 = parse4(version22, null, true);
       const comparison = v1.compare(v2);
       if (comparison === 0) {
         return null;
@@ -20083,9 +20083,9 @@ var require_patch = __commonJS({
 var require_prerelease = __commonJS({
   "node_modules/semver/functions/prerelease.js"(exports2, module2) {
     "use strict";
-    var parse2 = require_parse2();
+    var parse4 = require_parse2();
     var prerelease = (version3, options) => {
-      const parsed = parse2(version3, options);
+      const parsed = parse4(version3, options);
       return parsed && parsed.prerelease.length ? parsed.prerelease : null;
     };
     module2.exports = prerelease;
@@ -20107,8 +20107,8 @@ var require_rcompare = __commonJS({
   "node_modules/semver/functions/rcompare.js"(exports2, module2) {
     "use strict";
     var compare = require_compare();
-    var rcompare = (a, b, loose) => compare(b, a, loose);
-    module2.exports = rcompare;
+    var rcompare2 = (a, b, loose) => compare(b, a, loose);
+    module2.exports = rcompare2;
   }
 });
 
@@ -20271,7 +20271,7 @@ var require_coerce = __commonJS({
   "node_modules/semver/functions/coerce.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var parse2 = require_parse2();
+    var parse4 = require_parse2();
     var { safeRe: re, t } = require_re();
     var coerce = (version3, options) => {
       if (version3 instanceof SemVer) {
@@ -20306,7 +20306,7 @@ var require_coerce = __commonJS({
       const patch = match2[4] || "0";
       const prerelease = options.includePrerelease && match2[5] ? `-${match2[5]}` : "";
       const build = options.includePrerelease && match2[6] ? `+${match2[6]}` : "";
-      return parse2(`${major}.${minor}.${patch}${prerelease}${build}`, options);
+      return parse4(`${major}.${minor}.${patch}${prerelease}${build}`, options);
     };
     module2.exports = coerce;
   }
@@ -21323,8 +21323,8 @@ var require_semver2 = __commonJS({
     var constants4 = require_constants6();
     var SemVer = require_semver();
     var identifiers = require_identifiers();
-    var parse2 = require_parse2();
-    var valid3 = require_valid();
+    var parse4 = require_parse2();
+    var valid4 = require_valid();
     var clean3 = require_clean();
     var inc = require_inc();
     var diff = require_diff();
@@ -21333,7 +21333,7 @@ var require_semver2 = __commonJS({
     var patch = require_patch();
     var prerelease = require_prerelease();
     var compare = require_compare();
-    var rcompare = require_rcompare();
+    var rcompare2 = require_rcompare();
     var compareLoose = require_compare_loose();
     var compareBuild = require_compare_build();
     var sort = require_sort();
@@ -21361,8 +21361,8 @@ var require_semver2 = __commonJS({
     var simplifyRange = require_simplify();
     var subset = require_subset();
     module2.exports = {
-      parse: parse2,
-      valid: valid3,
+      parse: parse4,
+      valid: valid4,
       clean: clean3,
       inc,
       diff,
@@ -21371,7 +21371,7 @@ var require_semver2 = __commonJS({
       patch,
       prerelease,
       compare,
-      rcompare,
+      rcompare: rcompare2,
       compareLoose,
       compareBuild,
       sort,
@@ -21423,7 +21423,7 @@ var require_ms = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse4(val);
       } else if (type === "number" && isFinite(val)) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
@@ -21431,7 +21431,7 @@ var require_ms = __commonJS({
         "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
       );
     };
-    function parse2(str) {
+    function parse4(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -22118,8 +22118,8 @@ var require_helpers = __commonJS({
     function req(url2, opts = {}) {
       const href = typeof url2 === "string" ? url2 : url2.href;
       const req2 = (href.startsWith("https:") ? https3 : http3).request(url2, opts);
-      const promise = new Promise((resolve3, reject) => {
-        req2.once("response", resolve3).once("error", reject).end();
+      const promise = new Promise((resolve5, reject) => {
+        req2.once("response", resolve5).once("error", reject).end();
       });
       req2.then = promise.then.bind(promise);
       return req2;
@@ -22296,7 +22296,7 @@ var require_parse_proxy_response = __commonJS({
     var debug_1 = __importDefault(require_src());
     var debug2 = (0, debug_1.default)("https-proxy-agent:parse-proxy-response");
     function parseProxyResponse(socket) {
-      return new Promise((resolve3, reject) => {
+      return new Promise((resolve5, reject) => {
         let buffersLength = 0;
         const buffers = [];
         function read() {
@@ -22362,7 +22362,7 @@ var require_parse_proxy_response = __commonJS({
           }
           debug2("got proxy server response: %o %o", firstLine, headers);
           cleanup();
-          resolve3({
+          resolve5({
             connect: {
               statusCode,
               statusText,
@@ -26022,8 +26022,8 @@ var require_deferred = __commonJS({
        */
       constructor(preventUnhandledRejectionWarning = true) {
         this._state = DeferredState.PENDING;
-        this._promise = new Promise((resolve3, reject) => {
-          this._resolve = resolve3;
+        this._promise = new Promise((resolve5, reject) => {
+          this._resolve = resolve5;
           this._reject = reject;
         });
         if (preventUnhandledRejectionWarning) {
@@ -26238,11 +26238,11 @@ var require_unary_call = __commonJS({
     "use strict";
     var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve5) {
+          resolve5(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve5, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -26258,7 +26258,7 @@ var require_unary_call = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -26307,11 +26307,11 @@ var require_server_streaming_call = __commonJS({
     "use strict";
     var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve5) {
+          resolve5(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve5, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -26327,7 +26327,7 @@ var require_server_streaming_call = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -26377,11 +26377,11 @@ var require_client_streaming_call = __commonJS({
     "use strict";
     var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve5) {
+          resolve5(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve5, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -26397,7 +26397,7 @@ var require_client_streaming_call = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -26446,11 +26446,11 @@ var require_duplex_streaming_call = __commonJS({
     "use strict";
     var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve5) {
+          resolve5(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve5, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -26466,7 +26466,7 @@ var require_duplex_streaming_call = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -26514,11 +26514,11 @@ var require_test_transport = __commonJS({
     "use strict";
     var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve5) {
+          resolve5(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve5, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -26534,7 +26534,7 @@ var require_test_transport = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -26731,11 +26731,11 @@ var require_test_transport = __commonJS({
       responseTrailer: "test"
     };
     function delay4(ms, abort) {
-      return (v) => new Promise((resolve3, reject) => {
+      return (v) => new Promise((resolve5, reject) => {
         if (abort === null || abort === void 0 ? void 0 : abort.aborted) {
           reject(new rpc_error_1.RpcError("user cancel", "CANCELLED"));
         } else {
-          const id = setTimeout(() => resolve3(v), ms);
+          const id = setTimeout(() => resolve5(v), ms);
           if (abort) {
             abort.addEventListener("abort", (ev) => {
               clearTimeout(id);
@@ -27185,11 +27185,11 @@ var tunnel = __toESM(require_tunnel2(), 1);
 var import_undici = __toESM(require_undici(), 1);
 var __awaiter = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -27205,7 +27205,7 @@ var __awaiter = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -27278,26 +27278,26 @@ var HttpClientResponse = class {
   }
   readBody() {
     return __awaiter(this, void 0, void 0, function* () {
-      return new Promise((resolve3) => __awaiter(this, void 0, void 0, function* () {
+      return new Promise((resolve5) => __awaiter(this, void 0, void 0, function* () {
         let output = Buffer.alloc(0);
         this.message.on("data", (chunk) => {
           output = Buffer.concat([output, chunk]);
         });
         this.message.on("end", () => {
-          resolve3(output.toString());
+          resolve5(output.toString());
         });
       }));
     });
   }
   readBodyBuffer() {
     return __awaiter(this, void 0, void 0, function* () {
-      return new Promise((resolve3) => __awaiter(this, void 0, void 0, function* () {
+      return new Promise((resolve5) => __awaiter(this, void 0, void 0, function* () {
         const chunks = [];
         this.message.on("data", (chunk) => {
           chunks.push(chunk);
         });
         this.message.on("end", () => {
-          resolve3(Buffer.concat(chunks));
+          resolve5(Buffer.concat(chunks));
         });
       }));
     });
@@ -27500,14 +27500,14 @@ var HttpClient = class {
    */
   requestRaw(info2, data) {
     return __awaiter(this, void 0, void 0, function* () {
-      return new Promise((resolve3, reject) => {
+      return new Promise((resolve5, reject) => {
         function callbackForResult(err, res) {
           if (err) {
             reject(err);
           } else if (!res) {
             reject(new Error("Unknown error"));
           } else {
-            resolve3(res);
+            resolve5(res);
           }
         }
         this.requestRawWithCallback(info2, data, callbackForResult);
@@ -27751,12 +27751,12 @@ var HttpClient = class {
     return __awaiter(this, void 0, void 0, function* () {
       retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
       const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
-      return new Promise((resolve3) => setTimeout(() => resolve3(), ms));
+      return new Promise((resolve5) => setTimeout(() => resolve5(), ms));
     });
   }
   _processResponse(res, options) {
     return __awaiter(this, void 0, void 0, function* () {
-      return new Promise((resolve3, reject) => __awaiter(this, void 0, void 0, function* () {
+      return new Promise((resolve5, reject) => __awaiter(this, void 0, void 0, function* () {
         const statusCode = res.message.statusCode || 0;
         const response = {
           statusCode,
@@ -27764,7 +27764,7 @@ var HttpClient = class {
           headers: {}
         };
         if (statusCode === HttpCodes.NotFound) {
-          resolve3(response);
+          resolve5(response);
         }
         function dateTimeDeserializer(key, value) {
           if (typeof value === "string") {
@@ -27803,7 +27803,7 @@ var HttpClient = class {
           err.result = response.result;
           reject(err);
         } else {
-          resolve3(response);
+          resolve5(response);
         }
       }));
     });
@@ -27814,11 +27814,11 @@ var lowercaseKeys = (obj) => Object.keys(obj).reduce((c, k) => (c[k.toLowerCase(
 // node_modules/@actions/http-client/lib/auth.js
 var __awaiter2 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -27834,7 +27834,7 @@ var __awaiter2 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -27867,11 +27867,11 @@ var import_os = require("os");
 var import_fs = require("fs");
 var __awaiter3 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -27887,7 +27887,7 @@ var __awaiter3 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -28164,11 +28164,11 @@ var fs2 = __toESM(require("fs"), 1);
 var path = __toESM(require("path"), 1);
 var __awaiter4 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -28184,7 +28184,7 @@ var __awaiter4 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -28297,11 +28297,11 @@ function isUnixExecutable(stats) {
 // node_modules/@actions/io/lib/io.js
 var __awaiter5 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -28317,7 +28317,7 @@ var __awaiter5 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -28487,11 +28487,11 @@ function copyFile2(srcFile, destFile, force) {
 var import_timers = require("timers");
 var __awaiter6 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -28507,7 +28507,7 @@ var __awaiter6 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -28726,7 +28726,7 @@ var ToolRunner = class extends events.EventEmitter {
         this.toolPath = path3.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
       }
       this.toolPath = yield which(this.toolPath, true);
-      return new Promise((resolve3, reject) => __awaiter6(this, void 0, void 0, function* () {
+      return new Promise((resolve5, reject) => __awaiter6(this, void 0, void 0, function* () {
         this._debug(`exec tool: ${this.toolPath}`);
         this._debug("arguments:");
         for (const arg of this.args) {
@@ -28809,7 +28809,7 @@ var ToolRunner = class extends events.EventEmitter {
           if (error2) {
             reject(error2);
           } else {
-            resolve3(exitCode);
+            resolve5(exitCode);
           }
         });
         if (this.options.input) {
@@ -28932,11 +28932,11 @@ var ExecState = class _ExecState extends events.EventEmitter {
 // node_modules/@actions/exec/lib/exec.js
 var __awaiter7 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -28952,7 +28952,7 @@ var __awaiter7 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -29277,8 +29277,8 @@ var Path = class {
         let remaining = itemPath;
         let dir = dirname4(remaining);
         while (dir !== remaining) {
-          const basename5 = path6.basename(remaining);
-          this.segments.unshift(basename5);
+          const basename8 = path6.basename(remaining);
+          this.segments.unshift(basename8);
           remaining = dir;
           dir = dirname4(remaining);
         }
@@ -29482,8 +29482,8 @@ var Pattern = class _Pattern {
 
 // node_modules/@actions/glob/lib/internal-search-state.js
 var SearchState = class {
-  constructor(path16, level) {
-    this.path = path16;
+  constructor(path21, level) {
+    this.path = path21;
     this.level = level;
   }
 };
@@ -29491,11 +29491,11 @@ var SearchState = class {
 // node_modules/@actions/glob/lib/internal-globber.js
 var __awaiter8 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -29511,7 +29511,7 @@ var __awaiter8 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -29524,14 +29524,14 @@ var __asyncValues = function(o) {
   }, i);
   function verb(n) {
     i[n] = o[n] && function(v) {
-      return new Promise(function(resolve3, reject) {
-        v = o[n](v), settle(resolve3, reject, v.done, v.value);
+      return new Promise(function(resolve5, reject) {
+        v = o[n](v), settle(resolve5, reject, v.done, v.value);
       });
     };
   }
-  function settle(resolve3, reject, d, v) {
+  function settle(resolve5, reject, d, v) {
     Promise.resolve(v).then(function(v2) {
-      resolve3({ value: v2, done: d });
+      resolve5({ value: v2, done: d });
     }, reject);
   }
 };
@@ -29728,11 +29728,11 @@ var DefaultGlobber = class _DefaultGlobber {
 // node_modules/@actions/glob/lib/glob.js
 var __awaiter9 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -29748,7 +29748,7 @@ var __awaiter9 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -29795,11 +29795,11 @@ var CacheFileSizeLimit = 10 * Math.pow(1024, 3);
 // node_modules/@actions/cache/lib/internal/cacheUtils.js
 var __awaiter10 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -29815,7 +29815,7 @@ var __awaiter10 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -30743,9 +30743,9 @@ function isStreamComplete(stream3) {
   if (stream3.readable === false) {
     return Promise.resolve();
   }
-  return new Promise((resolve3) => {
+  return new Promise((resolve5) => {
     const handler = () => {
-      resolve3();
+      resolve5();
       stream3.removeListener("close", handler);
       stream3.removeListener("end", handler);
       stream3.removeListener("error", handler);
@@ -30900,8 +30900,8 @@ var NodeHttpClient = class {
       headers: request.headers.toJSON({ preserveCase: true }),
       ...request.requestOverrides
     };
-    return new Promise((resolve3, reject) => {
-      const req = isInsecure ? import_node_http.default.request(options, resolve3) : import_node_https.default.request(options, resolve3);
+    return new Promise((resolve5, reject) => {
+      const req = isInsecure ? import_node_http.default.request(options, resolve5) : import_node_https.default.request(options, resolve5);
       req.once("error", (err) => {
         reject(new RestError(err.message, { code: err.code ?? RestError.REQUEST_SEND_ERROR, request }));
       });
@@ -30985,7 +30985,7 @@ function getDecodedResponseStream(stream3, headers) {
   return stream3;
 }
 function streamToText(stream3) {
-  return new Promise((resolve3, reject) => {
+  return new Promise((resolve5, reject) => {
     const buffer3 = [];
     stream3.on("data", (chunk) => {
       if (Buffer.isBuffer(chunk)) {
@@ -30995,7 +30995,7 @@ function streamToText(stream3) {
       }
     });
     stream3.on("end", () => {
-      resolve3(Buffer.concat(buffer3).toString("utf8"));
+      resolve5(Buffer.concat(buffer3).toString("utf8"));
     });
     stream3.on("error", (e) => {
       if (e && e?.name === "AbortError") {
@@ -31142,7 +31142,7 @@ function calculateRetryDelay(retryAttempt, config) {
 // node_modules/@typespec/ts-http-runtime/dist/esm/util/helpers.js
 var StandardAbortMessage = "The operation was aborted.";
 function delay(delayInMs, value, options) {
-  return new Promise((resolve3, reject) => {
+  return new Promise((resolve5, reject) => {
     let timer = void 0;
     let onAborted = void 0;
     const rejectOnAbort = () => {
@@ -31165,7 +31165,7 @@ function delay(delayInMs, value, options) {
     }
     timer = setTimeout(() => {
       removeListeners();
-      resolve3(value);
+      resolve5(value);
     }, delayInMs);
     if (options?.abortSignal) {
       options.abortSignal.addEventListener("abort", onAborted);
@@ -31868,7 +31868,7 @@ var AbortError2 = class extends Error {
 // node_modules/@azure/core-util/dist/esm/createAbortablePromise.js
 function createAbortablePromise(buildPromise, options) {
   const { cleanupBeforeAbort, abortSignal, abortErrorMsg } = options ?? {};
-  return new Promise((resolve3, reject) => {
+  return new Promise((resolve5, reject) => {
     function rejectOnAbort() {
       reject(new AbortError2(abortErrorMsg ?? "The operation was aborted."));
     }
@@ -31886,7 +31886,7 @@ function createAbortablePromise(buildPromise, options) {
     try {
       buildPromise((x) => {
         removeListeners();
-        resolve3(x);
+        resolve5(x);
       }, (x) => {
         removeListeners();
         reject(x);
@@ -31903,8 +31903,8 @@ var StandardAbortMessage2 = "The delay was aborted.";
 function delay2(timeInMs, options) {
   let token;
   const { abortSignal, abortErrorMsg } = options ?? {};
-  return createAbortablePromise((resolve3) => {
-    token = setTimeout(resolve3, timeInMs);
+  return createAbortablePromise((resolve5) => {
+    token = setTimeout(resolve5, timeInMs);
   }, {
     cleanupBeforeAbort: () => clearTimeout(token),
     abortSignal,
@@ -33928,15 +33928,15 @@ function getRequestUrl(baseUri, operationSpec, operationArguments, fallbackObjec
   let isAbsolutePath = false;
   let requestUrl = replaceAll(baseUri, urlReplacements);
   if (operationSpec.path) {
-    let path16 = replaceAll(operationSpec.path, urlReplacements);
-    if (operationSpec.path === "/{nextLink}" && path16.startsWith("/")) {
-      path16 = path16.substring(1);
+    let path21 = replaceAll(operationSpec.path, urlReplacements);
+    if (operationSpec.path === "/{nextLink}" && path21.startsWith("/")) {
+      path21 = path21.substring(1);
     }
-    if (isAbsoluteUrl(path16)) {
-      requestUrl = path16;
+    if (isAbsoluteUrl(path21)) {
+      requestUrl = path21;
       isAbsolutePath = true;
     } else {
-      requestUrl = appendPath(requestUrl, path16);
+      requestUrl = appendPath(requestUrl, path21);
     }
   }
   const { queryParams, sequenceParams } = calculateQueryParameters(operationSpec, operationArguments, fallbackObject);
@@ -33982,9 +33982,9 @@ function appendPath(url2, pathToAppend) {
   }
   const searchStart = pathToAppend.indexOf("?");
   if (searchStart !== -1) {
-    const path16 = pathToAppend.substring(0, searchStart);
+    const path21 = pathToAppend.substring(0, searchStart);
     const search = pathToAppend.substring(searchStart + 1);
-    newPath = newPath + path16;
+    newPath = newPath + path21;
     if (search) {
       parsedUrl.search = parsedUrl.search ? `${parsedUrl.search}&${search}` : search;
     }
@@ -37927,7 +37927,7 @@ var BufferScheduler = class {
    *
    */
   async do() {
-    return new Promise((resolve3, reject) => {
+    return new Promise((resolve5, reject) => {
       this.readable.on("data", (data) => {
         data = typeof data === "string" ? Buffer.from(data, this.encoding) : data;
         this.appendUnresolvedData(data);
@@ -37955,11 +37955,11 @@ var BufferScheduler = class {
         if (this.isStreamEnd && this.executingOutgoingHandlers === 0) {
           if (this.unresolvedLength > 0 && this.unresolvedLength < this.bufferSize) {
             const buffer3 = this.shiftBufferFromUnresolvedDataArray();
-            this.outgoingHandler(() => buffer3.getReadableStream(), buffer3.size, this.offset).then(resolve3).catch(reject);
+            this.outgoingHandler(() => buffer3.getReadableStream(), buffer3.size, this.offset).then(resolve5).catch(reject);
           } else if (this.unresolvedLength >= this.bufferSize) {
             return;
           } else {
-            resolve3();
+            resolve5();
           }
         }
       });
@@ -38197,7 +38197,7 @@ function getURLQueries(url2) {
   return queries;
 }
 async function delay3(timeInMs, aborter, abortError) {
-  return new Promise((resolve3, reject) => {
+  return new Promise((resolve5, reject) => {
     let timeout;
     const abortHandler = () => {
       if (timeout !== void 0) {
@@ -38209,7 +38209,7 @@ async function delay3(timeInMs, aborter, abortError) {
       if (aborter !== void 0) {
         aborter.removeEventListener("abort", abortHandler);
       }
-      resolve3();
+      resolve5();
     };
     timeout = setTimeout(resolveHandler, timeInMs);
     if (aborter !== void 0) {
@@ -38850,9 +38850,9 @@ var StorageSharedKeyCredentialPolicy = class extends CredentialPolicy {
    * @param request -
    */
   getCanonicalizedResourceString(request) {
-    const path16 = getURLPath(request.url) || "/";
+    const path21 = getURLPath(request.url) || "/";
     let canonicalizedResourceString = "";
-    canonicalizedResourceString += `/${this.factory.accountName}${path16}`;
+    canonicalizedResourceString += `/${this.factory.accountName}${path21}`;
     const queries = getURLQueries(request.url);
     const lowercaseQueries = {};
     if (queries) {
@@ -39350,9 +39350,9 @@ function storageSharedKeyCredentialPolicy(options) {
     return canonicalizedHeadersStringToSign;
   }
   function getCanonicalizedResourceString(request) {
-    const path16 = getURLPath(request.url) || "/";
+    const path21 = getURLPath(request.url) || "/";
     let canonicalizedResourceString = "";
-    canonicalizedResourceString += `/${options.accountName}${path16}`;
+    canonicalizedResourceString += `/${options.accountName}${path21}`;
     const queries = getURLQueries(request.url);
     const lowercaseQueries = {};
     if (queries) {
@@ -53293,10 +53293,10 @@ var StorageContextClient = class extends StorageClient {
 // node_modules/@azure/storage-blob/dist/esm/utils/utils.common.js
 function escapeURLPath(url2) {
   const urlParsed = new URL(url2);
-  let path16 = urlParsed.pathname;
-  path16 = path16 || "/";
-  path16 = escape(path16);
-  urlParsed.pathname = path16;
+  let path21 = urlParsed.pathname;
+  path21 = path21 || "/";
+  path21 = escape(path21);
+  urlParsed.pathname = path21;
   return urlParsed.toString();
 }
 function getProxyUriFromDevConnString(connectionString) {
@@ -53381,9 +53381,9 @@ function escape(text) {
 }
 function appendToURLPath(url2, name) {
   const urlParsed = new URL(url2);
-  let path16 = urlParsed.pathname;
-  path16 = path16 ? path16.endsWith("/") ? `${path16}${name}` : `${path16}/${name}` : name;
-  urlParsed.pathname = path16;
+  let path21 = urlParsed.pathname;
+  path21 = path21 ? path21.endsWith("/") ? `${path21}${name}` : `${path21}/${name}` : name;
+  urlParsed.pathname = path21;
   return urlParsed.toString();
 }
 function setURLParameter2(url2, name, value) {
@@ -56115,7 +56115,7 @@ var AvroReadableFromStream = class extends AvroReadable {
       this._position += chunk.length;
       return this.toUint8Array(chunk);
     } else {
-      return new Promise((resolve3, reject) => {
+      return new Promise((resolve5, reject) => {
         const cleanUp = () => {
           this._readable.removeListener("readable", readableCallback);
           this._readable.removeListener("error", rejectCallback);
@@ -56130,7 +56130,7 @@ var AvroReadableFromStream = class extends AvroReadable {
           if (callbackChunk) {
             this._position += callbackChunk.length;
             cleanUp();
-            resolve3(this.toUint8Array(callbackChunk));
+            resolve5(this.toUint8Array(callbackChunk));
           }
         };
         const rejectCallback = () => {
@@ -56776,8 +56776,8 @@ var Poller = class {
     this.stopped = true;
     this.pollProgressCallbacks = [];
     this.operation = operation;
-    this.promise = new Promise((resolve3, reject) => {
-      this.resolve = resolve3;
+    this.promise = new Promise((resolve5, reject) => {
+      this.resolve = resolve5;
       this.reject = reject;
     });
     this.promise.catch(() => {
@@ -57182,8 +57182,8 @@ var Batch = class {
       return Promise.resolve();
     }
     this.parallelExecute();
-    return new Promise((resolve3, reject) => {
-      this.emitter.on("finish", resolve3);
+    return new Promise((resolve5, reject) => {
+      this.emitter.on("finish", resolve5);
       this.emitter.on("error", (error2) => {
         this.state = BatchStates.Error;
         reject(error2);
@@ -57230,12 +57230,12 @@ var import_node_util3 = __toESM(require("node:util"), 1);
 async function streamToBuffer(stream3, buffer3, offset, end, encoding) {
   let pos = 0;
   const count = end - offset;
-  return new Promise((resolve3, reject) => {
+  return new Promise((resolve5, reject) => {
     const timeout = setTimeout(() => reject(new Error(`The operation cannot be completed in timeout.`)), REQUEST_TIMEOUT);
     stream3.on("readable", () => {
       if (pos >= count) {
         clearTimeout(timeout);
-        resolve3();
+        resolve5();
         return;
       }
       let chunk = stream3.read();
@@ -57254,7 +57254,7 @@ async function streamToBuffer(stream3, buffer3, offset, end, encoding) {
       if (pos < count) {
         reject(new Error(`Stream drains before getting enough data needed. Data read: ${pos}, data need: ${count}`));
       }
-      resolve3();
+      resolve5();
     });
     stream3.on("error", (msg) => {
       clearTimeout(timeout);
@@ -57263,7 +57263,7 @@ async function streamToBuffer(stream3, buffer3, offset, end, encoding) {
   });
 }
 async function readStreamToLocalFile(rs, file) {
-  return new Promise((resolve3, reject) => {
+  return new Promise((resolve5, reject) => {
     const ws = import_node_fs.default.createWriteStream(file);
     rs.on("error", (err) => {
       reject(err);
@@ -57271,7 +57271,7 @@ async function readStreamToLocalFile(rs, file) {
     ws.on("error", (err) => {
       reject(err);
     });
-    ws.on("close", resolve3);
+    ws.on("close", resolve5);
     rs.pipe(ws);
   });
 }
@@ -58183,7 +58183,7 @@ var BlobClient = class _BlobClient extends StorageClient2 {
    * @returns The SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
    */
   generateSasUrl(options) {
-    return new Promise((resolve3) => {
+    return new Promise((resolve5) => {
       if (!(this.credential instanceof StorageSharedKeyCredential)) {
         throw new RangeError("Can only generate the SAS when the client is initialized with a shared key credential");
       }
@@ -58194,7 +58194,7 @@ var BlobClient = class _BlobClient extends StorageClient2 {
         versionId: this._versionId,
         ...options
       }, this.credential).toString();
-      resolve3(appendToURLQuery(this.url, sas));
+      resolve5(appendToURLQuery(this.url, sas));
     });
   }
   /**
@@ -58233,7 +58233,7 @@ var BlobClient = class _BlobClient extends StorageClient2 {
    * @returns The SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
    */
   generateUserDelegationSasUrl(options, userDelegationKey) {
-    return new Promise((resolve3) => {
+    return new Promise((resolve5) => {
       const sas = generateBlobSASQueryParameters({
         containerName: this._containerName,
         blobName: this._name,
@@ -58241,7 +58241,7 @@ var BlobClient = class _BlobClient extends StorageClient2 {
         versionId: this._versionId,
         ...options
       }, userDelegationKey, this.accountName).toString();
-      resolve3(appendToURLQuery(this.url, sas));
+      resolve5(appendToURLQuery(this.url, sas));
     });
   }
   /**
@@ -59998,11 +59998,11 @@ var util4 = __toESM(require("util"), 1);
 // node_modules/@actions/cache/lib/internal/requestUtils.js
 var __awaiter11 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -60018,7 +60018,7 @@ var __awaiter11 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -60048,7 +60048,7 @@ function isRetryableStatusCode(statusCode) {
 }
 function sleep(milliseconds) {
   return __awaiter11(this, void 0, void 0, function* () {
-    return new Promise((resolve3) => setTimeout(resolve3, milliseconds));
+    return new Promise((resolve5) => setTimeout(resolve5, milliseconds));
   });
 }
 function retry(name_1, method_1, getStatusCode_1) {
@@ -60123,11 +60123,11 @@ function retryHttpClientResponse(name_1, method_1) {
 // node_modules/@actions/cache/lib/internal/downloadUtils.js
 var __awaiter12 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -60143,7 +60143,7 @@ var __awaiter12 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -60422,8 +60422,8 @@ function downloadCacheStorageSDK(archiveLocation, archivePath, options) {
 }
 var promiseWithTimeout = (timeoutMs, promise) => __awaiter12(void 0, void 0, void 0, function* () {
   let timeoutHandle;
-  const timeoutPromise = new Promise((resolve3) => {
-    timeoutHandle = setTimeout(() => resolve3("timeout"), timeoutMs);
+  const timeoutPromise = new Promise((resolve5) => {
+    timeoutHandle = setTimeout(() => resolve5("timeout"), timeoutMs);
   });
   return Promise.race([promise, timeoutPromise]).then((result) => {
     clearTimeout(timeoutHandle);
@@ -60509,11 +60509,11 @@ function getUserAgentString2() {
 // node_modules/@actions/cache/lib/internal/cacheHttpClient.js
 var __awaiter13 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -60529,7 +60529,7 @@ var __awaiter13 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -61303,11 +61303,11 @@ function maskSecretUrls(body2) {
 // node_modules/@actions/cache/lib/internal/shared/cacheTwirpClient.js
 var __awaiter14 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -61323,7 +61323,7 @@ var __awaiter14 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -61452,7 +61452,7 @@ var CacheServiceClient = class {
   }
   sleep(milliseconds) {
     return __awaiter14(this, void 0, void 0, function* () {
-      return new Promise((resolve3) => setTimeout(resolve3, milliseconds));
+      return new Promise((resolve5) => setTimeout(resolve5, milliseconds));
     });
   }
   getExponentialRetryTimeMilliseconds(attempt) {
@@ -61477,11 +61477,11 @@ var import_fs2 = require("fs");
 var path10 = __toESM(require("path"), 1);
 var __awaiter15 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -61497,7 +61497,7 @@ var __awaiter15 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -61670,11 +61670,11 @@ function extractTar(archivePath, compressionMethod) {
 // node_modules/@actions/cache/lib/cache.js
 var __awaiter16 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -61690,7 +61690,7 @@ var __awaiter16 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -62071,6 +62071,7 @@ function getInputs() {
     installOnly: getBooleanInput("install-only"),
     prekVersion: getInput("prek-version") || "latest",
     showVerboseLogs: getBooleanInput("show-verbose-logs"),
+    versionFile: getInput("version-file") || void 0,
     workingDirectory: getInput("working-directory") || "."
   };
 }
@@ -62078,8 +62079,8 @@ function getInputs() {
 // src/install.ts
 var crypto6 = __toESM(require("node:crypto"), 1);
 var import_node_fs2 = require("node:fs");
-var fs11 = __toESM(require("node:fs/promises"), 1);
-var path15 = __toESM(require("node:path"), 1);
+var fs13 = __toESM(require("node:fs/promises"), 1);
+var path20 = __toESM(require("node:path"), 1);
 
 // node_modules/@actions/tool-cache/lib/tool-cache.js
 var crypto5 = __toESM(require("crypto"), 1);
@@ -62099,11 +62100,11 @@ var import_assert5 = require("assert");
 // node_modules/@actions/tool-cache/lib/retry-helper.js
 var __awaiter17 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -62119,7 +62120,7 @@ var __awaiter17 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -62161,7 +62162,7 @@ var RetryHelper = class {
   }
   sleep(seconds) {
     return __awaiter17(this, void 0, void 0, function* () {
-      return new Promise((resolve3) => setTimeout(resolve3, seconds * 1e3));
+      return new Promise((resolve5) => setTimeout(resolve5, seconds * 1e3));
     });
   }
 };
@@ -62169,11 +62170,11 @@ var RetryHelper = class {
 // node_modules/@actions/tool-cache/lib/tool-cache.js
 var __awaiter18 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve3) {
-      resolve3(value);
+    return value instanceof P ? value : new P(function(resolve5) {
+      resolve5(value);
     });
   }
-  return new (P || (P = Promise))(function(resolve3, reject) {
+  return new (P || (P = Promise))(function(resolve5, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -62189,7 +62190,7 @@ var __awaiter18 = function(thisArg, _arguments, P, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve5(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -62472,9 +62473,9 @@ function _completeToolPath(tool, version3, arch3) {
 function isExplicitVersion(versionSpec) {
   const c = semver3.clean(versionSpec) || "";
   debug(`isExplicit: ${c}`);
-  const valid3 = semver3.valid(c) != null;
-  debug(`explicit? ${valid3}`);
-  return valid3;
+  const valid4 = semver3.valid(c) != null;
+  debug(`explicit? ${valid4}`);
+  return valid4;
 }
 function evaluateVersions(versions, versionSpec) {
   let version3 = "";
@@ -63432,23 +63433,1144 @@ var knownChecksumsByAsset = /* @__PURE__ */ new Map([
 ]);
 
 // src/manifest.ts
+var fs12 = __toESM(require("node:fs/promises"), 1);
+var path19 = __toESM(require("node:path"), 1);
+var semver5 = __toESM(require_semver2(), 1);
+
+// src/version/auto.ts
+var path16 = __toESM(require("node:path"), 1);
+
+// src/version/constants.ts
+var TOOL_VERSIONS_FILENAME = ".tool-versions";
+var PREK_PACKAGE_NAME = "@j178/prek";
+var REQUIREMENTS_FILE_RE = /^requirements.*\.txt$/;
+var PEP508_PREK_RE = /^prek(?:\[.*?\])?\s*((?:~=|==|!=|<=?|>=?)[^;]+)/i;
+var VERSION_FILE_HINTS = {
+  ".tool-versions": 'Expected a "prek <version>" line.',
+  "mise.toml": "Expected [tools].prek or [tools.prek].version.",
+  "package.json": "Expected @j178/prek in dependencies or devDependencies.",
+  "pyproject.toml": "Checked [tool.prek].version, [dependency-groups], and [project.optional-dependencies].",
+  "uv.lock": 'Expected a [[package]] entry with name = "prek".'
+};
+var SUPPORTED_VERSION_FILE_NAMES = [
+  TOOL_VERSIONS_FILENAME,
+  "mise.toml",
+  "uv.lock",
+  "pyproject.toml",
+  "package.json"
+];
+
+// src/version/sources/shared.ts
 var fs10 = __toESM(require("node:fs/promises"), 1);
+var path15 = __toESM(require("node:path"), 1);
+function stripVPrefix(version3) {
+  return version3.replace(/^v/, "");
+}
+function stripByteOrderMark(content) {
+  return content.replace(/^\uFEFF/, "");
+}
+async function readFileOrNull(filePath) {
+  try {
+    return stripByteOrderMark(await fs10.readFile(filePath, "utf8"));
+  } catch (error2) {
+    if (error2 instanceof Error && "code" in error2 && error2.code === "ENOENT") {
+      return null;
+    }
+    throw error2;
+  }
+}
+function createParseError(filePath, format, error2) {
+  const message = error2 instanceof Error ? error2.message : String(error2);
+  return new Error(`Failed to parse ${path15.basename(filePath)} as ${format}: ${message}`);
+}
+
+// src/version/sources/tool-versions.ts
+async function findVersionInToolVersions(filePath) {
+  const content = await readFileOrNull(filePath);
+  if (!content) return null;
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const [tool, version3] = trimmed.split(/\s+/);
+    if (tool === "prek" && version3) {
+      return stripVPrefix(version3);
+    }
+  }
+  return null;
+}
+
+// src/version/auto.ts
+async function detectVersion(workingDirectory, repoRoot) {
+  const searchDirectories = [workingDirectory];
+  if (repoRoot && path16.resolve(repoRoot) !== path16.resolve(workingDirectory)) {
+    searchDirectories.push(repoRoot);
+  }
+  for (const directory of searchDirectories) {
+    const version3 = await findVersionInToolVersions(path16.join(directory, TOOL_VERSIONS_FILENAME));
+    if (version3) {
+      return { source: TOOL_VERSIONS_FILENAME, version: version3 };
+    }
+  }
+  return null;
+}
+
+// src/version/constraints.ts
 var semver4 = __toESM(require_semver2(), 1);
+function getStaleManifestHint() {
+  return " The version manifest may be stale. Try updating prek-action or pinning an older prek version.";
+}
+function createMissingVersionError(version3) {
+  return new Error(
+    `prek version ${normalizeVersion(version3)} was not found in the version manifest.${getStaleManifestHint()}`
+  );
+}
+function createUnsatisfiedRangeError(versionInput) {
+  return new Error(
+    `No prek release satisfies version range: ${versionInput}.${getStaleManifestHint()}`
+  );
+}
+function normalizeVersion(version3) {
+  return `v${version3.replace(/^v/, "")}`;
+}
+function getStableReleases(manifest) {
+  return manifest.filter((release) => !release.prerelease).sort((left, right) => semver4.rcompare(left.version, right.version));
+}
+function parsePrefixExclusion(versionInput) {
+  const match2 = versionInput.match(/^(\d+)\.(\d+)(?:\.(\d+))?\.\*$/);
+  if (!match2) return null;
+  return match2.slice(1).filter((segment) => typeof segment === "string").map((segment) => Number(segment));
+}
+function matchesExcludedPrefix(version3, prefix2) {
+  const parsed = semver4.parse(version3);
+  if (!parsed) return false;
+  const releaseSegments = [parsed.major, parsed.minor, parsed.patch];
+  return prefix2.every((segment, index) => releaseSegments[index] === segment);
+}
+function parseConstraint(versionInput) {
+  const exactExclusions = [];
+  const prefixExclusions = [];
+  const rangeTokens = [];
+  for (const token of versionInput.split(/\s+/).filter(Boolean)) {
+    if (!token.startsWith("!=")) {
+      rangeTokens.push(token);
+      continue;
+    }
+    const rawExclusion = token.slice(2);
+    const excludedVersion = semver4.valid(rawExclusion);
+    if (excludedVersion) {
+      exactExclusions.push(excludedVersion);
+      continue;
+    }
+    const prefixExclusion = parsePrefixExclusion(rawExclusion);
+    if (!prefixExclusion) {
+      throw new Error(
+        `Invalid prek-version exclusion: "${token}". Expected an exact version like "!=0.3.5" or a release prefix like "!=0.3.*".`
+      );
+    }
+    prefixExclusions.push(prefixExclusion);
+  }
+  return {
+    exactExclusions,
+    prefixExclusions,
+    rangeInput: rangeTokens.join(" ") || "*"
+  };
+}
+function resolveVersionFromManifest(versionInput, manifest) {
+  const normalizedInput = versionInput.trim() || "latest";
+  debug(`Resolving prek version from input "${versionInput}"`);
+  if (normalizedInput === "latest") {
+    const latestRelease = getStableReleases(manifest)[0];
+    if (!latestRelease) {
+      throw new Error("The bundled prek version manifest does not contain a stable release");
+    }
+    info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`);
+    return latestRelease.version;
+  }
+  const { exactExclusions, prefixExclusions, rangeInput } = parseConstraint(normalizedInput);
+  const exactVersion = exactExclusions.length === 0 && prefixExclusions.length === 0 ? semver4.valid(rangeInput) : null;
+  if (exactVersion) {
+    const exactRelease = manifest.find((candidate) => candidate.version === exactVersion);
+    if (!exactRelease) {
+      throw createMissingVersionError(exactVersion);
+    }
+    info(`Resolved exact version "${normalizedInput}" to ${exactRelease.version}`);
+    return exactRelease.version;
+  }
+  const range2 = semver4.validRange(rangeInput);
+  if (!range2) {
+    throw new Error(
+      `Invalid prek-version input: "${versionInput}". Expected a semver version (e.g. 0.3.5), range (e.g. 0.3.x, >=0.3.0), or "latest".`
+    );
+  }
+  const rangeRelease = getStableReleases(manifest).find(
+    (candidate) => semver4.satisfies(candidate.version, range2) && !exactExclusions.includes(candidate.version) && !prefixExclusions.some((prefix2) => matchesExcludedPrefix(candidate.version, prefix2))
+  );
+  if (!rangeRelease) {
+    throw createUnsatisfiedRangeError(versionInput);
+  }
+  info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`);
+  return rangeRelease.version;
+}
+
+// src/version/version-file.ts
+var fs11 = __toESM(require("node:fs/promises"), 1);
+var path18 = __toESM(require("node:path"), 1);
+
+// src/version/sources/package-json.ts
+async function findVersionInPackageJson(filePath) {
+  const content = await readFileOrNull(filePath);
+  if (!content) return null;
+  try {
+    const data = JSON.parse(content);
+    const devDependencies = data.devDependencies;
+    const devVersion = devDependencies?.[PREK_PACKAGE_NAME];
+    if (typeof devVersion === "string" && devVersion) return devVersion;
+    const dependencies = data.dependencies;
+    const dependencyVersion = dependencies?.[PREK_PACKAGE_NAME];
+    if (typeof dependencyVersion === "string" && dependencyVersion) {
+      return dependencyVersion;
+    }
+    return null;
+  } catch (error2) {
+    throw createParseError(filePath, "JSON", error2);
+  }
+}
+
+// src/version/pep440.ts
+function expandCompatibleRelease(version3) {
+  const segments = version3.split(".");
+  if (segments.length < 2 || segments.length > 3 || segments.some((segment) => !/^\d+$/.test(segment))) {
+    throw new Error(
+      `Unsupported PEP 440 compatible release specifier: "~=${version3}". Expected "~=X.Y" or "~=X.Y.Z".`
+    );
+  }
+  const numericSegments = segments.map((segment) => Number(segment));
+  if (numericSegments.length === 2) {
+    const [major2, minor2] = numericSegments;
+    return `>=${major2}.${minor2}.0 <${major2 + 1}.0.0`;
+  }
+  const [major, minor, patch] = numericSegments;
+  return `>=${major}.${minor}.${patch} <${major}.${minor + 1}.0`;
+}
+function translatePep440Specifier(specifier) {
+  const parts = specifier.split(",").map((part) => part.trim()).filter(Boolean);
+  if (parts.length === 0) return null;
+  const translated = parts.map((part) => {
+    if (part.startsWith("==")) {
+      return part.slice(2);
+    }
+    if (part.startsWith("~=")) {
+      return expandCompatibleRelease(part.slice(2));
+    }
+    return part;
+  });
+  return translated.join(" ");
+}
+
+// src/version/sources/requirements.ts
+function extractPep508PrekVersion(dep) {
+  const match2 = dep.trim().match(PEP508_PREK_RE);
+  if (!match2) return null;
+  return pep440ToSemver(match2[1].trim());
+}
+function sanitizeRequirementLine(entry) {
+  return entry.replace(/\s+--hash=\S+/g, "").replace(/\s+#.*$/, "").trim();
+}
+function getLogicalRequirementLines(content) {
+  const logicalLines = [];
+  let current = "";
+  for (const rawLine of content.split(/\r?\n/)) {
+    const trimmed = rawLine.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    current = current ? `${current} ${trimmed}` : trimmed;
+    if (current.endsWith("\\")) {
+      current = current.slice(0, -1).trimEnd();
+      continue;
+    }
+    logicalLines.push(sanitizeRequirementLine(current));
+    current = "";
+  }
+  if (current) {
+    logicalLines.push(sanitizeRequirementLine(current));
+  }
+  return logicalLines;
+}
+function pep440ToSemver(specifier) {
+  return translatePep440Specifier(specifier);
+}
+async function findVersionInRequirements(filePath) {
+  const content = await readFileOrNull(filePath);
+  if (!content) return null;
+  for (const line of getLogicalRequirementLines(content)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("-")) continue;
+    const version3 = extractPep508PrekVersion(trimmed);
+    if (version3) return version3;
+  }
+  return null;
+}
+
+// src/version/sources/toml.ts
+var path17 = __toESM(require("node:path"), 1);
+
+// node_modules/smol-toml/dist/error.js
+function getLineColFromPtr(string, ptr) {
+  let lines = string.slice(0, ptr).split(/\r\n|\n|\r/g);
+  return [lines.length, lines.pop().length + 1];
+}
+function makeCodeBlock(string, line, column) {
+  let lines = string.split(/\r\n|\n|\r/g);
+  let codeblock = "";
+  let numberLen = (Math.log10(line + 1) | 0) + 1;
+  for (let i = line - 1; i <= line + 1; i++) {
+    let l = lines[i - 1];
+    if (!l)
+      continue;
+    codeblock += i.toString().padEnd(numberLen, " ");
+    codeblock += ":  ";
+    codeblock += l;
+    codeblock += "\n";
+    if (i === line) {
+      codeblock += " ".repeat(numberLen + column + 2);
+      codeblock += "^\n";
+    }
+  }
+  return codeblock;
+}
+var TomlError = class extends Error {
+  line;
+  column;
+  codeblock;
+  constructor(message, options) {
+    const [line, column] = getLineColFromPtr(options.toml, options.ptr);
+    const codeblock = makeCodeBlock(options.toml, line, column);
+    super(`Invalid TOML document: ${message}
+
+${codeblock}`, options);
+    this.line = line;
+    this.column = column;
+    this.codeblock = codeblock;
+  }
+};
+
+// node_modules/smol-toml/dist/util.js
+function isEscaped(str, ptr) {
+  let i = 0;
+  while (str[ptr - ++i] === "\\")
+    ;
+  return --i && i % 2;
+}
+function indexOfNewline(str, start = 0, end = str.length) {
+  let idx = str.indexOf("\n", start);
+  if (str[idx - 1] === "\r")
+    idx--;
+  return idx <= end ? idx : -1;
+}
+function skipComment(str, ptr) {
+  for (let i = ptr; i < str.length; i++) {
+    let c = str[i];
+    if (c === "\n")
+      return i;
+    if (c === "\r" && str[i + 1] === "\n")
+      return i + 1;
+    if (c < " " && c !== "	" || c === "\x7F") {
+      throw new TomlError("control characters are not allowed in comments", {
+        toml: str,
+        ptr
+      });
+    }
+  }
+  return str.length;
+}
+function skipVoid(str, ptr, banNewLines, banComments) {
+  let c;
+  while ((c = str[ptr]) === " " || c === "	" || !banNewLines && (c === "\n" || c === "\r" && str[ptr + 1] === "\n"))
+    ptr++;
+  return banComments || c !== "#" ? ptr : skipVoid(str, skipComment(str, ptr), banNewLines);
+}
+function skipUntil(str, ptr, sep8, end, banNewLines = false) {
+  if (!end) {
+    ptr = indexOfNewline(str, ptr);
+    return ptr < 0 ? str.length : ptr;
+  }
+  for (let i = ptr; i < str.length; i++) {
+    let c = str[i];
+    if (c === "#") {
+      i = indexOfNewline(str, i);
+    } else if (c === sep8) {
+      return i + 1;
+    } else if (c === end || banNewLines && (c === "\n" || c === "\r" && str[i + 1] === "\n")) {
+      return i;
+    }
+  }
+  throw new TomlError("cannot find end of structure", {
+    toml: str,
+    ptr
+  });
+}
+function getStringEnd(str, seek) {
+  let first = str[seek];
+  let target = first === str[seek + 1] && str[seek + 1] === str[seek + 2] ? str.slice(seek, seek + 3) : first;
+  seek += target.length - 1;
+  do
+    seek = str.indexOf(target, ++seek);
+  while (seek > -1 && first !== "'" && isEscaped(str, seek));
+  if (seek > -1) {
+    seek += target.length;
+    if (target.length > 1) {
+      if (str[seek] === first)
+        seek++;
+      if (str[seek] === first)
+        seek++;
+    }
+  }
+  return seek;
+}
+
+// node_modules/smol-toml/dist/date.js
+var DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})?[T ]?(?:(\d{2}):\d{2}(?::\d{2}(?:\.\d+)?)?)?(Z|[-+]\d{2}:\d{2})?$/i;
+var TomlDate = class _TomlDate extends Date {
+  #hasDate = false;
+  #hasTime = false;
+  #offset = null;
+  constructor(date) {
+    let hasDate = true;
+    let hasTime = true;
+    let offset = "Z";
+    if (typeof date === "string") {
+      let match2 = date.match(DATE_TIME_RE);
+      if (match2) {
+        if (!match2[1]) {
+          hasDate = false;
+          date = `0000-01-01T${date}`;
+        }
+        hasTime = !!match2[2];
+        hasTime && date[10] === " " && (date = date.replace(" ", "T"));
+        if (match2[2] && +match2[2] > 23) {
+          date = "";
+        } else {
+          offset = match2[3] || null;
+          date = date.toUpperCase();
+          if (!offset && hasTime)
+            date += "Z";
+        }
+      } else {
+        date = "";
+      }
+    }
+    super(date);
+    if (!isNaN(this.getTime())) {
+      this.#hasDate = hasDate;
+      this.#hasTime = hasTime;
+      this.#offset = offset;
+    }
+  }
+  isDateTime() {
+    return this.#hasDate && this.#hasTime;
+  }
+  isLocal() {
+    return !this.#hasDate || !this.#hasTime || !this.#offset;
+  }
+  isDate() {
+    return this.#hasDate && !this.#hasTime;
+  }
+  isTime() {
+    return this.#hasTime && !this.#hasDate;
+  }
+  isValid() {
+    return this.#hasDate || this.#hasTime;
+  }
+  toISOString() {
+    let iso = super.toISOString();
+    if (this.isDate())
+      return iso.slice(0, 10);
+    if (this.isTime())
+      return iso.slice(11, 23);
+    if (this.#offset === null)
+      return iso.slice(0, -1);
+    if (this.#offset === "Z")
+      return iso;
+    let offset = +this.#offset.slice(1, 3) * 60 + +this.#offset.slice(4, 6);
+    offset = this.#offset[0] === "-" ? offset : -offset;
+    let offsetDate = new Date(this.getTime() - offset * 6e4);
+    return offsetDate.toISOString().slice(0, -1) + this.#offset;
+  }
+  static wrapAsOffsetDateTime(jsDate, offset = "Z") {
+    let date = new _TomlDate(jsDate);
+    date.#offset = offset;
+    return date;
+  }
+  static wrapAsLocalDateTime(jsDate) {
+    let date = new _TomlDate(jsDate);
+    date.#offset = null;
+    return date;
+  }
+  static wrapAsLocalDate(jsDate) {
+    let date = new _TomlDate(jsDate);
+    date.#hasTime = false;
+    date.#offset = null;
+    return date;
+  }
+  static wrapAsLocalTime(jsDate) {
+    let date = new _TomlDate(jsDate);
+    date.#hasDate = false;
+    date.#offset = null;
+    return date;
+  }
+};
+
+// node_modules/smol-toml/dist/primitive.js
+var INT_REGEX = /^((0x[0-9a-fA-F](_?[0-9a-fA-F])*)|(([+-]|0[ob])?\d(_?\d)*))$/;
+var FLOAT_REGEX = /^[+-]?\d(_?\d)*(\.\d(_?\d)*)?([eE][+-]?\d(_?\d)*)?$/;
+var LEADING_ZERO = /^[+-]?0[0-9_]/;
+var ESCAPE_REGEX = /^[0-9a-f]{2,8}$/i;
+var ESC_MAP = {
+  b: "\b",
+  t: "	",
+  n: "\n",
+  f: "\f",
+  r: "\r",
+  e: "\x1B",
+  '"': '"',
+  "\\": "\\"
+};
+function parseString(str, ptr = 0, endPtr = str.length) {
+  let isLiteral = str[ptr] === "'";
+  let isMultiline = str[ptr++] === str[ptr] && str[ptr] === str[ptr + 1];
+  if (isMultiline) {
+    endPtr -= 2;
+    if (str[ptr += 2] === "\r")
+      ptr++;
+    if (str[ptr] === "\n")
+      ptr++;
+  }
+  let tmp = 0;
+  let isEscape;
+  let parsed = "";
+  let sliceStart = ptr;
+  while (ptr < endPtr - 1) {
+    let c = str[ptr++];
+    if (c === "\n" || c === "\r" && str[ptr] === "\n") {
+      if (!isMultiline) {
+        throw new TomlError("newlines are not allowed in strings", {
+          toml: str,
+          ptr: ptr - 1
+        });
+      }
+    } else if (c < " " && c !== "	" || c === "\x7F") {
+      throw new TomlError("control characters are not allowed in strings", {
+        toml: str,
+        ptr: ptr - 1
+      });
+    }
+    if (isEscape) {
+      isEscape = false;
+      if (c === "x" || c === "u" || c === "U") {
+        let code = str.slice(ptr, ptr += c === "x" ? 2 : c === "u" ? 4 : 8);
+        if (!ESCAPE_REGEX.test(code)) {
+          throw new TomlError("invalid unicode escape", {
+            toml: str,
+            ptr: tmp
+          });
+        }
+        try {
+          parsed += String.fromCodePoint(parseInt(code, 16));
+        } catch {
+          throw new TomlError("invalid unicode escape", {
+            toml: str,
+            ptr: tmp
+          });
+        }
+      } else if (isMultiline && (c === "\n" || c === " " || c === "	" || c === "\r")) {
+        ptr = skipVoid(str, ptr - 1, true);
+        if (str[ptr] !== "\n" && str[ptr] !== "\r") {
+          throw new TomlError("invalid escape: only line-ending whitespace may be escaped", {
+            toml: str,
+            ptr: tmp
+          });
+        }
+        ptr = skipVoid(str, ptr);
+      } else if (c in ESC_MAP) {
+        parsed += ESC_MAP[c];
+      } else {
+        throw new TomlError("unrecognized escape sequence", {
+          toml: str,
+          ptr: tmp
+        });
+      }
+      sliceStart = ptr;
+    } else if (!isLiteral && c === "\\") {
+      tmp = ptr - 1;
+      isEscape = true;
+      parsed += str.slice(sliceStart, tmp);
+    }
+  }
+  return parsed + str.slice(sliceStart, endPtr - 1);
+}
+function parseValue2(value, toml, ptr, integersAsBigInt) {
+  if (value === "true")
+    return true;
+  if (value === "false")
+    return false;
+  if (value === "-inf")
+    return -Infinity;
+  if (value === "inf" || value === "+inf")
+    return Infinity;
+  if (value === "nan" || value === "+nan" || value === "-nan")
+    return NaN;
+  if (value === "-0")
+    return integersAsBigInt ? 0n : 0;
+  let isInt = INT_REGEX.test(value);
+  if (isInt || FLOAT_REGEX.test(value)) {
+    if (LEADING_ZERO.test(value)) {
+      throw new TomlError("leading zeroes are not allowed", {
+        toml,
+        ptr
+      });
+    }
+    value = value.replace(/_/g, "");
+    let numeric = +value;
+    if (isNaN(numeric)) {
+      throw new TomlError("invalid number", {
+        toml,
+        ptr
+      });
+    }
+    if (isInt) {
+      if ((isInt = !Number.isSafeInteger(numeric)) && !integersAsBigInt) {
+        throw new TomlError("integer value cannot be represented losslessly", {
+          toml,
+          ptr
+        });
+      }
+      if (isInt || integersAsBigInt === true)
+        numeric = BigInt(value);
+    }
+    return numeric;
+  }
+  const date = new TomlDate(value);
+  if (!date.isValid()) {
+    throw new TomlError("invalid value", {
+      toml,
+      ptr
+    });
+  }
+  return date;
+}
+
+// node_modules/smol-toml/dist/extract.js
+function sliceAndTrimEndOf(str, startPtr, endPtr) {
+  let value = str.slice(startPtr, endPtr);
+  let commentIdx = value.indexOf("#");
+  if (commentIdx > -1) {
+    skipComment(str, commentIdx);
+    value = value.slice(0, commentIdx);
+  }
+  return [value.trimEnd(), commentIdx];
+}
+function extractValue(str, ptr, end, depth, integersAsBigInt) {
+  if (depth === 0) {
+    throw new TomlError("document contains excessively nested structures. aborting.", {
+      toml: str,
+      ptr
+    });
+  }
+  let c = str[ptr];
+  if (c === "[" || c === "{") {
+    let [value, endPtr2] = c === "[" ? parseArray(str, ptr, depth, integersAsBigInt) : parseInlineTable(str, ptr, depth, integersAsBigInt);
+    if (end) {
+      endPtr2 = skipVoid(str, endPtr2);
+      if (str[endPtr2] === ",")
+        endPtr2++;
+      else if (str[endPtr2] !== end) {
+        throw new TomlError("expected comma or end of structure", {
+          toml: str,
+          ptr: endPtr2
+        });
+      }
+    }
+    return [value, endPtr2];
+  }
+  let endPtr;
+  if (c === '"' || c === "'") {
+    endPtr = getStringEnd(str, ptr);
+    let parsed = parseString(str, ptr, endPtr);
+    if (end) {
+      endPtr = skipVoid(str, endPtr);
+      if (str[endPtr] && str[endPtr] !== "," && str[endPtr] !== end && str[endPtr] !== "\n" && str[endPtr] !== "\r") {
+        throw new TomlError("unexpected character encountered", {
+          toml: str,
+          ptr: endPtr
+        });
+      }
+      endPtr += +(str[endPtr] === ",");
+    }
+    return [parsed, endPtr];
+  }
+  endPtr = skipUntil(str, ptr, ",", end);
+  let slice = sliceAndTrimEndOf(str, ptr, endPtr - +(str[endPtr - 1] === ","));
+  if (!slice[0]) {
+    throw new TomlError("incomplete key-value declaration: no value specified", {
+      toml: str,
+      ptr
+    });
+  }
+  if (end && slice[1] > -1) {
+    endPtr = skipVoid(str, ptr + slice[1]);
+    endPtr += +(str[endPtr] === ",");
+  }
+  return [
+    parseValue2(slice[0], str, ptr, integersAsBigInt),
+    endPtr
+  ];
+}
+
+// node_modules/smol-toml/dist/struct.js
+var KEY_PART_RE = /^[a-zA-Z0-9-_]+[ \t]*$/;
+function parseKey(str, ptr, end = "=") {
+  let dot = ptr - 1;
+  let parsed = [];
+  let endPtr = str.indexOf(end, ptr);
+  if (endPtr < 0) {
+    throw new TomlError("incomplete key-value: cannot find end of key", {
+      toml: str,
+      ptr
+    });
+  }
+  do {
+    let c = str[ptr = ++dot];
+    if (c !== " " && c !== "	") {
+      if (c === '"' || c === "'") {
+        if (c === str[ptr + 1] && c === str[ptr + 2]) {
+          throw new TomlError("multiline strings are not allowed in keys", {
+            toml: str,
+            ptr
+          });
+        }
+        let eos = getStringEnd(str, ptr);
+        if (eos < 0) {
+          throw new TomlError("unfinished string encountered", {
+            toml: str,
+            ptr
+          });
+        }
+        dot = str.indexOf(".", eos);
+        let strEnd = str.slice(eos, dot < 0 || dot > endPtr ? endPtr : dot);
+        let newLine = indexOfNewline(strEnd);
+        if (newLine > -1) {
+          throw new TomlError("newlines are not allowed in keys", {
+            toml: str,
+            ptr: ptr + dot + newLine
+          });
+        }
+        if (strEnd.trimStart()) {
+          throw new TomlError("found extra tokens after the string part", {
+            toml: str,
+            ptr: eos
+          });
+        }
+        if (endPtr < eos) {
+          endPtr = str.indexOf(end, eos);
+          if (endPtr < 0) {
+            throw new TomlError("incomplete key-value: cannot find end of key", {
+              toml: str,
+              ptr
+            });
+          }
+        }
+        parsed.push(parseString(str, ptr, eos));
+      } else {
+        dot = str.indexOf(".", ptr);
+        let part = str.slice(ptr, dot < 0 || dot > endPtr ? endPtr : dot);
+        if (!KEY_PART_RE.test(part)) {
+          throw new TomlError("only letter, numbers, dashes and underscores are allowed in keys", {
+            toml: str,
+            ptr
+          });
+        }
+        parsed.push(part.trimEnd());
+      }
+    }
+  } while (dot + 1 && dot < endPtr);
+  return [parsed, skipVoid(str, endPtr + 1, true, true)];
+}
+function parseInlineTable(str, ptr, depth, integersAsBigInt) {
+  let res = {};
+  let seen = /* @__PURE__ */ new Set();
+  let c;
+  ptr++;
+  while ((c = str[ptr++]) !== "}" && c) {
+    if (c === ",") {
+      throw new TomlError("expected value, found comma", {
+        toml: str,
+        ptr: ptr - 1
+      });
+    } else if (c === "#")
+      ptr = skipComment(str, ptr);
+    else if (c !== " " && c !== "	" && c !== "\n" && c !== "\r") {
+      let k;
+      let t = res;
+      let hasOwn = false;
+      let [key, keyEndPtr] = parseKey(str, ptr - 1);
+      for (let i = 0; i < key.length; i++) {
+        if (i)
+          t = hasOwn ? t[k] : t[k] = {};
+        k = key[i];
+        if ((hasOwn = Object.hasOwn(t, k)) && (typeof t[k] !== "object" || seen.has(t[k]))) {
+          throw new TomlError("trying to redefine an already defined value", {
+            toml: str,
+            ptr
+          });
+        }
+        if (!hasOwn && k === "__proto__") {
+          Object.defineProperty(t, k, { enumerable: true, configurable: true, writable: true });
+        }
+      }
+      if (hasOwn) {
+        throw new TomlError("trying to redefine an already defined value", {
+          toml: str,
+          ptr
+        });
+      }
+      let [value, valueEndPtr] = extractValue(str, keyEndPtr, "}", depth - 1, integersAsBigInt);
+      seen.add(value);
+      t[k] = value;
+      ptr = valueEndPtr;
+    }
+  }
+  if (!c) {
+    throw new TomlError("unfinished table encountered", {
+      toml: str,
+      ptr
+    });
+  }
+  return [res, ptr];
+}
+function parseArray(str, ptr, depth, integersAsBigInt) {
+  let res = [];
+  let c;
+  ptr++;
+  while ((c = str[ptr++]) !== "]" && c) {
+    if (c === ",") {
+      throw new TomlError("expected value, found comma", {
+        toml: str,
+        ptr: ptr - 1
+      });
+    } else if (c === "#")
+      ptr = skipComment(str, ptr);
+    else if (c !== " " && c !== "	" && c !== "\n" && c !== "\r") {
+      let e = extractValue(str, ptr - 1, "]", depth - 1, integersAsBigInt);
+      res.push(e[0]);
+      ptr = e[1];
+    }
+  }
+  if (!c) {
+    throw new TomlError("unfinished array encountered", {
+      toml: str,
+      ptr
+    });
+  }
+  return [res, ptr];
+}
+
+// node_modules/smol-toml/dist/parse.js
+function peekTable(key, table, meta, type) {
+  let t = table;
+  let m = meta;
+  let k;
+  let hasOwn = false;
+  let state3;
+  for (let i = 0; i < key.length; i++) {
+    if (i) {
+      t = hasOwn ? t[k] : t[k] = {};
+      m = (state3 = m[k]).c;
+      if (type === 0 && (state3.t === 1 || state3.t === 2)) {
+        return null;
+      }
+      if (state3.t === 2) {
+        let l = t.length - 1;
+        t = t[l];
+        m = m[l].c;
+      }
+    }
+    k = key[i];
+    if ((hasOwn = Object.hasOwn(t, k)) && m[k]?.t === 0 && m[k]?.d) {
+      return null;
+    }
+    if (!hasOwn) {
+      if (k === "__proto__") {
+        Object.defineProperty(t, k, { enumerable: true, configurable: true, writable: true });
+        Object.defineProperty(m, k, { enumerable: true, configurable: true, writable: true });
+      }
+      m[k] = {
+        t: i < key.length - 1 && type === 2 ? 3 : type,
+        d: false,
+        i: 0,
+        c: {}
+      };
+    }
+  }
+  state3 = m[k];
+  if (state3.t !== type && !(type === 1 && state3.t === 3)) {
+    return null;
+  }
+  if (type === 2) {
+    if (!state3.d) {
+      state3.d = true;
+      t[k] = [];
+    }
+    t[k].push(t = {});
+    state3.c[state3.i++] = state3 = { t: 1, d: false, i: 0, c: {} };
+  }
+  if (state3.d) {
+    return null;
+  }
+  state3.d = true;
+  if (type === 1) {
+    t = hasOwn ? t[k] : t[k] = {};
+  } else if (type === 0 && hasOwn) {
+    return null;
+  }
+  return [k, t, state3.c];
+}
+function parse3(toml, { maxDepth = 1e3, integersAsBigInt } = {}) {
+  let res = {};
+  let meta = {};
+  let tbl = res;
+  let m = meta;
+  for (let ptr = skipVoid(toml, 0); ptr < toml.length; ) {
+    if (toml[ptr] === "[") {
+      let isTableArray = toml[++ptr] === "[";
+      let k = parseKey(toml, ptr += +isTableArray, "]");
+      if (isTableArray) {
+        if (toml[k[1] - 1] !== "]") {
+          throw new TomlError("expected end of table declaration", {
+            toml,
+            ptr: k[1] - 1
+          });
+        }
+        k[1]++;
+      }
+      let p = peekTable(
+        k[0],
+        res,
+        meta,
+        isTableArray ? 2 : 1
+        /* Type.EXPLICIT */
+      );
+      if (!p) {
+        throw new TomlError("trying to redefine an already defined table or value", {
+          toml,
+          ptr
+        });
+      }
+      m = p[2];
+      tbl = p[1];
+      ptr = k[1];
+    } else {
+      let k = parseKey(toml, ptr);
+      let p = peekTable(
+        k[0],
+        tbl,
+        m,
+        0
+        /* Type.DOTTED */
+      );
+      if (!p) {
+        throw new TomlError("trying to redefine an already defined table or value", {
+          toml,
+          ptr
+        });
+      }
+      let v = extractValue(toml, k[1], void 0, maxDepth, integersAsBigInt);
+      p[1][p[0]] = v[0];
+      ptr = v[1];
+    }
+    ptr = skipVoid(toml, ptr, true);
+    if (toml[ptr] && toml[ptr] !== "\n" && toml[ptr] !== "\r") {
+      throw new TomlError("each key-value declaration must be followed by an end-of-line", {
+        toml,
+        ptr
+      });
+    }
+    ptr = skipVoid(toml, ptr);
+  }
+  return res;
+}
+
+// src/version/sources/toml.ts
+function findPrekInDependencyList(deps) {
+  const versions = [];
+  for (const dep of deps) {
+    if (typeof dep !== "string") continue;
+    const match2 = dep.trim().match(PEP508_PREK_RE);
+    if (!match2) continue;
+    const translated = translatePep440Specifier(match2[1].trim());
+    if (translated) {
+      versions.push(translated);
+    }
+  }
+  return versions;
+}
+function getUniqueDependencyVersion(filePath, versions) {
+  const uniqueVersions = [...new Set(versions)];
+  if (uniqueVersions.length === 0) return null;
+  if (uniqueVersions.length === 1) return uniqueVersions[0] ?? null;
+  throw new Error(
+    `Ambiguous prek version in ${path17.basename(filePath)}: found multiple distinct constraints (${uniqueVersions.join(", ")}). Set [tool.prek].version to make the version explicit.`
+  );
+}
+async function parseTomlFile(filePath) {
+  const content = await readFileOrNull(filePath);
+  if (!content) return null;
+  try {
+    return parse3(content);
+  } catch (error2) {
+    throw createParseError(filePath, "TOML", error2);
+  }
+}
+async function findVersionInMiseToml(filePath) {
+  const data = await parseTomlFile(filePath);
+  if (!data) return null;
+  const tools = data.tools;
+  if (!tools) return null;
+  const prek = tools.prek;
+  if (typeof prek === "string") return stripVPrefix(prek);
+  if (typeof prek === "object" && prek !== null) {
+    const version3 = prek.version;
+    if (typeof version3 === "string") return stripVPrefix(version3);
+  }
+  return null;
+}
+async function findVersionInUvLock(filePath) {
+  const data = await parseTomlFile(filePath);
+  if (!data) return null;
+  const packages = data.package;
+  if (!Array.isArray(packages)) return null;
+  for (const pkg of packages) {
+    if (typeof pkg.name === "string" && pkg.name.toLowerCase() === "prek") {
+      const version3 = pkg.version;
+      if (typeof version3 === "string") return stripVPrefix(version3);
+    }
+  }
+  return null;
+}
+async function findVersionInPyprojectToml(filePath) {
+  const data = await parseTomlFile(filePath);
+  if (!data) return null;
+  const tool = data.tool;
+  const prekTool = tool?.prek;
+  const explicitVersion = prekTool?.version;
+  if (typeof explicitVersion === "string") return stripVPrefix(explicitVersion);
+  const dependencyVersions = [];
+  const dependencyGroups = data["dependency-groups"];
+  if (dependencyGroups) {
+    for (const group of Object.values(dependencyGroups)) {
+      if (!Array.isArray(group)) continue;
+      dependencyVersions.push(...findPrekInDependencyList(group));
+    }
+  }
+  const project = data.project;
+  const optionalDependencies = project?.["optional-dependencies"];
+  if (optionalDependencies) {
+    for (const group of Object.values(optionalDependencies)) {
+      if (!Array.isArray(group)) continue;
+      dependencyVersions.push(...findPrekInDependencyList(group));
+    }
+  }
+  return getUniqueDependencyVersion(filePath, dependencyVersions);
+}
+
+// src/version/version-file.ts
+var PARSER_MAP = {
+  ".tool-versions": findVersionInToolVersions,
+  "mise.toml": findVersionInMiseToml,
+  "package.json": findVersionInPackageJson,
+  "pyproject.toml": findVersionInPyprojectToml,
+  "uv.lock": findVersionInUvLock
+};
+function isRequirementsFile(filename) {
+  return REQUIREMENTS_FILE_RE.test(filename);
+}
+function getNoVersionHint(filename) {
+  return VERSION_FILE_HINTS[filename] || (isRequirementsFile(filename) ? "Expected a prek PEP 508 specifier (e.g. prek==0.3.0)." : "");
+}
+async function resolveVersionFile(filePath) {
+  try {
+    await fs11.access(filePath);
+  } catch {
+    throw new Error(`version-file "${filePath}" does not exist`);
+  }
+  const filename = path18.basename(filePath);
+  let parser = PARSER_MAP[filename];
+  if (!parser && isRequirementsFile(filename)) {
+    parser = findVersionInRequirements;
+  }
+  if (!parser) {
+    throw new Error(
+      `Unsupported version-file type: "${filename}". Supported: ${SUPPORTED_VERSION_FILE_NAMES.join(", ")}, requirements*.txt`
+    );
+  }
+  const version3 = await parser(filePath);
+  if (!version3) {
+    const hint = getNoVersionHint(filename);
+    throw new Error(`No prek version found in "${filePath}". ${hint}`.trimEnd());
+  }
+  return { source: filePath, version: version3 };
+}
+
+// src/manifest.ts
 var prekReleasesBaseUrl = "https://github.com/j178/prek/releases/download";
 var prekVersionManifestUrl = "https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json";
 var versionManifestPromise;
-async function resolveVersion(versionInput) {
+async function resolveVersion(options, manifest) {
+  const normalizedOptions = typeof options === "string" ? { prekVersion: options } : options;
+  const { prekVersion, versionFile, workingDirectory = "." } = normalizedOptions;
+  const normalizedInput = prekVersion.trim() || "latest";
+  if (normalizedInput !== "latest" && versionFile) {
+    throw new Error(
+      "Cannot specify both prek-version and version-file inputs. Use one or the other to avoid ambiguity."
+    );
+  }
+  if (normalizedInput !== "latest") {
+    return resolveVersionInput(normalizedInput, manifest);
+  }
+  const resolvedWorkingDirectory = resolveWorkingDirectory(workingDirectory);
+  if (versionFile) {
+    const resolvedPath = path19.isAbsolute(versionFile) ? versionFile : path19.resolve(resolvedWorkingDirectory, versionFile);
+    const detected2 = await resolveVersionFile(resolvedPath);
+    info(`Resolved prek version "${detected2.version}" from version-file: ${detected2.source}`);
+    return resolveVersionInput(detected2.version, manifest);
+  }
+  const repoRoot = resolveRepoRoot();
+  const detected = await detectVersion(resolvedWorkingDirectory, repoRoot);
+  if (detected) {
+    info(`Auto-detected prek version "${detected.version}" from ${detected.source}`);
+    return resolveVersionInput(detected.version, manifest);
+  }
+  info("No version source found (no version-file or .tool-versions); defaulting to latest");
+  return resolveVersionInput("latest", manifest);
+}
+async function resolveVersionInput(versionInput, manifest) {
   const normalizedInput = versionInput.trim() || "latest";
-  const exactVersion = semver4.valid(toVersion(normalizedInput));
+  const exactVersion = semver5.valid(toVersion(normalizedInput));
   if (exactVersion) {
     const version3 = exactVersion;
     info(`Resolved exact version "${normalizedInput}" to ${version3}`);
     return version3;
   }
-  return resolveVersionFromManifest(versionInput, await getVersionManifest());
+  return resolveVersionFromManifest2(versionInput, manifest ?? await getVersionManifest());
 }
-function normalizeVersion(version3) {
-  return `v${version3.replace(/^v/, "")}`;
+function resolveRepoRoot() {
+  const repoRoot = process.env.GITHUB_WORKSPACE;
+  return repoRoot ? path19.resolve(repoRoot) : void 0;
+}
+function resolveWorkingDirectory(workingDirectory) {
+  if (path19.isAbsolute(workingDirectory)) {
+    return workingDirectory;
+  }
+  const repoRoot = resolveRepoRoot();
+  return repoRoot ? path19.resolve(repoRoot, workingDirectory) : path19.resolve(workingDirectory);
 }
 function toVersion(version3) {
   return version3.replace(/^v/, "");
@@ -63487,34 +64609,13 @@ async function getAssetForVersion(version3, archiveName) {
   );
   return buildReleaseAssetUrl(version3, archiveName);
 }
-function resolveVersionFromManifest(versionInput, manifest) {
-  const normalizedInput = versionInput.trim() || "latest";
-  info(`Resolving prek version from input "${versionInput}"`);
-  if (normalizedInput === "latest") {
-    const latestRelease = manifest.find((release) => !release.prerelease);
-    if (!latestRelease) {
-      throw new Error("The prek version manifest does not contain a stable release");
-    }
-    info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`);
-    return latestRelease.version;
-  }
-  const range2 = semver4.validRange(normalizedInput);
-  if (!range2) {
-    throw new Error(`Invalid prek-version input: ${versionInput}`);
-  }
-  const rangeRelease = manifest.find(
-    (candidate) => !candidate.prerelease && semver4.satisfies(candidate.version, range2)
-  );
-  if (!rangeRelease) {
-    throw new Error(`No prek release satisfies version range: ${versionInput}`);
-  }
-  info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`);
-  return rangeRelease.version;
+function resolveVersionFromManifest2(versionInput, manifest) {
+  return resolveVersionFromManifest(versionInput, manifest);
 }
 async function downloadVersionManifest() {
   info(`Downloading version manifest from ${prekVersionManifestUrl}`);
   const downloadedPath = await downloadTool(prekVersionManifestUrl);
-  const rawManifest = await fs10.readFile(downloadedPath, "utf8");
+  const rawManifest = await fs12.readFile(downloadedPath, "utf8");
   return JSON.parse(rawManifest);
 }
 async function getVersionManifest() {
@@ -63557,7 +64658,7 @@ async function installPrek(version3) {
     info(`Extracted ${asset.archiveType} archive to ${extractedPath}`);
     const binaryPath = await getBinaryPath(extractedPath, asset);
     if (process.platform !== "win32") {
-      await fs11.chmod(binaryPath, 493);
+      await fs13.chmod(binaryPath, 493);
     }
     const toolPath = await cacheFile(binaryPath, asset.binaryName, "prek", version3, toolArch);
     info(`Cached prek binary at ${toolPath}`);
@@ -63650,15 +64751,15 @@ function getToolCacheArchFor(arch3) {
 }
 async function getBinaryPath(rootDir, asset) {
   if (asset.archiveType === "zip") {
-    const binaryPath2 = path15.join(rootDir, asset.binaryName);
+    const binaryPath2 = path20.join(rootDir, asset.binaryName);
     info(`Resolved binary path to ${binaryPath2}`);
     return binaryPath2;
   }
-  const [entry] = await fs11.readdir(rootDir);
+  const [entry] = await fs13.readdir(rootDir);
   if (!entry) {
     throw new Error(`Extracted archive is empty: ${rootDir}`);
   }
-  const binaryPath = path15.join(rootDir, entry, asset.binaryName);
+  const binaryPath = path20.join(rootDir, entry, asset.binaryName);
   info(`Resolved binary path to ${binaryPath}`);
   return binaryPath;
 }
@@ -63690,12 +64791,12 @@ function buildChecksumKey(version3, assetName) {
 }
 async function hashFile(filePath) {
   const hash = crypto6.createHash("sha256");
-  await new Promise((resolve3, reject) => {
+  await new Promise((resolve5, reject) => {
     const stream3 = (0, import_node_fs2.createReadStream)(filePath);
     stream3.on("data", (chunk) => {
       hash.update(chunk);
     });
-    stream3.on("end", resolve3);
+    stream3.on("end", resolve5);
     stream3.on("error", reject);
   });
   return hash.digest("hex");
@@ -63705,7 +64806,14 @@ async function hashFile(filePath) {
 async function run() {
   const inputs = getInputs();
   startGroup("Resolving prek version");
-  const version3 = await resolveVersion(inputs.prekVersion);
+  info(
+    `Inputs: prek-version="${inputs.prekVersion}", version-file="${inputs.versionFile ?? ""}", working-directory="${inputs.workingDirectory}"`
+  );
+  const version3 = await resolveVersion({
+    prekVersion: inputs.prekVersion,
+    versionFile: inputs.versionFile,
+    workingDirectory: inputs.workingDirectory
+  });
   info(`Using prek ${version3}`);
   endGroup();
   setOutput("prek-version", normalizeVersion(version3));
@@ -63755,4 +64863,41 @@ undici/lib/web/fetch/body.js:
 
 undici/lib/web/websocket/frame.js:
   (*! ws. MIT License. Einar Otto Stangvik <einaros@gmail.com> *)
+
+smol-toml/dist/error.js:
+smol-toml/dist/util.js:
+smol-toml/dist/date.js:
+smol-toml/dist/primitive.js:
+smol-toml/dist/extract.js:
+smol-toml/dist/struct.js:
+smol-toml/dist/parse.js:
+smol-toml/dist/stringify.js:
+smol-toml/dist/index.js:
+  (*!
+   * Copyright (c) Squirrel Chat et al., All rights reserved.
+   * SPDX-License-Identifier: BSD-3-Clause
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * 1. Redistributions of source code must retain the above copyright notice, this
+   *    list of conditions and the following disclaimer.
+   * 2. Redistributions in binary form must reproduce the above copyright notice,
+   *    this list of conditions and the following disclaimer in the
+   *    documentation and/or other materials provided with the distribution.
+   * 3. Neither the name of the copyright holder nor the names of its contributors
+   *    may be used to endorse or promote products derived from this software without
+   *    specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+   * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+   * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   *)
 */
