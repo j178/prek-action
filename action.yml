@@ -42,7 +42,7 @@ outputs:
 runs:
   using: node24
   main: dist/index.cjs
-  post: dist/post/index.cjs
+  post: dist/index.cjs
 branding:
   icon: git-commit
   color: orange
