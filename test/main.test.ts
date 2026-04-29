@@ -18,7 +18,9 @@ const mockContext = vi.hoisted(() => ({
 
 const coreMocks = vi.hoisted(() => ({
   endGroup: vi.fn(),
+  getState: vi.fn(() => ''),
   info: vi.fn(),
+  saveState: vi.fn(),
   setFailed: vi.fn((message: string) => {
     mockContext.failures.push(message)
   }),
@@ -26,6 +28,7 @@ const coreMocks = vi.hoisted(() => ({
     mockContext.outputs.push([name, value])
   }),
   startGroup: vi.fn(),
+  warning: vi.fn(),
 }))
 
 const dependencyMocks = vi.hoisted(() => ({
@@ -36,12 +39,14 @@ const dependencyMocks = vi.hoisted(() => ({
   resolveVersion: vi.fn(async () => '0.3.6'),
   restorePrekCache: vi.fn(async () => mockContext.restoreResult),
   runPrek: vi.fn(async () => 0),
+  savePrekCache: vi.fn(async () => {}),
   showVerboseLogs: vi.fn(async () => {}),
 }))
 
 vi.mock('@actions/core', () => coreMocks)
 vi.mock('../src/cache', () => ({
   restorePrekCache: dependencyMocks.restorePrekCache,
+  savePrekCache: dependencyMocks.savePrekCache,
 }))
 vi.mock('../src/inputs', () => ({
   getInputs: dependencyMocks.getInputs,
@@ -132,5 +137,21 @@ describe('run', () => {
       ['prek-version', 'v0.3.6'],
       ['cache-hit', 'false'],
     ])
+  })
+})
+
+describe('runPost', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    vi.clearAllMocks()
+    resetMockContext()
+  })
+
+  it('saves the cache through the post path', async () => {
+    const { runPost } = await importMainModule()
+
+    await runPost()
+
+    expect(dependencyMocks.savePrekCache).toHaveBeenCalledTimes(1)
   })
 })

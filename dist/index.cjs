@@ -26236,7 +26236,7 @@ var require_rpc_output_stream = __commonJS({
 var require_unary_call = __commonJS({
   "node_modules/@protobuf-ts/runtime-rpc/build/commonjs/unary-call.js"(exports2) {
     "use strict";
-    var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter20 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -26283,7 +26283,7 @@ var require_unary_call = __commonJS({
         return this.promiseFinished().then((value) => onfulfilled ? Promise.resolve(onfulfilled(value)) : value, (reason) => onrejected ? Promise.resolve(onrejected(reason)) : Promise.reject(reason));
       }
       promiseFinished() {
-        return __awaiter19(this, void 0, void 0, function* () {
+        return __awaiter20(this, void 0, void 0, function* () {
           let [headers, response, status, trailers] = yield Promise.all([this.headers, this.response, this.status, this.trailers]);
           return {
             method: this.method,
@@ -26305,7 +26305,7 @@ var require_unary_call = __commonJS({
 var require_server_streaming_call = __commonJS({
   "node_modules/@protobuf-ts/runtime-rpc/build/commonjs/server-streaming-call.js"(exports2) {
     "use strict";
-    var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter20 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -26354,7 +26354,7 @@ var require_server_streaming_call = __commonJS({
         return this.promiseFinished().then((value) => onfulfilled ? Promise.resolve(onfulfilled(value)) : value, (reason) => onrejected ? Promise.resolve(onrejected(reason)) : Promise.reject(reason));
       }
       promiseFinished() {
-        return __awaiter19(this, void 0, void 0, function* () {
+        return __awaiter20(this, void 0, void 0, function* () {
           let [headers, status, trailers] = yield Promise.all([this.headers, this.status, this.trailers]);
           return {
             method: this.method,
@@ -26375,7 +26375,7 @@ var require_server_streaming_call = __commonJS({
 var require_client_streaming_call = __commonJS({
   "node_modules/@protobuf-ts/runtime-rpc/build/commonjs/client-streaming-call.js"(exports2) {
     "use strict";
-    var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter20 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -26423,7 +26423,7 @@ var require_client_streaming_call = __commonJS({
         return this.promiseFinished().then((value) => onfulfilled ? Promise.resolve(onfulfilled(value)) : value, (reason) => onrejected ? Promise.resolve(onrejected(reason)) : Promise.reject(reason));
       }
       promiseFinished() {
-        return __awaiter19(this, void 0, void 0, function* () {
+        return __awaiter20(this, void 0, void 0, function* () {
           let [headers, response, status, trailers] = yield Promise.all([this.headers, this.response, this.status, this.trailers]);
           return {
             method: this.method,
@@ -26444,7 +26444,7 @@ var require_client_streaming_call = __commonJS({
 var require_duplex_streaming_call = __commonJS({
   "node_modules/@protobuf-ts/runtime-rpc/build/commonjs/duplex-streaming-call.js"(exports2) {
     "use strict";
-    var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter20 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -26492,7 +26492,7 @@ var require_duplex_streaming_call = __commonJS({
         return this.promiseFinished().then((value) => onfulfilled ? Promise.resolve(onfulfilled(value)) : value, (reason) => onrejected ? Promise.resolve(onrejected(reason)) : Promise.reject(reason));
       }
       promiseFinished() {
-        return __awaiter19(this, void 0, void 0, function* () {
+        return __awaiter20(this, void 0, void 0, function* () {
           let [headers, status, trailers] = yield Promise.all([this.headers, this.status, this.trailers]);
           return {
             method: this.method,
@@ -26512,7 +26512,7 @@ var require_duplex_streaming_call = __commonJS({
 var require_test_transport = __commonJS({
   "node_modules/@protobuf-ts/runtime-rpc/build/commonjs/test-transport.js"(exports2) {
     "use strict";
-    var __awaiter19 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter20 = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -26616,7 +26616,7 @@ var require_test_transport = __commonJS({
        * not reject. If it does, code is broken.
        */
       streamResponses(method, stream3, abort) {
-        return __awaiter19(this, void 0, void 0, function* () {
+        return __awaiter20(this, void 0, void 0, function* () {
           const messages = [];
           if (this.data.response === void 0) {
             messages.push(method.O.create());
@@ -26993,7 +26993,8 @@ var require_commonjs2 = __commonJS({
 // src/main.ts
 var main_exports = {};
 __export(main_exports, {
-  run: () => run
+  run: () => run,
+  runPost: () => runPost
 });
 module.exports = __toCommonJS(main_exports);
 
@@ -29053,10 +29054,13 @@ function saveState(name, value) {
   }
   issueCommand("save-state", { name }, toCommandValue(value));
 }
+function getState(name) {
+  return process.env[`STATE_${name}`] || "";
+}
 
 // src/cache.ts
 var crypto4 = __toESM(require("node:crypto"), 1);
-var fs8 = __toESM(require("node:fs/promises"), 1);
+var fs9 = __toESM(require("node:fs/promises"), 1);
 var path13 = __toESM(require("node:path"), 1);
 
 // node_modules/@actions/cache/lib/cache.js
@@ -29820,6 +29824,25 @@ var __awaiter10 = function(thisArg, _arguments, P, generator) {
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
+var __asyncValues2 = function(o) {
+  if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+  var m = o[Symbol.asyncIterator], i;
+  return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+    return this;
+  }, i);
+  function verb(n) {
+    i[n] = o[n] && function(v) {
+      return new Promise(function(resolve3, reject) {
+        v = o[n](v), settle(resolve3, reject, v.done, v.value);
+      });
+    };
+  }
+  function settle(resolve3, reject, d, v) {
+    Promise.resolve(v).then(function(v2) {
+      resolve3({ value: v2, done: d });
+    }, reject);
+  }
+};
 var versionSalt = "1.0";
 function createTempDirectory() {
   return __awaiter10(this, void 0, void 0, function* () {
@@ -29845,6 +29868,40 @@ function createTempDirectory() {
 }
 function getArchiveFileSizeInBytes(filePath) {
   return fs4.statSync(filePath).size;
+}
+function resolvePaths(patterns) {
+  return __awaiter10(this, void 0, void 0, function* () {
+    var _a, e_1, _b, _c;
+    var _d;
+    const paths = [];
+    const workspace = (_d = process.env["GITHUB_WORKSPACE"]) !== null && _d !== void 0 ? _d : process.cwd();
+    const globber = yield create(patterns.join("\n"), {
+      implicitDescendants: false
+    });
+    try {
+      for (var _e = true, _f = __asyncValues2(globber.globGenerator()), _g; _g = yield _f.next(), _a = _g.done, !_a; _e = true) {
+        _c = _g.value;
+        _e = false;
+        const file = _c;
+        const relativeFile = path9.relative(workspace, file).replace(new RegExp(`\\${path9.sep}`, "g"), "/");
+        debug(`Matched: ${relativeFile}`);
+        if (relativeFile === "") {
+          paths.push(".");
+        } else {
+          paths.push(`${relativeFile}`);
+        }
+      }
+    } catch (e_1_1) {
+      e_1 = { error: e_1_1 };
+    } finally {
+      try {
+        if (!_e && !_a && (_b = _f.return)) yield _b.call(_f);
+      } finally {
+        if (e_1) throw e_1.error;
+      }
+    }
+    return paths;
+  });
 }
 function unlinkFile(filePath) {
   return __awaiter10(this, void 0, void 0, function* () {
@@ -29897,6 +29954,12 @@ function getGnuTarPathOnWindows() {
     return versionOutput.toLowerCase().includes("gnu tar") ? which("tar") : "";
   });
 }
+function assertDefined(name, value) {
+  if (value === void 0) {
+    throw Error(`Expected ${name} but value was undefiend`);
+  }
+  return value;
+}
 function getCacheVersion(paths, compressionMethod, enableCrossOsArchive = false) {
   const components = paths.slice();
   if (compressionMethod) {
@@ -29917,6 +29980,7 @@ function getRuntimeToken() {
 }
 
 // node_modules/@actions/cache/lib/internal/cacheHttpClient.js
+var fs7 = __toESM(require("fs"), 1);
 var import_url = require("url");
 
 // node_modules/@typespec/ts-http-runtime/dist/esm/abort-controller/AbortError.js
@@ -59949,6 +60013,12 @@ var KnownEncryptionAlgorithmType2;
 })(KnownEncryptionAlgorithmType2 || (KnownEncryptionAlgorithmType2 = {}));
 
 // node_modules/@actions/cache/lib/internal/shared/errors.js
+var InvalidResponseError = class extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "InvalidResponseError";
+  }
+};
 var NetworkError = class extends Error {
   constructor(code) {
     const message = `Unable to make request: ${code}
@@ -59989,6 +60059,144 @@ var RateLimitError = class extends Error {
   }
 };
 
+// node_modules/@actions/cache/lib/internal/uploadUtils.js
+var __awaiter11 = function(thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function(resolve3) {
+      resolve3(value);
+    });
+  }
+  return new (P || (P = Promise))(function(resolve3, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+    function step(result) {
+      result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+var UploadProgress = class {
+  constructor(contentLength2) {
+    this.contentLength = contentLength2;
+    this.sentBytes = 0;
+    this.displayedComplete = false;
+    this.startTime = Date.now();
+  }
+  /**
+   * Sets the number of bytes sent
+   *
+   * @param sentBytes the number of bytes sent
+   */
+  setSentBytes(sentBytes) {
+    this.sentBytes = sentBytes;
+  }
+  /**
+   * Returns the total number of bytes transferred.
+   */
+  getTransferredBytes() {
+    return this.sentBytes;
+  }
+  /**
+   * Returns true if the upload is complete.
+   */
+  isDone() {
+    return this.getTransferredBytes() === this.contentLength;
+  }
+  /**
+   * Prints the current upload stats. Once the upload completes, this will print one
+   * last line and then stop.
+   */
+  display() {
+    if (this.displayedComplete) {
+      return;
+    }
+    const transferredBytes = this.sentBytes;
+    const percentage = (100 * (transferredBytes / this.contentLength)).toFixed(1);
+    const elapsedTime = Date.now() - this.startTime;
+    const uploadSpeed = (transferredBytes / (1024 * 1024) / (elapsedTime / 1e3)).toFixed(1);
+    info(`Sent ${transferredBytes} of ${this.contentLength} (${percentage}%), ${uploadSpeed} MBs/sec`);
+    if (this.isDone()) {
+      this.displayedComplete = true;
+    }
+  }
+  /**
+   * Returns a function used to handle TransferProgressEvents.
+   */
+  onProgress() {
+    return (progress) => {
+      this.setSentBytes(progress.loadedBytes);
+    };
+  }
+  /**
+   * Starts the timer that displays the stats.
+   *
+   * @param delayInMs the delay between each write
+   */
+  startDisplayTimer(delayInMs = 1e3) {
+    const displayCallback = () => {
+      this.display();
+      if (!this.isDone()) {
+        this.timeoutHandle = setTimeout(displayCallback, delayInMs);
+      }
+    };
+    this.timeoutHandle = setTimeout(displayCallback, delayInMs);
+  }
+  /**
+   * Stops the timer that displays the stats. As this typically indicates the upload
+   * is complete, this will display one last line, unless the last line has already
+   * been written.
+   */
+  stopDisplayTimer() {
+    if (this.timeoutHandle) {
+      clearTimeout(this.timeoutHandle);
+      this.timeoutHandle = void 0;
+    }
+    this.display();
+  }
+};
+function uploadCacheArchiveSDK(signedUploadURL, archivePath, options) {
+  return __awaiter11(this, void 0, void 0, function* () {
+    var _a;
+    const blobClient = new BlobClient(signedUploadURL);
+    const blockBlobClient = blobClient.getBlockBlobClient();
+    const uploadProgress = new UploadProgress((_a = options === null || options === void 0 ? void 0 : options.archiveSizeBytes) !== null && _a !== void 0 ? _a : 0);
+    const uploadOptions = {
+      blockSize: options === null || options === void 0 ? void 0 : options.uploadChunkSize,
+      concurrency: options === null || options === void 0 ? void 0 : options.uploadConcurrency,
+      // maximum number of parallel transfer workers
+      maxSingleShotSize: 128 * 1024 * 1024,
+      // 128 MiB initial transfer size
+      onProgress: uploadProgress.onProgress()
+    };
+    try {
+      uploadProgress.startDisplayTimer();
+      debug(`BlobClient: ${blobClient.name}:${blobClient.accountName}:${blobClient.containerName}`);
+      const response = yield blockBlobClient.uploadFile(archivePath, uploadOptions);
+      if (response._response.status >= 400) {
+        throw new InvalidResponseError(`uploadCacheArchiveSDK: upload failed with status code ${response._response.status}`);
+      }
+      return response;
+    } catch (error2) {
+      warning(`uploadCacheArchiveSDK: internal error uploading cache archive: ${error2.message}`);
+      throw error2;
+    } finally {
+      uploadProgress.stopDisplayTimer();
+    }
+  });
+}
+
 // node_modules/@actions/cache/lib/internal/downloadUtils.js
 var buffer2 = __toESM(require("buffer"), 1);
 var fs6 = __toESM(require("fs"), 1);
@@ -59996,7 +60204,7 @@ var stream = __toESM(require("stream"), 1);
 var util4 = __toESM(require("util"), 1);
 
 // node_modules/@actions/cache/lib/internal/requestUtils.js
-var __awaiter11 = function(thisArg, _arguments, P, generator) {
+var __awaiter12 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve3) {
       resolve3(value);
@@ -60047,12 +60255,12 @@ function isRetryableStatusCode(statusCode) {
   return retryableStatusCodes.includes(statusCode);
 }
 function sleep(milliseconds) {
-  return __awaiter11(this, void 0, void 0, function* () {
+  return __awaiter12(this, void 0, void 0, function* () {
     return new Promise((resolve3) => setTimeout(resolve3, milliseconds));
   });
 }
 function retry(name_1, method_1, getStatusCode_1) {
-  return __awaiter11(this, arguments, void 0, function* (name, method, getStatusCode, maxAttempts = DefaultRetryAttempts, delay4 = DefaultRetryDelay, onError = void 0) {
+  return __awaiter12(this, arguments, void 0, function* (name, method, getStatusCode, maxAttempts = DefaultRetryAttempts, delay4 = DefaultRetryDelay, onError = void 0) {
     let errorMessage = "";
     let attempt = 1;
     while (attempt <= maxAttempts) {
@@ -60090,7 +60298,7 @@ function retry(name_1, method_1, getStatusCode_1) {
   });
 }
 function retryTypedResponse(name_1, method_1) {
-  return __awaiter11(this, arguments, void 0, function* (name, method, maxAttempts = DefaultRetryAttempts, delay4 = DefaultRetryDelay) {
+  return __awaiter12(this, arguments, void 0, function* (name, method, maxAttempts = DefaultRetryAttempts, delay4 = DefaultRetryDelay) {
     return yield retry(
       name,
       method,
@@ -60115,13 +60323,13 @@ function retryTypedResponse(name_1, method_1) {
   });
 }
 function retryHttpClientResponse(name_1, method_1) {
-  return __awaiter11(this, arguments, void 0, function* (name, method, maxAttempts = DefaultRetryAttempts, delay4 = DefaultRetryDelay) {
+  return __awaiter12(this, arguments, void 0, function* (name, method, maxAttempts = DefaultRetryAttempts, delay4 = DefaultRetryDelay) {
     return yield retry(name, method, (response) => response.message.statusCode, maxAttempts, delay4);
   });
 }
 
 // node_modules/@actions/cache/lib/internal/downloadUtils.js
-var __awaiter12 = function(thisArg, _arguments, P, generator) {
+var __awaiter13 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve3) {
       resolve3(value);
@@ -60149,7 +60357,7 @@ var __awaiter12 = function(thisArg, _arguments, P, generator) {
   });
 };
 function pipeResponseToStream(response, output) {
-  return __awaiter12(this, void 0, void 0, function* () {
+  return __awaiter13(this, void 0, void 0, function* () {
     const pipeline3 = util4.promisify(stream.pipeline);
     yield pipeline3(response.message, output);
   });
@@ -60250,10 +60458,10 @@ var DownloadProgress = class {
   }
 };
 function downloadCacheHttpClient(archiveLocation, archivePath) {
-  return __awaiter12(this, void 0, void 0, function* () {
+  return __awaiter13(this, void 0, void 0, function* () {
     const writeStream = fs6.createWriteStream(archivePath);
     const httpClient = new HttpClient("actions/cache");
-    const downloadResponse = yield retryHttpClientResponse("downloadCache", () => __awaiter12(this, void 0, void 0, function* () {
+    const downloadResponse = yield retryHttpClientResponse("downloadCache", () => __awaiter13(this, void 0, void 0, function* () {
       return httpClient.get(archiveLocation);
     }));
     downloadResponse.message.socket.setTimeout(SocketTimeout, () => {
@@ -60274,7 +60482,7 @@ function downloadCacheHttpClient(archiveLocation, archivePath) {
   });
 }
 function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options) {
-  return __awaiter12(this, void 0, void 0, function* () {
+  return __awaiter13(this, void 0, void 0, function* () {
     var _a;
     const archiveDescriptor = yield fs6.promises.open(archivePath, "w");
     const httpClient = new HttpClient("actions/cache", void 0, {
@@ -60282,7 +60490,7 @@ function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options
       keepAlive: true
     });
     try {
-      const res = yield retryHttpClientResponse("downloadCacheMetadata", () => __awaiter12(this, void 0, void 0, function* () {
+      const res = yield retryHttpClientResponse("downloadCacheMetadata", () => __awaiter13(this, void 0, void 0, function* () {
         return yield httpClient.request("HEAD", archiveLocation, null, {});
       }));
       const lengthHeader = res.message.headers["content-length"];
@@ -60299,7 +60507,7 @@ function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options
         const count = Math.min(blockSize, length - offset);
         downloads.push({
           offset,
-          promiseGetter: () => __awaiter12(this, void 0, void 0, function* () {
+          promiseGetter: () => __awaiter13(this, void 0, void 0, function* () {
             return yield downloadSegmentRetry(httpClient, archiveLocation, offset, count);
           })
         });
@@ -60312,7 +60520,7 @@ function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options
       const progressFn = progress.onProgress();
       const activeDownloads = [];
       let nextDownload;
-      const waitAndWrite = () => __awaiter12(this, void 0, void 0, function* () {
+      const waitAndWrite = () => __awaiter13(this, void 0, void 0, function* () {
         const segment = yield Promise.race(Object.values(activeDownloads));
         yield archiveDescriptor.write(segment.buffer, 0, segment.count, segment.offset);
         actives--;
@@ -60337,7 +60545,7 @@ function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options
   });
 }
 function downloadSegmentRetry(httpClient, archiveLocation, offset, count) {
-  return __awaiter12(this, void 0, void 0, function* () {
+  return __awaiter13(this, void 0, void 0, function* () {
     const retries = 5;
     let failures = 0;
     while (true) {
@@ -60358,8 +60566,8 @@ function downloadSegmentRetry(httpClient, archiveLocation, offset, count) {
   });
 }
 function downloadSegment(httpClient, archiveLocation, offset, count) {
-  return __awaiter12(this, void 0, void 0, function* () {
-    const partRes = yield retryHttpClientResponse("downloadCachePart", () => __awaiter12(this, void 0, void 0, function* () {
+  return __awaiter13(this, void 0, void 0, function* () {
+    const partRes = yield retryHttpClientResponse("downloadCachePart", () => __awaiter13(this, void 0, void 0, function* () {
       return yield httpClient.get(archiveLocation, {
         Range: `bytes=${offset}-${offset + count - 1}`
       });
@@ -60375,7 +60583,7 @@ function downloadSegment(httpClient, archiveLocation, offset, count) {
   });
 }
 function downloadCacheStorageSDK(archiveLocation, archivePath, options) {
-  return __awaiter12(this, void 0, void 0, function* () {
+  return __awaiter13(this, void 0, void 0, function* () {
     var _a;
     const client = new BlockBlobClient(archiveLocation, void 0, {
       retryOptions: {
@@ -60420,7 +60628,7 @@ function downloadCacheStorageSDK(archiveLocation, archivePath, options) {
     }
   });
 }
-var promiseWithTimeout = (timeoutMs, promise) => __awaiter12(void 0, void 0, void 0, function* () {
+var promiseWithTimeout = (timeoutMs, promise) => __awaiter13(void 0, void 0, void 0, function* () {
   let timeoutHandle;
   const timeoutPromise = new Promise((resolve3) => {
     timeoutHandle = setTimeout(() => resolve3("timeout"), timeoutMs);
@@ -60432,6 +60640,30 @@ var promiseWithTimeout = (timeoutMs, promise) => __awaiter12(void 0, void 0, voi
 });
 
 // node_modules/@actions/cache/lib/options.js
+function getUploadOptions(copy) {
+  const result = {
+    useAzureSdk: false,
+    uploadConcurrency: 4,
+    uploadChunkSize: 32 * 1024 * 1024
+  };
+  if (copy) {
+    if (typeof copy.useAzureSdk === "boolean") {
+      result.useAzureSdk = copy.useAzureSdk;
+    }
+    if (typeof copy.uploadConcurrency === "number") {
+      result.uploadConcurrency = copy.uploadConcurrency;
+    }
+    if (typeof copy.uploadChunkSize === "number") {
+      result.uploadChunkSize = copy.uploadChunkSize;
+    }
+  }
+  result.uploadConcurrency = !isNaN(Number(process.env["CACHE_UPLOAD_CONCURRENCY"])) ? Math.min(32, Number(process.env["CACHE_UPLOAD_CONCURRENCY"])) : result.uploadConcurrency;
+  result.uploadChunkSize = !isNaN(Number(process.env["CACHE_UPLOAD_CHUNK_SIZE"])) ? Math.min(128 * 1024 * 1024, Number(process.env["CACHE_UPLOAD_CHUNK_SIZE"]) * 1024 * 1024) : result.uploadChunkSize;
+  debug(`Use Azure SDK: ${result.useAzureSdk}`);
+  debug(`Upload concurrency: ${result.uploadConcurrency}`);
+  debug(`Upload chunk size: ${result.uploadChunkSize}`);
+  return result;
+}
 function getDownloadOptions(copy) {
   const result = {
     useAzureSdk: false,
@@ -60507,7 +60739,7 @@ function getUserAgentString2() {
 }
 
 // node_modules/@actions/cache/lib/internal/cacheHttpClient.js
-var __awaiter13 = function(thisArg, _arguments, P, generator) {
+var __awaiter14 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve3) {
       resolve3(value);
@@ -60560,11 +60792,11 @@ function createHttpClient() {
   return new HttpClient(getUserAgentString2(), [bearerCredentialHandler], getRequestOptions());
 }
 function getCacheEntry(keys, paths, options) {
-  return __awaiter13(this, void 0, void 0, function* () {
+  return __awaiter14(this, void 0, void 0, function* () {
     const httpClient = createHttpClient();
     const version3 = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod, options === null || options === void 0 ? void 0 : options.enableCrossOsArchive);
     const resource = `cache?keys=${encodeURIComponent(keys.join(","))}&version=${version3}`;
-    const response = yield retryTypedResponse("getCacheEntry", () => __awaiter13(this, void 0, void 0, function* () {
+    const response = yield retryTypedResponse("getCacheEntry", () => __awaiter14(this, void 0, void 0, function* () {
       return httpClient.getJson(getCacheApiUrl(resource));
     }));
     if (response.statusCode === 204) {
@@ -60588,9 +60820,9 @@ function getCacheEntry(keys, paths, options) {
   });
 }
 function printCachesListForDiagnostics(key, httpClient, version3) {
-  return __awaiter13(this, void 0, void 0, function* () {
+  return __awaiter14(this, void 0, void 0, function* () {
     const resource = `caches?key=${encodeURIComponent(key)}`;
-    const response = yield retryTypedResponse("listCache", () => __awaiter13(this, void 0, void 0, function* () {
+    const response = yield retryTypedResponse("listCache", () => __awaiter14(this, void 0, void 0, function* () {
       return httpClient.getJson(getCacheApiUrl(resource));
     }));
     if (response.statusCode === 200) {
@@ -60607,7 +60839,7 @@ Other caches with similar key:`);
   });
 }
 function downloadCache(archiveLocation, archivePath, options) {
-  return __awaiter13(this, void 0, void 0, function* () {
+  return __awaiter14(this, void 0, void 0, function* () {
     const archiveUrl = new import_url.URL(archiveLocation);
     const downloadOptions = getDownloadOptions(options);
     if (archiveUrl.hostname.endsWith(".blob.core.windows.net")) {
@@ -60620,6 +60852,104 @@ function downloadCache(archiveLocation, archivePath, options) {
       }
     } else {
       yield downloadCacheHttpClient(archiveLocation, archivePath);
+    }
+  });
+}
+function reserveCache(key, paths, options) {
+  return __awaiter14(this, void 0, void 0, function* () {
+    const httpClient = createHttpClient();
+    const version3 = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod, options === null || options === void 0 ? void 0 : options.enableCrossOsArchive);
+    const reserveCacheRequest = {
+      key,
+      version: version3,
+      cacheSize: options === null || options === void 0 ? void 0 : options.cacheSize
+    };
+    const response = yield retryTypedResponse("reserveCache", () => __awaiter14(this, void 0, void 0, function* () {
+      return httpClient.postJson(getCacheApiUrl("caches"), reserveCacheRequest);
+    }));
+    return response;
+  });
+}
+function getContentRange(start, end) {
+  return `bytes ${start}-${end}/*`;
+}
+function uploadChunk(httpClient, resourceUrl, openStream, start, end) {
+  return __awaiter14(this, void 0, void 0, function* () {
+    debug(`Uploading chunk of size ${end - start + 1} bytes at offset ${start} with content range: ${getContentRange(start, end)}`);
+    const additionalHeaders = {
+      "Content-Type": "application/octet-stream",
+      "Content-Range": getContentRange(start, end)
+    };
+    const uploadChunkResponse = yield retryHttpClientResponse(`uploadChunk (start: ${start}, end: ${end})`, () => __awaiter14(this, void 0, void 0, function* () {
+      return httpClient.sendStream("PATCH", resourceUrl, openStream(), additionalHeaders);
+    }));
+    if (!isSuccessStatusCode(uploadChunkResponse.message.statusCode)) {
+      throw new Error(`Cache service responded with ${uploadChunkResponse.message.statusCode} during upload chunk.`);
+    }
+  });
+}
+function uploadFile(httpClient, cacheId, archivePath, options) {
+  return __awaiter14(this, void 0, void 0, function* () {
+    const fileSize = getArchiveFileSizeInBytes(archivePath);
+    const resourceUrl = getCacheApiUrl(`caches/${cacheId.toString()}`);
+    const fd = fs7.openSync(archivePath, "r");
+    const uploadOptions = getUploadOptions(options);
+    const concurrency = assertDefined("uploadConcurrency", uploadOptions.uploadConcurrency);
+    const maxChunkSize = assertDefined("uploadChunkSize", uploadOptions.uploadChunkSize);
+    const parallelUploads = [...new Array(concurrency).keys()];
+    debug("Awaiting all uploads");
+    let offset = 0;
+    try {
+      yield Promise.all(parallelUploads.map(() => __awaiter14(this, void 0, void 0, function* () {
+        while (offset < fileSize) {
+          const chunkSize = Math.min(fileSize - offset, maxChunkSize);
+          const start = offset;
+          const end = offset + chunkSize - 1;
+          offset += maxChunkSize;
+          yield uploadChunk(httpClient, resourceUrl, () => fs7.createReadStream(archivePath, {
+            fd,
+            start,
+            end,
+            autoClose: false
+          }).on("error", (error2) => {
+            throw new Error(`Cache upload failed because file read failed with ${error2.message}`);
+          }), start, end);
+        }
+      })));
+    } finally {
+      fs7.closeSync(fd);
+    }
+    return;
+  });
+}
+function commitCache(httpClient, cacheId, filesize) {
+  return __awaiter14(this, void 0, void 0, function* () {
+    const commitCacheRequest = { size: filesize };
+    return yield retryTypedResponse("commitCache", () => __awaiter14(this, void 0, void 0, function* () {
+      return httpClient.postJson(getCacheApiUrl(`caches/${cacheId.toString()}`), commitCacheRequest);
+    }));
+  });
+}
+function saveCache(cacheId, archivePath, signedUploadURL, options) {
+  return __awaiter14(this, void 0, void 0, function* () {
+    const uploadOptions = getUploadOptions(options);
+    if (uploadOptions.useAzureSdk) {
+      if (!signedUploadURL) {
+        throw new Error("Azure Storage SDK can only be used when a signed URL is provided.");
+      }
+      yield uploadCacheArchiveSDK(signedUploadURL, archivePath, options);
+    } else {
+      const httpClient = createHttpClient();
+      debug("Upload cache");
+      yield uploadFile(httpClient, cacheId, archivePath, options);
+      debug("Commiting cache");
+      const cacheSize = getArchiveFileSizeInBytes(archivePath);
+      info(`Cache Size: ~${Math.round(cacheSize / (1024 * 1024))} MB (${cacheSize} B)`);
+      const commitCacheResponse = yield commitCache(httpClient, cacheId, cacheSize);
+      if (!isSuccessStatusCode(commitCacheResponse.statusCode)) {
+        throw new Error(`Cache service responded with ${commitCacheResponse.statusCode} during commit cache.`);
+      }
+      info("Cache saved successfully");
     }
   });
 }
@@ -61301,7 +61631,7 @@ function maskSecretUrls(body2) {
 }
 
 // node_modules/@actions/cache/lib/internal/shared/cacheTwirpClient.js
-var __awaiter14 = function(thisArg, _arguments, P, generator) {
+var __awaiter15 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve3) {
       resolve3(value);
@@ -61351,14 +61681,14 @@ var CacheServiceClient = class {
   // This function satisfies the Rpc interface. It is compatible with the JSON
   // JSON generated client.
   request(service, method, contentType2, data) {
-    return __awaiter14(this, void 0, void 0, function* () {
+    return __awaiter15(this, void 0, void 0, function* () {
       const url2 = new URL(`/twirp/${service}/${method}`, this.baseUrl).href;
       debug(`[Request] ${method} ${url2}`);
       const headers = {
         "Content-Type": contentType2
       };
       try {
-        const { body: body2 } = yield this.retryableRequest(() => __awaiter14(this, void 0, void 0, function* () {
+        const { body: body2 } = yield this.retryableRequest(() => __awaiter15(this, void 0, void 0, function* () {
           return this.httpClient.post(url2, JSON.stringify(data), headers);
         }));
         return body2;
@@ -61368,7 +61698,7 @@ var CacheServiceClient = class {
     });
   }
   retryableRequest(operation) {
-    return __awaiter14(this, void 0, void 0, function* () {
+    return __awaiter15(this, void 0, void 0, function* () {
       let attempt = 0;
       let errorMessage = "";
       let rawBody = "";
@@ -61451,7 +61781,7 @@ var CacheServiceClient = class {
     return retryableStatusCodes.includes(statusCode);
   }
   sleep(milliseconds) {
-    return __awaiter14(this, void 0, void 0, function* () {
+    return __awaiter15(this, void 0, void 0, function* () {
       return new Promise((resolve3) => setTimeout(resolve3, milliseconds));
     });
   }
@@ -61475,7 +61805,7 @@ function internalCacheTwirpClient(options) {
 // node_modules/@actions/cache/lib/internal/tar.js
 var import_fs2 = require("fs");
 var path10 = __toESM(require("path"), 1);
-var __awaiter15 = function(thisArg, _arguments, P, generator) {
+var __awaiter16 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve3) {
       resolve3(value);
@@ -61504,7 +61834,7 @@ var __awaiter15 = function(thisArg, _arguments, P, generator) {
 };
 var IS_WINDOWS8 = process.platform === "win32";
 function getTarPath() {
-  return __awaiter15(this, void 0, void 0, function* () {
+  return __awaiter16(this, void 0, void 0, function* () {
     switch (process.platform) {
       case "win32": {
         const gnuTar = yield getGnuTarPathOnWindows();
@@ -61537,7 +61867,7 @@ function getTarPath() {
   });
 }
 function getTarArgs(tarPath_1, compressionMethod_1, type_1) {
-  return __awaiter15(this, arguments, void 0, function* (tarPath, compressionMethod, type, archivePath = "") {
+  return __awaiter16(this, arguments, void 0, function* (tarPath, compressionMethod, type, archivePath = "") {
     const args = [`"${tarPath.path}"`];
     const cacheFileName = getCacheFileName(compressionMethod);
     const tarFile = "cache.tar";
@@ -61568,7 +61898,7 @@ function getTarArgs(tarPath_1, compressionMethod_1, type_1) {
   });
 }
 function getCommands(compressionMethod_1, type_1) {
-  return __awaiter15(this, arguments, void 0, function* (compressionMethod, type, archivePath = "") {
+  return __awaiter16(this, arguments, void 0, function* (compressionMethod, type, archivePath = "") {
     let args;
     const tarPath = yield getTarPath();
     const tarArgs = yield getTarArgs(tarPath, compressionMethod, type, archivePath);
@@ -61590,7 +61920,7 @@ function getWorkingDirectory() {
   return (_a = process.env["GITHUB_WORKSPACE"]) !== null && _a !== void 0 ? _a : process.cwd();
 }
 function getDecompressionProgram(tarPath, compressionMethod, archivePath) {
-  return __awaiter15(this, void 0, void 0, function* () {
+  return __awaiter16(this, void 0, void 0, function* () {
     const BSD_TAR_ZSTD = tarPath.type === ArchiveToolType.BSD && compressionMethod !== CompressionMethod.Gzip && IS_WINDOWS8;
     switch (compressionMethod) {
       case CompressionMethod.Zstd:
@@ -61614,7 +61944,7 @@ function getDecompressionProgram(tarPath, compressionMethod, archivePath) {
   });
 }
 function getCompressionProgram(tarPath, compressionMethod) {
-  return __awaiter15(this, void 0, void 0, function* () {
+  return __awaiter16(this, void 0, void 0, function* () {
     const cacheFileName = getCacheFileName(compressionMethod);
     const BSD_TAR_ZSTD = tarPath.type === ArchiveToolType.BSD && compressionMethod !== CompressionMethod.Gzip && IS_WINDOWS8;
     switch (compressionMethod) {
@@ -61639,7 +61969,7 @@ function getCompressionProgram(tarPath, compressionMethod) {
   });
 }
 function execCommands(commands, cwd) {
-  return __awaiter15(this, void 0, void 0, function* () {
+  return __awaiter16(this, void 0, void 0, function* () {
     for (const command of commands) {
       try {
         yield exec(command, void 0, {
@@ -61653,22 +61983,29 @@ function execCommands(commands, cwd) {
   });
 }
 function listTar(archivePath, compressionMethod) {
-  return __awaiter15(this, void 0, void 0, function* () {
+  return __awaiter16(this, void 0, void 0, function* () {
     const commands = yield getCommands(compressionMethod, "list", archivePath);
     yield execCommands(commands);
   });
 }
 function extractTar(archivePath, compressionMethod) {
-  return __awaiter15(this, void 0, void 0, function* () {
+  return __awaiter16(this, void 0, void 0, function* () {
     const workingDirectory = getWorkingDirectory();
     yield mkdirP(workingDirectory);
     const commands = yield getCommands(compressionMethod, "extract", archivePath);
     yield execCommands(commands);
   });
 }
+function createTar(archiveFolder, sourceDirectories, compressionMethod) {
+  return __awaiter16(this, void 0, void 0, function* () {
+    (0, import_fs2.writeFileSync)(path10.join(archiveFolder, ManifestFilename), sourceDirectories.join("\n"));
+    const commands = yield getCommands(compressionMethod, "create");
+    yield execCommands(commands, archiveFolder);
+  });
+}
 
 // node_modules/@actions/cache/lib/cache.js
-var __awaiter16 = function(thisArg, _arguments, P, generator) {
+var __awaiter17 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve3) {
       resolve3(value);
@@ -61702,6 +62039,20 @@ var ValidationError = class _ValidationError extends Error {
     Object.setPrototypeOf(this, _ValidationError.prototype);
   }
 };
+var ReserveCacheError = class _ReserveCacheError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ReserveCacheError";
+    Object.setPrototypeOf(this, _ReserveCacheError.prototype);
+  }
+};
+var FinalizeCacheError = class _FinalizeCacheError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "FinalizeCacheError";
+    Object.setPrototypeOf(this, _FinalizeCacheError.prototype);
+  }
+};
 function checkPaths(paths) {
   if (!paths || paths.length === 0) {
     throw new ValidationError(`Path Validation Error: At least one directory or file path is required`);
@@ -61717,7 +62068,7 @@ function checkKey(key) {
   }
 }
 function restoreCache(paths_1, primaryKey_1, restoreKeys_1, options_1) {
-  return __awaiter16(this, arguments, void 0, function* (paths, primaryKey, restoreKeys, options, enableCrossOsArchive = false) {
+  return __awaiter17(this, arguments, void 0, function* (paths, primaryKey, restoreKeys, options, enableCrossOsArchive = false) {
     const cacheServiceVersion = getCacheServiceVersion();
     debug(`Cache service version: ${cacheServiceVersion}`);
     checkPaths(paths);
@@ -61731,7 +62082,7 @@ function restoreCache(paths_1, primaryKey_1, restoreKeys_1, options_1) {
   });
 }
 function restoreCacheV1(paths_1, primaryKey_1, restoreKeys_1, options_1) {
-  return __awaiter16(this, arguments, void 0, function* (paths, primaryKey, restoreKeys, options, enableCrossOsArchive = false) {
+  return __awaiter17(this, arguments, void 0, function* (paths, primaryKey, restoreKeys, options, enableCrossOsArchive = false) {
     restoreKeys = restoreKeys || [];
     const keys = [primaryKey, ...restoreKeys];
     debug("Resolved Keys:");
@@ -61789,7 +62140,7 @@ function restoreCacheV1(paths_1, primaryKey_1, restoreKeys_1, options_1) {
   });
 }
 function restoreCacheV2(paths_1, primaryKey_1, restoreKeys_1, options_1) {
-  return __awaiter16(this, arguments, void 0, function* (paths, primaryKey, restoreKeys, options, enableCrossOsArchive = false) {
+  return __awaiter17(this, arguments, void 0, function* (paths, primaryKey, restoreKeys, options, enableCrossOsArchive = false) {
     options = Object.assign(Object.assign({}, options), { useAzureSdk: true });
     restoreKeys = restoreKeys || [];
     const keys = [primaryKey, ...restoreKeys];
@@ -61860,9 +62211,171 @@ function restoreCacheV2(paths_1, primaryKey_1, restoreKeys_1, options_1) {
     return void 0;
   });
 }
+function saveCache2(paths_1, key_1, options_1) {
+  return __awaiter17(this, arguments, void 0, function* (paths, key, options, enableCrossOsArchive = false) {
+    const cacheServiceVersion = getCacheServiceVersion();
+    debug(`Cache service version: ${cacheServiceVersion}`);
+    checkPaths(paths);
+    checkKey(key);
+    switch (cacheServiceVersion) {
+      case "v2":
+        return yield saveCacheV2(paths, key, options, enableCrossOsArchive);
+      case "v1":
+      default:
+        return yield saveCacheV1(paths, key, options, enableCrossOsArchive);
+    }
+  });
+}
+function saveCacheV1(paths_1, key_1, options_1) {
+  return __awaiter17(this, arguments, void 0, function* (paths, key, options, enableCrossOsArchive = false) {
+    var _a, _b, _c, _d, _e;
+    const compressionMethod = yield getCompressionMethod();
+    let cacheId = -1;
+    const cachePaths = yield resolvePaths(paths);
+    debug("Cache Paths:");
+    debug(`${JSON.stringify(cachePaths)}`);
+    if (cachePaths.length === 0) {
+      throw new Error(`Path Validation Error: Path(s) specified in the action for caching do(es) not exist, hence no cache is being saved.`);
+    }
+    const archiveFolder = yield createTempDirectory();
+    const archivePath = path11.join(archiveFolder, getCacheFileName(compressionMethod));
+    debug(`Archive Path: ${archivePath}`);
+    try {
+      yield createTar(archiveFolder, cachePaths, compressionMethod);
+      if (isDebug()) {
+        yield listTar(archivePath, compressionMethod);
+      }
+      const fileSizeLimit = 10 * 1024 * 1024 * 1024;
+      const archiveFileSize = getArchiveFileSizeInBytes(archivePath);
+      debug(`File Size: ${archiveFileSize}`);
+      if (archiveFileSize > fileSizeLimit && !isGhes()) {
+        throw new Error(`Cache size of ~${Math.round(archiveFileSize / (1024 * 1024))} MB (${archiveFileSize} B) is over the 10GB limit, not saving cache.`);
+      }
+      debug("Reserving Cache");
+      const reserveCacheResponse = yield reserveCache(key, paths, {
+        compressionMethod,
+        enableCrossOsArchive,
+        cacheSize: archiveFileSize
+      });
+      if ((_a = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.result) === null || _a === void 0 ? void 0 : _a.cacheId) {
+        cacheId = (_b = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.result) === null || _b === void 0 ? void 0 : _b.cacheId;
+      } else if ((reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.statusCode) === 400) {
+        throw new Error((_d = (_c = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.error) === null || _c === void 0 ? void 0 : _c.message) !== null && _d !== void 0 ? _d : `Cache size of ~${Math.round(archiveFileSize / (1024 * 1024))} MB (${archiveFileSize} B) is over the data cap limit, not saving cache.`);
+      } else {
+        throw new ReserveCacheError(`Unable to reserve cache with key ${key}, another job may be creating this cache. More details: ${(_e = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.error) === null || _e === void 0 ? void 0 : _e.message}`);
+      }
+      debug(`Saving Cache (ID: ${cacheId})`);
+      yield saveCache(cacheId, archivePath, "", options);
+    } catch (error2) {
+      const typedError = error2;
+      if (typedError.name === ValidationError.name) {
+        throw error2;
+      } else if (typedError.name === ReserveCacheError.name) {
+        info(`Failed to save: ${typedError.message}`);
+      } else {
+        if (typedError instanceof HttpClientError && typeof typedError.statusCode === "number" && typedError.statusCode >= 500) {
+          error(`Failed to save: ${typedError.message}`);
+        } else {
+          warning(`Failed to save: ${typedError.message}`);
+        }
+      }
+    } finally {
+      try {
+        yield unlinkFile(archivePath);
+      } catch (error2) {
+        debug(`Failed to delete archive: ${error2}`);
+      }
+    }
+    return cacheId;
+  });
+}
+function saveCacheV2(paths_1, key_1, options_1) {
+  return __awaiter17(this, arguments, void 0, function* (paths, key, options, enableCrossOsArchive = false) {
+    options = Object.assign(Object.assign({}, options), { uploadChunkSize: 64 * 1024 * 1024, uploadConcurrency: 8, useAzureSdk: true });
+    const compressionMethod = yield getCompressionMethod();
+    const twirpClient = internalCacheTwirpClient();
+    let cacheId = -1;
+    const cachePaths = yield resolvePaths(paths);
+    debug("Cache Paths:");
+    debug(`${JSON.stringify(cachePaths)}`);
+    if (cachePaths.length === 0) {
+      throw new Error(`Path Validation Error: Path(s) specified in the action for caching do(es) not exist, hence no cache is being saved.`);
+    }
+    const archiveFolder = yield createTempDirectory();
+    const archivePath = path11.join(archiveFolder, getCacheFileName(compressionMethod));
+    debug(`Archive Path: ${archivePath}`);
+    try {
+      yield createTar(archiveFolder, cachePaths, compressionMethod);
+      if (isDebug()) {
+        yield listTar(archivePath, compressionMethod);
+      }
+      const archiveFileSize = getArchiveFileSizeInBytes(archivePath);
+      debug(`File Size: ${archiveFileSize}`);
+      options.archiveSizeBytes = archiveFileSize;
+      debug("Reserving Cache");
+      const version3 = getCacheVersion(paths, compressionMethod, enableCrossOsArchive);
+      const request = {
+        key,
+        version: version3
+      };
+      let signedUploadUrl;
+      try {
+        const response = yield twirpClient.CreateCacheEntry(request);
+        if (!response.ok) {
+          if (response.message) {
+            warning(`Cache reservation failed: ${response.message}`);
+          }
+          throw new Error(response.message || "Response was not ok");
+        }
+        signedUploadUrl = response.signedUploadUrl;
+      } catch (error2) {
+        debug(`Failed to reserve cache: ${error2}`);
+        throw new ReserveCacheError(`Unable to reserve cache with key ${key}, another job may be creating this cache.`);
+      }
+      debug(`Attempting to upload cache located at: ${archivePath}`);
+      yield saveCache(cacheId, archivePath, signedUploadUrl, options);
+      const finalizeRequest = {
+        key,
+        version: version3,
+        sizeBytes: `${archiveFileSize}`
+      };
+      const finalizeResponse = yield twirpClient.FinalizeCacheEntryUpload(finalizeRequest);
+      debug(`FinalizeCacheEntryUploadResponse: ${finalizeResponse.ok}`);
+      if (!finalizeResponse.ok) {
+        if (finalizeResponse.message) {
+          throw new FinalizeCacheError(finalizeResponse.message);
+        }
+        throw new Error(`Unable to finalize cache with key ${key}, another job may be finalizing this cache.`);
+      }
+      cacheId = parseInt(finalizeResponse.entryId);
+    } catch (error2) {
+      const typedError = error2;
+      if (typedError.name === ValidationError.name) {
+        throw error2;
+      } else if (typedError.name === ReserveCacheError.name) {
+        info(`Failed to save: ${typedError.message}`);
+      } else if (typedError.name === FinalizeCacheError.name) {
+        warning(typedError.message);
+      } else {
+        if (typedError instanceof HttpClientError && typeof typedError.statusCode === "number" && typedError.statusCode >= 500) {
+          error(`Failed to save: ${typedError.message}`);
+        } else {
+          warning(`Failed to save: ${typedError.message}`);
+        }
+      }
+    } finally {
+      try {
+        yield unlinkFile(archivePath);
+      } catch (error2) {
+        debug(`Failed to delete archive: ${error2}`);
+      }
+    }
+    return cacheId;
+  });
+}
 
 // src/prek.ts
-var fs7 = __toESM(require("node:fs/promises"), 1);
+var fs8 = __toESM(require("node:fs/promises"), 1);
 var os8 = __toESM(require("node:os"), 1);
 var path12 = __toESM(require("node:path"), 1);
 
@@ -61921,7 +62434,7 @@ async function showVerboseLogs() {
     const cacheDir = await getPrekCacheDir();
     const logPath = path12.join(cacheDir, "prek.log");
     try {
-      const log2 = await fs7.readFile(logPath, "utf8");
+      const log2 = await fs8.readFile(logPath, "utf8");
       process.stdout.write(log2);
       if (!log2.endsWith("\n")) {
         process.stdout.write("\n");
@@ -62000,6 +62513,7 @@ function getDefaultPrekCacheDir() {
 var CACHE_KEY_STATE = "prek-cache-primary-key";
 var CACHE_MATCHED_KEY_STATE = "prek-cache-matched-key";
 var CACHE_PATHS_STATE = "prek-cache-paths";
+var POST_ACTION_STATE = "prek-action-post";
 var PREK_CACHE_KEY_PREFIX = "prek-v1";
 
 // src/cache.ts
@@ -62030,6 +62544,33 @@ async function restorePrekCache(workingDirectory) {
   }
   return { matchedKey, primaryKey };
 }
+async function savePrekCache() {
+  const primaryKey = getState(CACHE_KEY_STATE);
+  const matchedKey = getState(CACHE_MATCHED_KEY_STATE);
+  const rawPaths = getState(CACHE_PATHS_STATE);
+  if (!primaryKey || !rawPaths) {
+    info(
+      "No cache state found, skipping cache save (cache disabled or restore step did not run)"
+    );
+    return;
+  }
+  if (primaryKey === matchedKey) {
+    info(`Cache hit occurred on the primary key ${primaryKey}, not saving cache.`);
+    return;
+  }
+  const paths = JSON.parse(rawPaths);
+  startGroup("Save prek cache");
+  try {
+    const cacheId = await saveCache2(paths, primaryKey);
+    if (cacheId !== -1) {
+      info(`Saved prek cache with key ${primaryKey}`);
+    }
+  } catch (error2) {
+    warning(`Failed to save cache: ${formatError2(error2)}`);
+  } finally {
+    endGroup();
+  }
+}
 async function buildCacheKey(workingDirectory) {
   const normalizedWorkingDirectory = path13.resolve(workingDirectory);
   const hash = await hashConfigFiles(normalizedWorkingDirectory);
@@ -62048,7 +62589,7 @@ async function hashConfigFiles(workingDirectory) {
   for (const file of files.sort()) {
     digest.update(path13.relative(workingDirectory, file));
     digest.update("\0");
-    digest.update(await fs8.readFile(file));
+    digest.update(await fs9.readFile(file));
     digest.update("\0");
   }
   return digest.digest("hex");
@@ -62078,12 +62619,12 @@ function getInputs() {
 // src/install.ts
 var crypto6 = __toESM(require("node:crypto"), 1);
 var import_node_fs2 = require("node:fs");
-var fs11 = __toESM(require("node:fs/promises"), 1);
+var fs12 = __toESM(require("node:fs/promises"), 1);
 var path15 = __toESM(require("node:path"), 1);
 
 // node_modules/@actions/tool-cache/lib/tool-cache.js
 var crypto5 = __toESM(require("crypto"), 1);
-var fs9 = __toESM(require("fs"), 1);
+var fs10 = __toESM(require("fs"), 1);
 
 // node_modules/@actions/tool-cache/lib/manifest.js
 var semver2 = __toESM(require_semver2(), 1);
@@ -62097,7 +62638,7 @@ var util5 = __toESM(require("util"), 1);
 var import_assert5 = require("assert");
 
 // node_modules/@actions/tool-cache/lib/retry-helper.js
-var __awaiter17 = function(thisArg, _arguments, P, generator) {
+var __awaiter18 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve3) {
       resolve3(value);
@@ -62137,7 +62678,7 @@ var RetryHelper = class {
     }
   }
   execute(action5, isRetryable) {
-    return __awaiter17(this, void 0, void 0, function* () {
+    return __awaiter18(this, void 0, void 0, function* () {
       let attempt = 1;
       while (attempt < this.maxAttempts) {
         try {
@@ -62160,14 +62701,14 @@ var RetryHelper = class {
     return Math.floor(Math.random() * (this.maxSeconds - this.minSeconds + 1)) + this.minSeconds;
   }
   sleep(seconds) {
-    return __awaiter17(this, void 0, void 0, function* () {
+    return __awaiter18(this, void 0, void 0, function* () {
       return new Promise((resolve3) => setTimeout(resolve3, seconds * 1e3));
     });
   }
 };
 
 // node_modules/@actions/tool-cache/lib/tool-cache.js
-var __awaiter18 = function(thisArg, _arguments, P, generator) {
+var __awaiter19 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve3) {
       resolve3(value);
@@ -62205,7 +62746,7 @@ var IS_WINDOWS9 = process.platform === "win32";
 var IS_MAC = process.platform === "darwin";
 var userAgent = "actions/tool-cache";
 function downloadTool(url2, dest, auth, headers) {
-  return __awaiter18(this, void 0, void 0, function* () {
+  return __awaiter19(this, void 0, void 0, function* () {
     dest = dest || path14.join(_getTempDirectory(), crypto5.randomUUID());
     yield mkdirP(path14.dirname(dest));
     debug(`Downloading ${url2}`);
@@ -62214,7 +62755,7 @@ function downloadTool(url2, dest, auth, headers) {
     const minSeconds = _getGlobal("TEST_DOWNLOAD_TOOL_RETRY_MIN_SECONDS", 10);
     const maxSeconds = _getGlobal("TEST_DOWNLOAD_TOOL_RETRY_MAX_SECONDS", 20);
     const retryHelper = new RetryHelper(maxAttempts, minSeconds, maxSeconds);
-    return yield retryHelper.execute(() => __awaiter18(this, void 0, void 0, function* () {
+    return yield retryHelper.execute(() => __awaiter19(this, void 0, void 0, function* () {
       return yield downloadToolAttempt(url2, dest || "", auth, headers);
     }), (err) => {
       if (err instanceof HTTPError && err.httpStatusCode) {
@@ -62227,8 +62768,8 @@ function downloadTool(url2, dest, auth, headers) {
   });
 }
 function downloadToolAttempt(url2, dest, auth, headers) {
-  return __awaiter18(this, void 0, void 0, function* () {
-    if (fs9.existsSync(dest)) {
+  return __awaiter19(this, void 0, void 0, function* () {
+    if (fs10.existsSync(dest)) {
       throw new Error(`Destination file path ${dest} already exists`);
     }
     const http3 = new HttpClient(userAgent, [], {
@@ -62252,7 +62793,7 @@ function downloadToolAttempt(url2, dest, auth, headers) {
     const readStream = responseMessageFactory();
     let succeeded = false;
     try {
-      yield pipeline3(readStream, fs9.createWriteStream(dest));
+      yield pipeline3(readStream, fs10.createWriteStream(dest));
       debug("download complete");
       succeeded = true;
       return dest;
@@ -62269,7 +62810,7 @@ function downloadToolAttempt(url2, dest, auth, headers) {
   });
 }
 function extractTar2(file_1, dest_1) {
-  return __awaiter18(this, arguments, void 0, function* (file, dest, flags = "xz") {
+  return __awaiter19(this, arguments, void 0, function* (file, dest, flags = "xz") {
     if (!file) {
       throw new Error("parameter 'file' is required");
     }
@@ -62312,7 +62853,7 @@ function extractTar2(file_1, dest_1) {
   });
 }
 function extractZip(file, dest) {
-  return __awaiter18(this, void 0, void 0, function* () {
+  return __awaiter19(this, void 0, void 0, function* () {
     if (!file) {
       throw new Error("parameter 'file' is required");
     }
@@ -62326,7 +62867,7 @@ function extractZip(file, dest) {
   });
 }
 function extractZipWin(file, dest) {
-  return __awaiter18(this, void 0, void 0, function* () {
+  return __awaiter19(this, void 0, void 0, function* () {
     const escapedFile = file.replace(/'/g, "''").replace(/"|\n|\r/g, "");
     const escapedDest = dest.replace(/'/g, "''").replace(/"|\n|\r/g, "");
     const pwshPath = yield which("pwsh", false);
@@ -62372,7 +62913,7 @@ function extractZipWin(file, dest) {
   });
 }
 function extractZipNix(file, dest) {
-  return __awaiter18(this, void 0, void 0, function* () {
+  return __awaiter19(this, void 0, void 0, function* () {
     const unzipPath = yield which("unzip", true);
     const args = [file];
     if (!isDebug()) {
@@ -62383,12 +62924,12 @@ function extractZipNix(file, dest) {
   });
 }
 function cacheFile(sourceFile, targetFile, tool, version3, arch3) {
-  return __awaiter18(this, void 0, void 0, function* () {
+  return __awaiter19(this, void 0, void 0, function* () {
     version3 = semver3.clean(version3) || version3;
     arch3 = arch3 || os9.arch();
     debug(`Caching tool ${tool} ${version3} ${arch3}`);
     debug(`source file: ${sourceFile}`);
-    if (!fs9.statSync(sourceFile).isFile()) {
+    if (!fs10.statSync(sourceFile).isFile()) {
       throw new Error("sourceFile is not a file");
     }
     const destFolder = yield _createToolPath(tool, version3, arch3);
@@ -62417,7 +62958,7 @@ function find(toolName, versionSpec, arch3) {
     versionSpec = semver3.clean(versionSpec) || "";
     const cachePath = path14.join(_getCacheDirectory(), toolName, versionSpec, arch3);
     debug(`checking cache: ${cachePath}`);
-    if (fs9.existsSync(cachePath) && fs9.existsSync(`${cachePath}.complete`)) {
+    if (fs10.existsSync(cachePath) && fs10.existsSync(`${cachePath}.complete`)) {
       debug(`Found tool in cache ${toolName} ${versionSpec} ${arch3}`);
       toolPath = cachePath;
     } else {
@@ -62430,12 +62971,12 @@ function findAllVersions(toolName, arch3) {
   const versions = [];
   arch3 = arch3 || os9.arch();
   const toolPath = path14.join(_getCacheDirectory(), toolName);
-  if (fs9.existsSync(toolPath)) {
-    const children = fs9.readdirSync(toolPath);
+  if (fs10.existsSync(toolPath)) {
+    const children = fs10.readdirSync(toolPath);
     for (const child2 of children) {
       if (isExplicitVersion(child2)) {
         const fullPath = path14.join(toolPath, child2, arch3 || "");
-        if (fs9.existsSync(fullPath) && fs9.existsSync(`${fullPath}.complete`)) {
+        if (fs10.existsSync(fullPath) && fs10.existsSync(`${fullPath}.complete`)) {
           versions.push(child2);
         }
       }
@@ -62444,7 +62985,7 @@ function findAllVersions(toolName, arch3) {
   return versions;
 }
 function _createExtractFolder(dest) {
-  return __awaiter18(this, void 0, void 0, function* () {
+  return __awaiter19(this, void 0, void 0, function* () {
     if (!dest) {
       dest = path14.join(_getTempDirectory(), crypto5.randomUUID());
     }
@@ -62453,7 +62994,7 @@ function _createExtractFolder(dest) {
   });
 }
 function _createToolPath(tool, version3, arch3) {
-  return __awaiter18(this, void 0, void 0, function* () {
+  return __awaiter19(this, void 0, void 0, function* () {
     const folderPath = path14.join(_getCacheDirectory(), tool, semver3.clean(version3) || version3, arch3 || "");
     debug(`destination ${folderPath}`);
     const markerPath = `${folderPath}.complete`;
@@ -62466,7 +63007,7 @@ function _createToolPath(tool, version3, arch3) {
 function _completeToolPath(tool, version3, arch3) {
   const folderPath = path14.join(_getCacheDirectory(), tool, semver3.clean(version3) || version3, arch3 || "");
   const markerPath = `${folderPath}.complete`;
-  fs9.writeFileSync(markerPath, "");
+  fs10.writeFileSync(markerPath, "");
   debug("finished caching tool");
 }
 function isExplicitVersion(versionSpec) {
@@ -63432,7 +63973,7 @@ var knownChecksumsByAsset = /* @__PURE__ */ new Map([
 ]);
 
 // src/manifest.ts
-var fs10 = __toESM(require("node:fs/promises"), 1);
+var fs11 = __toESM(require("node:fs/promises"), 1);
 var semver4 = __toESM(require_semver2(), 1);
 var prekReleasesBaseUrl = "https://github.com/j178/prek/releases/download";
 var prekVersionManifestUrl = "https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json";
@@ -63514,7 +64055,7 @@ function resolveVersionFromManifest(versionInput, manifest) {
 async function downloadVersionManifest() {
   info(`Downloading version manifest from ${prekVersionManifestUrl}`);
   const downloadedPath = await downloadTool(prekVersionManifestUrl);
-  const rawManifest = await fs10.readFile(downloadedPath, "utf8");
+  const rawManifest = await fs11.readFile(downloadedPath, "utf8");
   return JSON.parse(rawManifest);
 }
 async function getVersionManifest() {
@@ -63557,7 +64098,7 @@ async function installPrek(version3) {
     info(`Extracted ${asset.archiveType} archive to ${extractedPath}`);
     const binaryPath = await getBinaryPath(extractedPath, asset);
     if (process.platform !== "win32") {
-      await fs11.chmod(binaryPath, 493);
+      await fs12.chmod(binaryPath, 493);
     }
     const toolPath = await cacheFile(binaryPath, asset.binaryName, "prek", version3, toolArch);
     info(`Cached prek binary at ${toolPath}`);
@@ -63654,7 +64195,7 @@ async function getBinaryPath(rootDir, asset) {
     info(`Resolved binary path to ${binaryPath2}`);
     return binaryPath2;
   }
-  const [entry] = await fs11.readdir(rootDir);
+  const [entry] = await fs12.readdir(rootDir);
   if (!entry) {
     throw new Error(`Extracted archive is empty: ${rootDir}`);
   }
@@ -63736,17 +64277,36 @@ async function run() {
     setFailed(`prek exited with code ${exitCode}`);
   }
 }
+async function runPost() {
+  await savePrekCache();
+}
+function isPostAction() {
+  return getState(POST_ACTION_STATE) === "true";
+}
+function formatError3(error2) {
+  return error2 instanceof Error ? error2.message : String(error2);
+}
 function isMainModule() {
   return typeof require !== "undefined" && typeof module !== "undefined" && require.main === module;
 }
 if (isMainModule()) {
-  void run().catch((error2) => {
-    setFailed(error2 instanceof Error ? error2.message : String(error2));
+  const isPost = isPostAction();
+  if (!isPost) {
+    saveState(POST_ACTION_STATE, "true");
+  }
+  const action5 = isPost ? runPost() : run();
+  void action5.catch((error2) => {
+    if (isPost) {
+      warning(formatError3(error2));
+    } else {
+      setFailed(formatError3(error2));
+    }
   });
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  run
+  run,
+  runPost
 });
 /*! Bundled license information:
 
