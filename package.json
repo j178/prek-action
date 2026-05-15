@@ -17,7 +17,7 @@
     "@actions/cache": "^6.0.0",
     "@actions/core": "^3.0.0",
     "@actions/exec": "^3.0.0",
-    "@actions/glob": "^0.6.0",
+    "@actions/glob": "^0.7.0",
     "@actions/http-client": "^4.0.0",
     "@actions/io": "^3.0.0",
     "@actions/tool-cache": "^4.0.0",
