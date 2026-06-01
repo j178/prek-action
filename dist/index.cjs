@@ -20312,6 +20312,47 @@ var require_coerce = __commonJS({
   }
 });
 
+// node_modules/semver/functions/truncate.js
+var require_truncate = __commonJS({
+  "node_modules/semver/functions/truncate.js"(exports2, module2) {
+    "use strict";
+    var parse2 = require_parse2();
+    var constants4 = require_constants6();
+    var SemVer = require_semver();
+    var truncate = (version3, truncation, options) => {
+      if (!constants4.RELEASE_TYPES.includes(truncation)) {
+        return null;
+      }
+      const clonedVersion = cloneInputVersion(version3, options);
+      return clonedVersion && doTruncation(clonedVersion, truncation);
+    };
+    var cloneInputVersion = (version3, options) => {
+      const versionStringToParse = version3 instanceof SemVer ? version3.version : version3;
+      return parse2(versionStringToParse, options);
+    };
+    var doTruncation = (version3, truncation) => {
+      if (isPrerelease(truncation)) {
+        return version3.version;
+      }
+      version3.prerelease = [];
+      switch (truncation) {
+        case "major":
+          version3.minor = 0;
+          version3.patch = 0;
+          break;
+        case "minor":
+          version3.patch = 0;
+          break;
+      }
+      return version3.format();
+    };
+    var isPrerelease = (type) => {
+      return type.startsWith("pre");
+    };
+    module2.exports = truncate;
+  }
+});
+
 // node_modules/semver/internal/lrucache.js
 var require_lrucache = __commonJS({
   "node_modules/semver/internal/lrucache.js"(exports2, module2) {
@@ -21346,6 +21387,7 @@ var require_semver2 = __commonJS({
     var lte2 = require_lte();
     var cmp = require_cmp();
     var coerce = require_coerce();
+    var truncate = require_truncate();
     var Comparator = require_comparator();
     var Range = require_range();
     var satisfies4 = require_satisfies();
@@ -21384,6 +21426,7 @@ var require_semver2 = __commonJS({
       lte: lte2,
       cmp,
       coerce,
+      truncate,
       Comparator,
       Range,
       satisfies: satisfies4,
