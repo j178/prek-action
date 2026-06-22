@@ -65129,8 +65129,9 @@ async function hashConfigFiles(workingDirectory) {
   for (const file of files.sort()) {
     digest.update(path18.relative(workingDirectory, file));
     digest.update("\0");
-    digest.update(await fs10.readFile(file));
-    digest.update("\0");
+    digest.update(
+      crypto4.createHash("sha256").update(await fs10.readFile(file)).digest()
+    );
   }
   return digest.digest("hex");
 }

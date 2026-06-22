@@ -103,8 +103,12 @@ async function hashConfigFiles(workingDirectory: string): Promise<string> {
   for (const file of files.sort()) {
     digest.update(path.relative(workingDirectory, file))
     digest.update('\0')
-    digest.update(await fs.readFile(file))
-    digest.update('\0')
+    digest.update(
+      crypto
+        .createHash('sha256')
+        .update(await fs.readFile(file))
+        .digest(),
+    )
   }
   return digest.digest('hex')
 }
