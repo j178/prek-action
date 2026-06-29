@@ -4,13 +4,17 @@ import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
+import { isNonGlibcLinuxSync } from 'detect-libc'
 import { knownChecksumsByAsset } from './known-checksums'
 import { getAssetForVersion } from './manifest'
 import type { ManifestAsset, ReleaseAsset, Version } from './types'
 
+export type LinuxLibc = 'gnu' | 'musl'
+
 // Install a specific bare prek version, preferring the GitHub Actions tool cache when available.
 export async function installPrek(version: Version): Promise<string> {
-  const toolArch = getToolCacheArchFor(process.arch)
+  const linuxLibc = process.platform === 'linux' ? detectLinuxLibc() : 'gnu'
+  const toolArch = getToolCacheArchFor(process.arch, linuxLibc)
   const cachedTool = tc.find('prek', version, toolArch)
 
   core.startGroup(`Installing prek ${version}`)
@@ -21,7 +25,7 @@ export async function installPrek(version: Version): Promise<string> {
       return cachedTool
     }
 
-    const asset = getReleaseAssetFor(process.platform, process.arch)
+    const asset = getReleaseAssetFor(process.platform, process.arch, linuxLibc)
     core.info(
       `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`,
     )
@@ -77,9 +81,10 @@ async function extractWindowsZipArchive(archivePath: string): Promise<string> {
 export function getReleaseAssetFor(
   platform: NodeJS.Platform,
   arch: NodeJS.Architecture,
+  linuxLibc: LinuxLibc,
 ): ReleaseAsset {
   const binaryName = platform === 'win32' ? 'prek.exe' : 'prek'
-  const target = getRustTargetFor(platform, arch)
+  const target = getRustTargetFor(platform, arch, linuxLibc)
   const extension = platform === 'win32' ? 'zip' : 'tar.gz'
   return {
     archiveName: `prek-${target}.${extension}`,
@@ -88,7 +93,11 @@ export function getReleaseAssetFor(
   }
 }
 
-export function getRustTargetFor(platform: NodeJS.Platform, arch: NodeJS.Architecture): string {
+export function getRustTargetFor(
+  platform: NodeJS.Platform,
+  arch: NodeJS.Architecture,
+  linuxLibc: LinuxLibc,
+): string {
   switch (platform) {
     case 'darwin':
       switch (arch) {
@@ -111,37 +120,56 @@ export function getRustTargetFor(platform: NodeJS.Platform, arch: NodeJS.Archite
     case 'linux':
       switch (arch) {
         case 'arm':
-          return 'armv7-unknown-linux-gnueabihf'
+          return `armv7-unknown-linux-${linuxLibc}eabihf`
         case 'arm64':
-          return 'aarch64-unknown-linux-gnu'
+          return `aarch64-unknown-linux-${linuxLibc}`
         case 'ia32':
-          return 'i686-unknown-linux-gnu'
+          return `i686-unknown-linux-${linuxLibc}`
         case 'riscv64':
-          return 'riscv64gc-unknown-linux-gnu'
+          if (linuxLibc === 'gnu') {
+            return 'riscv64gc-unknown-linux-gnu'
+          }
+          break
         case 's390x':
-          return 's390x-unknown-linux-gnu'
+          if (linuxLibc === 'gnu') {
+            return 's390x-unknown-linux-gnu'
+          }
+          break
         case 'x64':
-          return 'x86_64-unknown-linux-gnu'
+          return `x86_64-unknown-linux-${linuxLibc}`
       }
       break
   }
 
-  throw new Error(`Unsupported platform/arch combination: ${platform}/${arch}`)
+  const targetDescription =
+    platform === 'linux' ? `${platform}/${arch}/${linuxLibc}` : `${platform}/${arch}`
+  throw new Error(`Unsupported platform/arch combination: ${targetDescription}`)
 }
 
-export function getToolCacheArchFor(arch: NodeJS.Architecture): string {
+export function detectLinuxLibc(): LinuxLibc {
+  return isNonGlibcLinuxSync() ? 'musl' : 'gnu'
+}
+
+export function getToolCacheArchFor(arch: NodeJS.Architecture, linuxLibc: LinuxLibc): string {
+  let toolArch: string
   switch (arch) {
     case 'x64':
-      return 'x64'
+      toolArch = 'x64'
+      break
     case 'arm64':
-      return 'arm64'
+      toolArch = 'arm64'
+      break
     case 'ia32':
-      return 'x86'
+      toolArch = 'x86'
+      break
     case 'arm':
-      return 'arm'
+      toolArch = 'arm'
+      break
     default:
-      return arch
+      toolArch = arch
   }
+
+  return linuxLibc === 'musl' ? `${toolArch}-musl` : toolArch
 }
 
 export async function getBinaryPath(rootDir: string, asset: ReleaseAsset): Promise<string> {
