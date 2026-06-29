@@ -16,37 +16,51 @@ const testVersion = toVersion('1.2.3')
 
 describe('install helpers', () => {
   it('getRustTargetFor maps supported runners to prek release targets', () => {
-    expect(getRustTargetFor('linux', 'x64')).toBe('x86_64-unknown-linux-gnu')
-    expect(getRustTargetFor('linux', 'arm64')).toBe('aarch64-unknown-linux-gnu')
-    expect(getRustTargetFor('darwin', 'x64')).toBe('x86_64-apple-darwin')
-    expect(getRustTargetFor('darwin', 'arm64')).toBe('aarch64-apple-darwin')
-    expect(getRustTargetFor('win32', 'x64')).toBe('x86_64-pc-windows-msvc')
+    expect(getRustTargetFor('linux', 'x64', 'gnu')).toBe('x86_64-unknown-linux-gnu')
+    expect(getRustTargetFor('linux', 'arm64', 'gnu')).toBe('aarch64-unknown-linux-gnu')
+    expect(getRustTargetFor('linux', 'x64', 'musl')).toBe('x86_64-unknown-linux-musl')
+    expect(getRustTargetFor('linux', 'arm64', 'musl')).toBe('aarch64-unknown-linux-musl')
+    expect(getRustTargetFor('linux', 'ia32', 'musl')).toBe('i686-unknown-linux-musl')
+    expect(getRustTargetFor('linux', 'arm', 'musl')).toBe('armv7-unknown-linux-musleabihf')
+    expect(getRustTargetFor('darwin', 'x64', 'gnu')).toBe('x86_64-apple-darwin')
+    expect(getRustTargetFor('darwin', 'arm64', 'gnu')).toBe('aarch64-apple-darwin')
+    expect(getRustTargetFor('win32', 'x64', 'gnu')).toBe('x86_64-pc-windows-msvc')
   })
 
   it('getRustTargetFor rejects unsupported platform and arch combinations', () => {
-    expect(() => getRustTargetFor('freebsd', 'x64')).toThrow()
-    expect(() => getRustTargetFor('darwin', 'ia32')).toThrow()
+    expect(() => getRustTargetFor('freebsd', 'x64', 'gnu')).toThrow()
+    expect(() => getRustTargetFor('darwin', 'ia32', 'gnu')).toThrow()
+    expect(() => getRustTargetFor('linux', 's390x', 'musl')).toThrow()
   })
 
   it('getReleaseAssetFor builds the expected archive and binary names', () => {
-    expect(getReleaseAssetFor('linux', 'x64')).toEqual({
+    expect(getReleaseAssetFor('linux', 'x64', 'gnu')).toEqual({
       archiveName: 'prek-x86_64-unknown-linux-gnu.tar.gz',
       archiveType: 'tar.gz',
       binaryName: 'prek',
     })
-    expect(getReleaseAssetFor('win32', 'x64')).toEqual({
+    expect(getReleaseAssetFor('linux', 'x64', 'musl')).toEqual({
+      archiveName: 'prek-x86_64-unknown-linux-musl.tar.gz',
+      archiveType: 'tar.gz',
+      binaryName: 'prek',
+    })
+    expect(getReleaseAssetFor('win32', 'x64', 'gnu')).toEqual({
       archiveName: 'prek-x86_64-pc-windows-msvc.zip',
       archiveType: 'zip',
       binaryName: 'prek.exe',
     })
   })
 
-  it('getToolCacheArchFor maps Node architectures to tool-cache values', () => {
-    expect(getToolCacheArchFor('x64')).toBe('x64')
-    expect(getToolCacheArchFor('arm64')).toBe('arm64')
-    expect(getToolCacheArchFor('ia32')).toBe('x86')
-    expect(getToolCacheArchFor('arm')).toBe('arm')
-    expect(getToolCacheArchFor('s390x')).toBe('s390x')
+  it('getToolCacheArchFor preserves GNU cache keys and separates musl cache keys', () => {
+    expect(getToolCacheArchFor('x64', 'gnu')).toBe('x64')
+    expect(getToolCacheArchFor('x64', 'musl')).toBe('x64-musl')
+    expect(getToolCacheArchFor('arm64', 'gnu')).toBe('arm64')
+    expect(getToolCacheArchFor('arm64', 'musl')).toBe('arm64-musl')
+    expect(getToolCacheArchFor('ia32', 'gnu')).toBe('x86')
+    expect(getToolCacheArchFor('ia32', 'musl')).toBe('x86-musl')
+    expect(getToolCacheArchFor('arm', 'gnu')).toBe('arm')
+    expect(getToolCacheArchFor('arm', 'musl')).toBe('arm-musl')
+    expect(getToolCacheArchFor('s390x', 'gnu')).toBe('s390x')
   })
 })
 

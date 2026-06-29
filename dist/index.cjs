@@ -27033,6 +27033,360 @@ var require_commonjs2 = __commonJS({
   }
 });
 
+// node_modules/detect-libc/lib/process.js
+var require_process = __commonJS({
+  "node_modules/detect-libc/lib/process.js"(exports2, module2) {
+    "use strict";
+    var isLinux = () => process.platform === "linux";
+    var report = null;
+    var getReport = () => {
+      if (!report) {
+        if (isLinux() && process.report) {
+          const orig = process.report.excludeNetwork;
+          process.report.excludeNetwork = true;
+          report = process.report.getReport();
+          process.report.excludeNetwork = orig;
+        } else {
+          report = {};
+        }
+      }
+      return report;
+    };
+    module2.exports = { isLinux, getReport };
+  }
+});
+
+// node_modules/detect-libc/lib/filesystem.js
+var require_filesystem = __commonJS({
+  "node_modules/detect-libc/lib/filesystem.js"(exports2, module2) {
+    "use strict";
+    var fs14 = require("fs");
+    var LDD_PATH = "/usr/bin/ldd";
+    var SELF_PATH = "/proc/self/exe";
+    var MAX_LENGTH = 2048;
+    var readFileSync = (path21) => {
+      const fd = fs14.openSync(path21, "r");
+      const buffer3 = Buffer.alloc(MAX_LENGTH);
+      const bytesRead = fs14.readSync(fd, buffer3, 0, MAX_LENGTH, 0);
+      fs14.close(fd, () => {
+      });
+      return buffer3.subarray(0, bytesRead);
+    };
+    var readFile4 = (path21) => new Promise((resolve3, reject) => {
+      fs14.open(path21, "r", (err, fd) => {
+        if (err) {
+          reject(err);
+        } else {
+          const buffer3 = Buffer.alloc(MAX_LENGTH);
+          fs14.read(fd, buffer3, 0, MAX_LENGTH, 0, (_, bytesRead) => {
+            resolve3(buffer3.subarray(0, bytesRead));
+            fs14.close(fd, () => {
+            });
+          });
+        }
+      });
+    });
+    module2.exports = {
+      LDD_PATH,
+      SELF_PATH,
+      readFileSync,
+      readFile: readFile4
+    };
+  }
+});
+
+// node_modules/detect-libc/lib/elf.js
+var require_elf = __commonJS({
+  "node_modules/detect-libc/lib/elf.js"(exports2, module2) {
+    "use strict";
+    var interpreterPath = (elf) => {
+      if (elf.length < 64) {
+        return null;
+      }
+      if (elf.readUInt32BE(0) !== 2135247942) {
+        return null;
+      }
+      if (elf.readUInt8(4) !== 2) {
+        return null;
+      }
+      if (elf.readUInt8(5) !== 1) {
+        return null;
+      }
+      const offset = elf.readUInt32LE(32);
+      const size = elf.readUInt16LE(54);
+      const count = elf.readUInt16LE(56);
+      for (let i = 0; i < count; i++) {
+        const headerOffset = offset + i * size;
+        const type = elf.readUInt32LE(headerOffset);
+        if (type === 3) {
+          const fileOffset = elf.readUInt32LE(headerOffset + 8);
+          const fileSize = elf.readUInt32LE(headerOffset + 32);
+          return elf.subarray(fileOffset, fileOffset + fileSize).toString().replace(/\0.*$/g, "");
+        }
+      }
+      return null;
+    };
+    module2.exports = {
+      interpreterPath
+    };
+  }
+});
+
+// node_modules/detect-libc/lib/detect-libc.js
+var require_detect_libc = __commonJS({
+  "node_modules/detect-libc/lib/detect-libc.js"(exports2, module2) {
+    "use strict";
+    var childProcess = require("child_process");
+    var { isLinux, getReport } = require_process();
+    var { LDD_PATH, SELF_PATH, readFile: readFile4, readFileSync } = require_filesystem();
+    var { interpreterPath } = require_elf();
+    var cachedFamilyInterpreter;
+    var cachedFamilyFilesystem;
+    var cachedVersionFilesystem;
+    var command = "getconf GNU_LIBC_VERSION 2>&1 || true; ldd --version 2>&1 || true";
+    var commandOut = "";
+    var safeCommand = () => {
+      if (!commandOut) {
+        return new Promise((resolve3) => {
+          childProcess.exec(command, (err, out) => {
+            commandOut = err ? " " : out;
+            resolve3(commandOut);
+          });
+        });
+      }
+      return commandOut;
+    };
+    var safeCommandSync = () => {
+      if (!commandOut) {
+        try {
+          commandOut = childProcess.execSync(command, { encoding: "utf8" });
+        } catch (_err) {
+          commandOut = " ";
+        }
+      }
+      return commandOut;
+    };
+    var GLIBC = "glibc";
+    var RE_GLIBC_VERSION = /LIBC[a-z0-9 \-).]*?(\d+\.\d+)/i;
+    var MUSL = "musl";
+    var isFileMusl = (f) => f.includes("libc.musl-") || f.includes("ld-musl-");
+    var familyFromReport = () => {
+      const report = getReport();
+      if (report.header && report.header.glibcVersionRuntime) {
+        return GLIBC;
+      }
+      if (Array.isArray(report.sharedObjects)) {
+        if (report.sharedObjects.some(isFileMusl)) {
+          return MUSL;
+        }
+      }
+      return null;
+    };
+    var familyFromCommand = (out) => {
+      const [getconf, ldd1] = out.split(/[\r\n]+/);
+      if (getconf && getconf.includes(GLIBC)) {
+        return GLIBC;
+      }
+      if (ldd1 && ldd1.includes(MUSL)) {
+        return MUSL;
+      }
+      return null;
+    };
+    var familyFromInterpreterPath = (path21) => {
+      if (path21) {
+        if (path21.includes("/ld-musl-")) {
+          return MUSL;
+        } else if (path21.includes("/ld-linux-")) {
+          return GLIBC;
+        }
+      }
+      return null;
+    };
+    var getFamilyFromLddContent = (content) => {
+      content = content.toString();
+      if (content.includes("musl")) {
+        return MUSL;
+      }
+      if (content.includes("GNU C Library")) {
+        return GLIBC;
+      }
+      return null;
+    };
+    var familyFromFilesystem = async () => {
+      if (cachedFamilyFilesystem !== void 0) {
+        return cachedFamilyFilesystem;
+      }
+      cachedFamilyFilesystem = null;
+      try {
+        const lddContent = await readFile4(LDD_PATH);
+        cachedFamilyFilesystem = getFamilyFromLddContent(lddContent);
+      } catch (e) {
+      }
+      return cachedFamilyFilesystem;
+    };
+    var familyFromFilesystemSync = () => {
+      if (cachedFamilyFilesystem !== void 0) {
+        return cachedFamilyFilesystem;
+      }
+      cachedFamilyFilesystem = null;
+      try {
+        const lddContent = readFileSync(LDD_PATH);
+        cachedFamilyFilesystem = getFamilyFromLddContent(lddContent);
+      } catch (e) {
+      }
+      return cachedFamilyFilesystem;
+    };
+    var familyFromInterpreter = async () => {
+      if (cachedFamilyInterpreter !== void 0) {
+        return cachedFamilyInterpreter;
+      }
+      cachedFamilyInterpreter = null;
+      try {
+        const selfContent = await readFile4(SELF_PATH);
+        const path21 = interpreterPath(selfContent);
+        cachedFamilyInterpreter = familyFromInterpreterPath(path21);
+      } catch (e) {
+      }
+      return cachedFamilyInterpreter;
+    };
+    var familyFromInterpreterSync = () => {
+      if (cachedFamilyInterpreter !== void 0) {
+        return cachedFamilyInterpreter;
+      }
+      cachedFamilyInterpreter = null;
+      try {
+        const selfContent = readFileSync(SELF_PATH);
+        const path21 = interpreterPath(selfContent);
+        cachedFamilyInterpreter = familyFromInterpreterPath(path21);
+      } catch (e) {
+      }
+      return cachedFamilyInterpreter;
+    };
+    var family = async () => {
+      let family2 = null;
+      if (isLinux()) {
+        family2 = await familyFromInterpreter();
+        if (!family2) {
+          family2 = await familyFromFilesystem();
+          if (!family2) {
+            family2 = familyFromReport();
+          }
+          if (!family2) {
+            const out = await safeCommand();
+            family2 = familyFromCommand(out);
+          }
+        }
+      }
+      return family2;
+    };
+    var familySync = () => {
+      let family2 = null;
+      if (isLinux()) {
+        family2 = familyFromInterpreterSync();
+        if (!family2) {
+          family2 = familyFromFilesystemSync();
+          if (!family2) {
+            family2 = familyFromReport();
+          }
+          if (!family2) {
+            const out = safeCommandSync();
+            family2 = familyFromCommand(out);
+          }
+        }
+      }
+      return family2;
+    };
+    var isNonGlibcLinux = async () => isLinux() && await family() !== GLIBC;
+    var isNonGlibcLinuxSync2 = () => isLinux() && familySync() !== GLIBC;
+    var versionFromFilesystem = async () => {
+      if (cachedVersionFilesystem !== void 0) {
+        return cachedVersionFilesystem;
+      }
+      cachedVersionFilesystem = null;
+      try {
+        const lddContent = await readFile4(LDD_PATH);
+        const versionMatch = lddContent.match(RE_GLIBC_VERSION);
+        if (versionMatch) {
+          cachedVersionFilesystem = versionMatch[1];
+        }
+      } catch (e) {
+      }
+      return cachedVersionFilesystem;
+    };
+    var versionFromFilesystemSync = () => {
+      if (cachedVersionFilesystem !== void 0) {
+        return cachedVersionFilesystem;
+      }
+      cachedVersionFilesystem = null;
+      try {
+        const lddContent = readFileSync(LDD_PATH);
+        const versionMatch = lddContent.match(RE_GLIBC_VERSION);
+        if (versionMatch) {
+          cachedVersionFilesystem = versionMatch[1];
+        }
+      } catch (e) {
+      }
+      return cachedVersionFilesystem;
+    };
+    var versionFromReport = () => {
+      const report = getReport();
+      if (report.header && report.header.glibcVersionRuntime) {
+        return report.header.glibcVersionRuntime;
+      }
+      return null;
+    };
+    var versionSuffix = (s) => s.trim().split(/\s+/)[1];
+    var versionFromCommand = (out) => {
+      const [getconf, ldd1, ldd2] = out.split(/[\r\n]+/);
+      if (getconf && getconf.includes(GLIBC)) {
+        return versionSuffix(getconf);
+      }
+      if (ldd1 && ldd2 && ldd1.includes(MUSL)) {
+        return versionSuffix(ldd2);
+      }
+      return null;
+    };
+    var version3 = async () => {
+      let version4 = null;
+      if (isLinux()) {
+        version4 = await versionFromFilesystem();
+        if (!version4) {
+          version4 = versionFromReport();
+        }
+        if (!version4) {
+          const out = await safeCommand();
+          version4 = versionFromCommand(out);
+        }
+      }
+      return version4;
+    };
+    var versionSync = () => {
+      let version4 = null;
+      if (isLinux()) {
+        version4 = versionFromFilesystemSync();
+        if (!version4) {
+          version4 = versionFromReport();
+        }
+        if (!version4) {
+          const out = safeCommandSync();
+          version4 = versionFromCommand(out);
+        }
+      }
+      return version4;
+    };
+    module2.exports = {
+      GLIBC,
+      MUSL,
+      family,
+      familySync,
+      isNonGlibcLinux,
+      isNonGlibcLinuxSync: isNonGlibcLinuxSync2,
+      version: version3,
+      versionSync
+    };
+  }
+});
+
 // src/main.ts
 var main_exports = {};
 __export(main_exports, {
@@ -65596,6 +65950,9 @@ function _getGlobal(key, defaultValue) {
   return value !== void 0 ? value : defaultValue;
 }
 
+// src/install.ts
+var import_detect_libc = __toESM(require_detect_libc(), 1);
+
 // src/known-checksums.ts
 var knownChecksumsByAsset = /* @__PURE__ */ new Map([
   ["0.0.23:prek-aarch64-apple-darwin.tar.gz", "d38891f2a7f19b5395f930a5c152369d32f0e0a49bea5613753b0b86ffbf8a58"],
@@ -66744,7 +67101,8 @@ function buildReleaseAssetUrl(version3, archiveName) {
 
 // src/install.ts
 async function installPrek(version3) {
-  const toolArch = getToolCacheArchFor(process.arch);
+  const linuxLibc = process.platform === "linux" ? detectLinuxLibc() : "gnu";
+  const toolArch = getToolCacheArchFor(process.arch, linuxLibc);
   const cachedTool = find("prek", version3, toolArch);
   startGroup(`Installing prek ${version3}`);
   try {
@@ -66753,7 +67111,7 @@ async function installPrek(version3) {
       addPath(cachedTool);
       return cachedTool;
     }
-    const asset = getReleaseAssetFor(process.platform, process.arch);
+    const asset = getReleaseAssetFor(process.platform, process.arch, linuxLibc);
     info(
       `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`
     );
@@ -66794,9 +67152,9 @@ async function extractWindowsZipArchive(archivePath) {
     return extractZip(archivePath);
   }
 }
-function getReleaseAssetFor(platform2, arch3) {
+function getReleaseAssetFor(platform2, arch3, linuxLibc) {
   const binaryName = platform2 === "win32" ? "prek.exe" : "prek";
-  const target = getRustTargetFor(platform2, arch3);
+  const target = getRustTargetFor(platform2, arch3, linuxLibc);
   const extension = platform2 === "win32" ? "zip" : "tar.gz";
   return {
     archiveName: `prek-${target}.${extension}`,
@@ -66804,7 +67162,7 @@ function getReleaseAssetFor(platform2, arch3) {
     binaryName
   };
 }
-function getRustTargetFor(platform2, arch3) {
+function getRustTargetFor(platform2, arch3, linuxLibc) {
   switch (platform2) {
     case "darwin":
       switch (arch3) {
@@ -66827,35 +67185,51 @@ function getRustTargetFor(platform2, arch3) {
     case "linux":
       switch (arch3) {
         case "arm":
-          return "armv7-unknown-linux-gnueabihf";
+          return `armv7-unknown-linux-${linuxLibc}eabihf`;
         case "arm64":
-          return "aarch64-unknown-linux-gnu";
+          return `aarch64-unknown-linux-${linuxLibc}`;
         case "ia32":
-          return "i686-unknown-linux-gnu";
+          return `i686-unknown-linux-${linuxLibc}`;
         case "riscv64":
-          return "riscv64gc-unknown-linux-gnu";
+          if (linuxLibc === "gnu") {
+            return "riscv64gc-unknown-linux-gnu";
+          }
+          break;
         case "s390x":
-          return "s390x-unknown-linux-gnu";
+          if (linuxLibc === "gnu") {
+            return "s390x-unknown-linux-gnu";
+          }
+          break;
         case "x64":
-          return "x86_64-unknown-linux-gnu";
+          return `x86_64-unknown-linux-${linuxLibc}`;
       }
       break;
   }
-  throw new Error(`Unsupported platform/arch combination: ${platform2}/${arch3}`);
+  const targetDescription = platform2 === "linux" ? `${platform2}/${arch3}/${linuxLibc}` : `${platform2}/${arch3}`;
+  throw new Error(`Unsupported platform/arch combination: ${targetDescription}`);
 }
-function getToolCacheArchFor(arch3) {
+function detectLinuxLibc() {
+  return (0, import_detect_libc.isNonGlibcLinuxSync)() ? "musl" : "gnu";
+}
+function getToolCacheArchFor(arch3, linuxLibc) {
+  let toolArch;
   switch (arch3) {
     case "x64":
-      return "x64";
+      toolArch = "x64";
+      break;
     case "arm64":
-      return "arm64";
+      toolArch = "arm64";
+      break;
     case "ia32":
-      return "x86";
+      toolArch = "x86";
+      break;
     case "arm":
-      return "arm";
+      toolArch = "arm";
+      break;
     default:
-      return arch3;
+      toolArch = arch3;
   }
+  return linuxLibc === "musl" ? `${toolArch}-musl` : toolArch;
 }
 async function getBinaryPath(rootDir, asset) {
   if (asset.archiveType === "zip") {
