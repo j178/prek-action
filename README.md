@@ -12,7 +12,7 @@ jobs:
   prek:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: j178/prek-action@v2
 ```
 
@@ -57,7 +57,7 @@ Install and run against all files:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v6
+  - uses: actions/checkout@v7
   - uses: j178/prek-action@v2
 ```
 
@@ -65,7 +65,7 @@ Pass extra arguments:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v6
+  - uses: actions/checkout@v7
   - uses: j178/prek-action@v2
     with:
       extra-args: '--all-files --directory packages/'
@@ -75,7 +75,7 @@ Pin a specific `prek` version:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v6
+  - uses: actions/checkout@v7
   - uses: j178/prek-action@v2
     with:
       prek-version: '0.2.30'
@@ -85,7 +85,7 @@ Resolve a semver range:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v6
+  - uses: actions/checkout@v7
   - uses: j178/prek-action@v2
     with:
       prek-version: '0.3.x'
@@ -95,7 +95,7 @@ Install only:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v6
+  - uses: actions/checkout@v7
   - uses: j178/prek-action@v2
     with:
       install-only: true
@@ -106,7 +106,7 @@ Disable verbose log output after the run:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v6
+  - uses: actions/checkout@v7
   - uses: j178/prek-action@v2
     with:
       show-verbose-logs: false
