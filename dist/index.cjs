@@ -67010,7 +67010,23 @@ var knownChecksumsByAsset = /* @__PURE__ */ new Map([
   ["0.4.6:prek-x86_64-apple-darwin.tar.gz", "b65f6a9497762e3dd55bf8ce1ee3b9d4e2014d47dd0cb2e2da9fe46d2bb81a73"],
   ["0.4.6:prek-x86_64-pc-windows-msvc.zip", "775a6294333821d7af614201f1976b184a66c1036e529586c82e3c2dbf401f88"],
   ["0.4.6:prek-x86_64-unknown-linux-gnu.tar.gz", "13599635a22077f0ad6efc35e9ddaac73ce0bb9e1089b4be53ca76b6e8cbf0e7"],
-  ["0.4.6:prek-x86_64-unknown-linux-musl.tar.gz", "820de4920c112e273aedff646ab47439d3320dfd9f2c468d35992a1055ff8afb"]
+  ["0.4.6:prek-x86_64-unknown-linux-musl.tar.gz", "820de4920c112e273aedff646ab47439d3320dfd9f2c468d35992a1055ff8afb"],
+  ["0.4.8:prek-aarch64-apple-darwin.tar.gz", "f0084a9b5ce467c00306b2b329cc929744e2723ed1e7c369929a60ab10196fcc"],
+  ["0.4.8:prek-aarch64-pc-windows-msvc.zip", "774b8d3b2b64a4c16b2f5555493f8b50983afb88e43393b33230c1fe5c0b2a02"],
+  ["0.4.8:prek-aarch64-unknown-linux-gnu.tar.gz", "4a4d6ee04ed8b9142548d52e9d1f3c22055a333af72022b52d3610a62ae084de"],
+  ["0.4.8:prek-aarch64-unknown-linux-musl.tar.gz", "379108e6b2db7d49277ad2986446097f442b252ef27ff07bd0cbf716de982eb1"],
+  ["0.4.8:prek-arm-unknown-linux-musleabihf.tar.gz", "f2f6d7f46f06b540ce78c4845c88c273f8ba690a9fc652de2ef9f3a4d42153a8"],
+  ["0.4.8:prek-armv7-unknown-linux-gnueabihf.tar.gz", "b4296166e113e03932f6eb1ceda68a7bf7740ab07b28ede8eb42141948b7d74a"],
+  ["0.4.8:prek-armv7-unknown-linux-musleabihf.tar.gz", "146ad0181e6d3d2d0fd2697e4210df6596f67295371b334d969686a1a386d719"],
+  ["0.4.8:prek-i686-pc-windows-msvc.zip", "78b08af72710b4777c88c38c82eed0f259cef45df2feeca1a503b4de25ecad46"],
+  ["0.4.8:prek-i686-unknown-linux-gnu.tar.gz", "dc477f20f4705a1f6accfa44622a68066c85a38949b9f639452734b9808e55db"],
+  ["0.4.8:prek-i686-unknown-linux-musl.tar.gz", "e15c170e1b4c9f02471f06c9ffcb4187a131917a4603eac8ce60002123f2b48b"],
+  ["0.4.8:prek-riscv64gc-unknown-linux-gnu.tar.gz", "4cbbbf273324f3239df16d67da635648aa0f0f7d21485c28aa3be88d00307cf6"],
+  ["0.4.8:prek-s390x-unknown-linux-gnu.tar.gz", "587355611d3283eecbeebcbca1b97c4bd2a07c3ed6136df597bbe6efbd7c5519"],
+  ["0.4.8:prek-x86_64-apple-darwin.tar.gz", "dc402357bc5074791f4f1bcf5ce8622da38272e210ff84a551d3044e8da6f05d"],
+  ["0.4.8:prek-x86_64-pc-windows-msvc.zip", "7c17dba682812ab24e04a4982dccc228dbf74b695444bd9fa8cbb8c1dc78664c"],
+  ["0.4.8:prek-x86_64-unknown-linux-gnu.tar.gz", "9b6a7c2e825c1b916ab3bb843505902c07f3937975f935294852643510d721db"],
+  ["0.4.8:prek-x86_64-unknown-linux-musl.tar.gz", "21df9ac0c3d3c047e424be612cc55f5b243546f9ef5cde12ed134752312bdf7b"]
 ]);
 
 // src/manifest.ts
