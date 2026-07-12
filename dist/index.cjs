@@ -22732,7 +22732,7 @@ var require_package = __commonJS({
   "node_modules/@actions/cache/package.json"(exports2, module2) {
     module2.exports = {
       name: "@actions/cache",
-      version: "6.0.0",
+      version: "6.1.0",
       description: "Actions cache lib",
       keywords: [
         "github",
@@ -22775,21 +22775,21 @@ var require_package = __commonJS({
         url: "https://github.com/actions/toolkit/issues"
       },
       dependencies: {
-        "@actions/core": "^3.0.0",
+        "@actions/core": "^3.0.1",
         "@actions/exec": "^3.0.0",
         "@actions/glob": "^0.6.1",
-        "@actions/http-client": "^4.0.0",
-        "@actions/io": "^3.0.0",
-        "@azure/core-rest-pipeline": "^1.22.0",
-        "@azure/storage-blob": "^12.30.0",
+        "@actions/http-client": "^4.0.1",
+        "@actions/io": "^3.0.2",
+        "@azure/core-rest-pipeline": "^1.23.0",
+        "@azure/storage-blob": "^12.31.0",
         "@protobuf-ts/runtime-rpc": "^2.11.1",
-        semver: "^7.7.3"
+        semver: "^7.7.4"
       },
       devDependencies: {
-        "@protobuf-ts/plugin": "^2.9.4",
-        "@types/node": "^25.1.0",
+        "@protobuf-ts/plugin": "^2.11.1",
+        "@types/node": "^25.6.0",
         "@types/semver": "^7.7.1",
-        typescript: "^5.2.2"
+        typescript: "^5.9.3"
       },
       overrides: {
         "uri-js": "npm:uri-js-replace@^1.0.1",
@@ -60438,7 +60438,7 @@ NetworkError.isNetworkErrorCode = (code) => {
 };
 var UsageError = class extends Error {
   constructor() {
-    const message = `Cache storage quota has been hit. Unable to upload any new cache entries. Usage is recalculated every 6-12 hours.
+    const message = `Cache storage quota has been hit. Unable to upload any new cache entries.
 More info on storage limits: https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions#calculating-minute-and-storage-spending`;
     super(message);
     this.name = "UsageError";
@@ -62443,6 +62443,14 @@ var ReserveCacheError = class _ReserveCacheError extends Error {
     Object.setPrototypeOf(this, _ReserveCacheError.prototype);
   }
 };
+var CACHE_WRITE_DENIED_PREFIX = "cache write denied:";
+var CacheWriteDeniedError = class _CacheWriteDeniedError extends ReserveCacheError {
+  constructor(message) {
+    super(message);
+    this.name = "CacheWriteDeniedError";
+    Object.setPrototypeOf(this, _CacheWriteDeniedError.prototype);
+  }
+};
 var FinalizeCacheError = class _FinalizeCacheError extends Error {
   constructor(message) {
     super(message);
@@ -62625,7 +62633,7 @@ function saveCache2(paths_1, key_1, options_1) {
 }
 function saveCacheV1(paths_1, key_1, options_1) {
   return __awaiter17(this, arguments, void 0, function* (paths, key, options, enableCrossOsArchive = false) {
-    var _a2, _b, _c, _d, _e;
+    var _a2, _b, _c, _d, _e, _f;
     const compressionMethod = yield getCompressionMethod();
     let cacheId = -1;
     const cachePaths = yield resolvePaths(paths);
@@ -62659,7 +62667,11 @@ function saveCacheV1(paths_1, key_1, options_1) {
       } else if ((reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.statusCode) === 400) {
         throw new Error((_d = (_c = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.error) === null || _c === void 0 ? void 0 : _c.message) !== null && _d !== void 0 ? _d : `Cache size of ~${Math.round(archiveFileSize / (1024 * 1024))} MB (${archiveFileSize} B) is over the data cap limit, not saving cache.`);
       } else {
-        throw new ReserveCacheError(`Unable to reserve cache with key ${key}, another job may be creating this cache. More details: ${(_e = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.error) === null || _e === void 0 ? void 0 : _e.message}`);
+        const detailMessage = (_e = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.error) === null || _e === void 0 ? void 0 : _e.message;
+        if (detailMessage === null || detailMessage === void 0 ? void 0 : detailMessage.startsWith(CACHE_WRITE_DENIED_PREFIX)) {
+          throw new CacheWriteDeniedError(`Unable to reserve cache with key ${key}. More details: ${detailMessage}`);
+        }
+        throw new ReserveCacheError(`Unable to reserve cache with key ${key}, another job may be creating this cache. More details: ${(_f = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.error) === null || _f === void 0 ? void 0 : _f.message}`);
       }
       debug(`Saving Cache (ID: ${cacheId})`);
       yield saveCache(cacheId, archivePath, "", options);
@@ -62667,6 +62679,8 @@ function saveCacheV1(paths_1, key_1, options_1) {
       const typedError = error2;
       if (typedError.name === ValidationError.name) {
         throw error2;
+      } else if (typedError.name === CacheWriteDeniedError.name) {
+        warning(`Failed to save: ${typedError.message}`);
       } else if (typedError.name === ReserveCacheError.name) {
         info(`Failed to save: ${typedError.message}`);
       } else {
@@ -62688,6 +62702,7 @@ function saveCacheV1(paths_1, key_1, options_1) {
 }
 function saveCacheV2(paths_1, key_1, options_1) {
   return __awaiter17(this, arguments, void 0, function* (paths, key, options, enableCrossOsArchive = false) {
+    var _a2;
     options = Object.assign(Object.assign({}, options), { uploadChunkSize: 64 * 1024 * 1024, uploadConcurrency: 8, useAzureSdk: true });
     const compressionMethod = yield getCompressionMethod();
     const twirpClient = internalCacheTwirpClient();
@@ -62719,7 +62734,7 @@ function saveCacheV2(paths_1, key_1, options_1) {
       try {
         const response = yield twirpClient.CreateCacheEntry(request);
         if (!response.ok) {
-          if (response.message) {
+          if (response.message && !response.message.startsWith(CACHE_WRITE_DENIED_PREFIX)) {
             warning(`Cache reservation failed: ${response.message}`);
           }
           throw new Error(response.message || "Response was not ok");
@@ -62727,6 +62742,10 @@ function saveCacheV2(paths_1, key_1, options_1) {
         signedUploadUrl = response.signedUploadUrl;
       } catch (error2) {
         debug(`Failed to reserve cache: ${error2}`);
+        const errorMessage = (_a2 = error2 === null || error2 === void 0 ? void 0 : error2.message) !== null && _a2 !== void 0 ? _a2 : "";
+        if (errorMessage.startsWith(CACHE_WRITE_DENIED_PREFIX)) {
+          throw new CacheWriteDeniedError(`Unable to reserve cache with key ${key}. More details: ${errorMessage}`);
+        }
         throw new ReserveCacheError(`Unable to reserve cache with key ${key}, another job may be creating this cache.`);
       }
       debug(`Attempting to upload cache located at: ${archivePath}`);
@@ -62749,6 +62768,8 @@ function saveCacheV2(paths_1, key_1, options_1) {
       const typedError = error2;
       if (typedError.name === ValidationError.name) {
         throw error2;
+      } else if (typedError.name === CacheWriteDeniedError.name) {
+        warning(`Failed to save: ${typedError.message}`);
       } else if (typedError.name === ReserveCacheError.name) {
         info(`Failed to save: ${typedError.message}`);
       } else if (typedError.name === FinalizeCacheError.name) {
