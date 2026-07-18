@@ -65318,6 +65318,7 @@ function create2(patterns, options) {
 var fs9 = __toESM(require("node:fs/promises"), 1);
 var os9 = __toESM(require("node:os"), 1);
 var path17 = __toESM(require("node:path"), 1);
+var import_node_util4 = require("node:util");
 
 // node_modules/string-argv/index.js
 function parseArgsStringToArgv(value, env, file) {
@@ -65417,7 +65418,7 @@ async function getPrekCacheDir() {
     return getDefaultPrekCacheDir();
   }
   if (code === 0) {
-    const trimmed = output.trim();
+    const trimmed = (0, import_node_util4.stripVTControlCharacters)(output).trim();
     if (trimmed) {
       info(`Using prek cache dir ${trimmed}`);
       return trimmed;

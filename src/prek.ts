@@ -1,6 +1,7 @@
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
+import { stripVTControlCharacters } from 'node:util'
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import { parseArgsStringToArgv } from 'string-argv'
@@ -74,7 +75,7 @@ export async function getPrekCacheDir(): Promise<string> {
   }
 
   if (code === 0) {
-    const trimmed = output.trim()
+    const trimmed = stripVTControlCharacters(output).trim()
     if (trimmed) {
       core.info(`Using prek cache dir ${trimmed}`)
       return trimmed
