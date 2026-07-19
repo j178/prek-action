@@ -65403,7 +65403,7 @@ async function getPrekCacheDir() {
   let output = "";
   let code;
   try {
-    code = await exec("prek", ["cache", "dir", "--no-log-file"], {
+    code = await exec("prek", ["cache", "dir", "--no-log-file", "--color=never"], {
       ignoreReturnCode: true,
       listeners: {
         stdout: (data) => {

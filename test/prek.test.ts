@@ -43,6 +43,11 @@ describe('getPrekCacheDir', () => {
 
   it('prefers the CLI-reported path', async () => {
     await expect(getPrekCacheDir()).resolves.toBe('/tmp/prek-cache')
+    expect(toolkitMocks.exec).toHaveBeenCalledWith(
+      'prek',
+      ['cache', 'dir', '--no-log-file', '--color=never'],
+      expect.any(Object),
+    )
     expect(mockContext.infos).toEqual(['Using prek cache dir /tmp/prek-cache'])
   })
 

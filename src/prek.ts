@@ -59,7 +59,7 @@ export async function getPrekCacheDir(): Promise<string> {
   let output = ''
   let code: number
   try {
-    code = await exec.exec('prek', ['cache', 'dir', '--no-log-file'], {
+    code = await exec.exec('prek', ['cache', 'dir', '--no-log-file', '--color=never'], {
       ignoreReturnCode: true,
       listeners: {
         stdout: (data: Buffer) => {
