@@ -1,7 +1,6 @@
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import { stripVTControlCharacters } from 'node:util'
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import { parseArgsStringToArgv } from 'string-argv'
@@ -60,7 +59,7 @@ export async function getPrekCacheDir(): Promise<string> {
   let output = ''
   let code: number
   try {
-    code = await exec.exec('prek', ['cache', 'dir', '--no-log-file'], {
+    code = await exec.exec('prek', ['cache', 'dir', '--no-log-file', '--color=never'], {
       ignoreReturnCode: true,
       listeners: {
         stdout: (data: Buffer) => {
@@ -75,7 +74,7 @@ export async function getPrekCacheDir(): Promise<string> {
   }
 
   if (code === 0) {
-    const trimmed = stripVTControlCharacters(output).trim()
+    const trimmed = output.trim()
     if (trimmed) {
       core.info(`Using prek cache dir ${trimmed}`)
       return trimmed

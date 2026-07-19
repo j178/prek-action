@@ -43,23 +43,11 @@ describe('getPrekCacheDir', () => {
 
   it('prefers the CLI-reported path', async () => {
     await expect(getPrekCacheDir()).resolves.toBe('/tmp/prek-cache')
-    expect(mockContext.infos).toEqual(['Using prek cache dir /tmp/prek-cache'])
-  })
-
-  it('strips ANSI escapes from the colored CLI-reported path', async () => {
-    const originalEnv = { ...process.env }
-    process.env.PREK_COLOR = 'always'
-    toolkitMocks.exec.mockImplementation(async (_commandLine, _args, options) => {
-      options?.listeners?.stdout?.(Buffer.from(`\x1B[36m${mockContext.cacheDir}\x1B[39m\n`))
-      return 0
-    })
-
-    try {
-      await expect(getPrekCacheDir()).resolves.toBe('/tmp/prek-cache')
-    } finally {
-      process.env = originalEnv
-    }
-
+    expect(toolkitMocks.exec).toHaveBeenCalledWith(
+      'prek',
+      ['cache', 'dir', '--no-log-file', '--color=never'],
+      expect.any(Object),
+    )
     expect(mockContext.infos).toEqual(['Using prek cache dir /tmp/prek-cache'])
   })
 
