@@ -9,11 +9,16 @@ function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
-export async function runPrek(workingDirectory: string, extraArgs: string): Promise<number> {
+export async function runPrek(
+  workingDirectory: string,
+  extraArgs: string,
+  requireFrozenRevs: boolean,
+): Promise<number> {
   const args = [
     'run',
     '--show-diff-on-failure',
     '--color=always',
+    ...(requireFrozenRevs ? ['--require-frozen-revs'] : []),
     ...parseArgsStringToArgv(extraArgs),
   ]
   return exec.exec('prek', args, {

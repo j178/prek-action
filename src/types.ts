@@ -12,6 +12,7 @@ export type Inputs = {
   extraArgs: string
   installOnly: boolean
   prekVersion: string
+  requireFrozenRevs: boolean
   showVerboseLogs: boolean
   workingDirectory: string
 }
