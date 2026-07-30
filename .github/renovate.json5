@@ -22,17 +22,17 @@
     'custom.regex',
   ],
   customManagers: [
-    // Update major GitHub actions references in documentation.
+    // Update SHA-pinned GitHub Actions references from their version comments.
     {
       customType: 'regex',
       managerFilePatterns: [
-        '/README\\.md$/'
+        '/README\\.md$/',
       ],
       matchStrings: [
-        '\\suses: (?<depName>[\\w-]+/[\\w-]+)(?<path>/.*)?@(?<currentValue>.+?)\\s',
+        '\\suses: (?<depName>[\\w-]+/[\\w-]+)(?<path>/.*)?@(?<currentDigest>[a-f0-9]{40}) # (?<currentValue>v\\d+\\.\\d+\\.\\d+)\\s',
       ],
       datasourceTemplate: 'github-tags',
-      versioningTemplate: 'regex:^v(?<major>\\d+)$',
+      versioningTemplate: 'semver',
     },
   ],
   packageRules: [
