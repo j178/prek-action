@@ -62,12 +62,5 @@ git diff --stat
 6. Push the commit to `main`.
 7. Open the `Release` workflow in GitHub Actions and run it manually with the desired version, for example `v1.2.0` or `1.2.0`.
 8. The workflow re-runs validation, creates the GitHub Release with generated notes, and creates the corresponding Git tag from the current `main` commit.
-9. For stable semver tags, the workflow also moves the matching major tag such as `v1`.
 
 You do not need to create or push the version tag manually; the workflow does that via GitHub when it creates the release.
-
-Consumers should normally reference the major tag:
-
-```yaml
-- uses: j178/prek-action@v1
-```
