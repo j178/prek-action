@@ -6,6 +6,7 @@ const mockContext = vi.hoisted(() => ({
     extraArgs: '--all-files',
     installOnly: false,
     prekVersion: 'latest',
+    requireFrozenRevs: false,
     showVerboseLogs: false,
     workingDirectory: '/tmp/repo',
   },
@@ -76,6 +77,7 @@ function resetMockContext(): void {
     extraArgs: '--all-files',
     installOnly: false,
     prekVersion: 'latest',
+    requireFrozenRevs: false,
     showVerboseLogs: false,
     workingDirectory: '/tmp/repo',
   }
@@ -137,6 +139,16 @@ describe('run', () => {
       ['prek-version', 'v0.3.6'],
       ['cache-hit', 'false'],
     ])
+  })
+
+  it('passes frozen rev enforcement through to prek execution', async () => {
+    mockContext.inputs.requireFrozenRevs = true
+
+    const { run } = await importMainModule()
+
+    await run()
+
+    expect(dependencyMocks.runPrek).toHaveBeenCalledWith('/tmp/repo', '--all-files', true)
   })
 })
 

@@ -32,7 +32,11 @@ export async function run(): Promise<void> {
 
   let exitCode: number | undefined
   try {
-    exitCode = await runPrek(inputs.workingDirectory, inputs.extraArgs)
+    exitCode = await runPrek(
+      inputs.workingDirectory,
+      inputs.extraArgs,
+      inputs.requireFrozenRevs,
+    )
   } finally {
     if (inputs.showVerboseLogs) {
       await showVerboseLogs()

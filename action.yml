@@ -17,6 +17,10 @@ inputs:
     description: Only install prek, do not run it
     required: false
     default: "false"
+  require-frozen-revs:
+    description: Pass --require-frozen-revs to `prek run`
+    required: false
+    default: "false"
   prek-version:
     description: Version or semver range of prek to install (for example `0.2.1`, `0.3.x`, `<=1.0.0`, or `latest`)
     required: false
