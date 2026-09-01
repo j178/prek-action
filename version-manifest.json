@@ -2,6 +2,45 @@
   {
     "assets": [
       {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.1/prek-aarch64-apple-darwin.tar.gz",
+        "name": "prek-aarch64-apple-darwin.tar.gz"
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.1/prek-aarch64-pc-windows-msvc.zip",
+        "name": "prek-aarch64-pc-windows-msvc.zip"
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.1/prek-aarch64-unknown-linux-gnu.tar.gz",
+        "name": "prek-aarch64-unknown-linux-gnu.tar.gz"
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.1/prek-aarch64-unknown-linux-musl.tar.gz",
+        "name": "prek-aarch64-unknown-linux-musl.tar.gz"
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.1/prek-x86_64-apple-darwin.tar.gz",
+        "name": "prek-x86_64-apple-darwin.tar.gz"
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.1/prek-x86_64-pc-windows-msvc.zip",
+        "name": "prek-x86_64-pc-windows-msvc.zip"
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.1/prek-x86_64-unknown-linux-gnu.tar.gz",
+        "name": "prek-x86_64-unknown-linux-gnu.tar.gz"
+      },
+      {
+        "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.1/prek-x86_64-unknown-linux-musl.tar.gz",
+        "name": "prek-x86_64-unknown-linux-musl.tar.gz"
+      }
+    ],
+    "prerelease": false,
+    "publishedAt": "2026-09-01T04:22:04Z",
+    "version": "0.5.1"
+  },
+  {
+    "assets": [
+      {
         "downloadUrl": "https://github.com/j178/prek/releases/download/v0.5.0/prek-aarch64-apple-darwin.tar.gz",
         "name": "prek-aarch64-apple-darwin.tar.gz"
       },

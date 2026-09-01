@@ -1183,5 +1183,13 @@ export const knownChecksumsByAsset = new Map<string, string>([
   ['0.5.0:prek-x86_64-apple-darwin.tar.gz', 'da5cdb10ca7821ed15c888d2a9b2ae94a6d4f7eadf1bc735ac1f668dec40654e'],
   ['0.5.0:prek-x86_64-pc-windows-msvc.zip', '3b1704f9c44d2a5f29af84c18dc5529c2cefab75697bdfdf69074cced1c0533b'],
   ['0.5.0:prek-x86_64-unknown-linux-gnu.tar.gz', 'b9b97fec40013d096a3a4f3914b8d7d467758eab923917cb43302c0219600997'],
-  ['0.5.0:prek-x86_64-unknown-linux-musl.tar.gz', '99531890378759c04d38a93804d502d7df8a5c4bfb24c3e98af3031e868b9ba1']
+  ['0.5.0:prek-x86_64-unknown-linux-musl.tar.gz', '99531890378759c04d38a93804d502d7df8a5c4bfb24c3e98af3031e868b9ba1'],
+  ['0.5.1:prek-aarch64-apple-darwin.tar.gz', '9e5384f128d8731203d7cdd683e2786c269ac5c9dc04d5962f7d078966b16177'],
+  ['0.5.1:prek-aarch64-pc-windows-msvc.zip', 'c9a443249459631213981223ec09b4556515ff76d85a2b3e7ab7c62f14b5fd9b'],
+  ['0.5.1:prek-aarch64-unknown-linux-gnu.tar.gz', '80f555f9b54c3d1bdefbdf6767e52839361fc5fe5520fd2fd9b9046b3d45ac7c'],
+  ['0.5.1:prek-aarch64-unknown-linux-musl.tar.gz', '1507bd22f6ae5ffb465aff6e7a0159d6f419770286c8b3a8b2f51c5919949997'],
+  ['0.5.1:prek-x86_64-apple-darwin.tar.gz', 'f3fd514c2f2ff0b00b06ca48af161c64db723f6300849c77d504c27ca0926c80'],
+  ['0.5.1:prek-x86_64-pc-windows-msvc.zip', '0560f9bb198602241491abdcac0d0aecdb18fe64eeaff240b92efa224479fbcc'],
+  ['0.5.1:prek-x86_64-unknown-linux-gnu.tar.gz', '6506df452f0ad0111303d45e3a51ef27248a083e58d8fabf59c293781bec4f00'],
+  ['0.5.1:prek-x86_64-unknown-linux-musl.tar.gz', '01f873ac49f157885774a5bdb1aa1bc8e3b9db6941d79539df02cc182bdbbcec']
 ])
