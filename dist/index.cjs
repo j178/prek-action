@@ -65356,11 +65356,12 @@ function firstString() {
 function formatError(error2) {
   return error2 instanceof Error ? error2.message : String(error2);
 }
-async function runPrek(workingDirectory, extraArgs) {
+async function runPrek(workingDirectory, extraArgs, requireFrozenRevs) {
   const args = [
     "run",
     "--show-diff-on-failure",
     "--color=always",
+    ...requireFrozenRevs ? ["--require-frozen-revs"] : [],
     ...parseArgsStringToArgv(extraArgs)
   ];
   return exec("prek", args, {
@@ -65552,6 +65553,7 @@ function getInputs() {
     extraArgs: legacyExtraArgs || modernExtraArgs,
     installOnly: getBooleanInput("install-only"),
     prekVersion: getInput("prek-version") || "latest",
+    requireFrozenRevs: getBooleanInput("require-frozen-revs"),
     showVerboseLogs: getBooleanInput("show-verbose-logs"),
     workingDirectory: getInput("working-directory") || "."
   };
@@ -67513,7 +67515,11 @@ async function run() {
   }
   let exitCode;
   try {
-    exitCode = await runPrek(inputs.workingDirectory, inputs.extraArgs);
+    exitCode = await runPrek(
+      inputs.workingDirectory,
+      inputs.extraArgs,
+      inputs.requireFrozenRevs
+    );
   } finally {
     if (inputs.showVerboseLogs) {
       await showVerboseLogs();
