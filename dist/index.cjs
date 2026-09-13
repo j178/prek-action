@@ -67201,7 +67201,15 @@ var knownChecksumsByAsset = /* @__PURE__ */ new Map([
   ["0.5.2:prek-x86_64-apple-darwin.tar.gz", "5dfd123b8cf15f51dc8cbff6f12b674448b19a684ff1696db20f963ec2417e11"],
   ["0.5.2:prek-x86_64-pc-windows-msvc.zip", "03b6a7261d3a7e2d184ceca9c7e5fcb43b9dec83c8945976cddc3caa8b34b4c0"],
   ["0.5.2:prek-x86_64-unknown-linux-gnu.tar.gz", "a4d51a463cb15ee2929368cc4884eec4ef33dce3ff5101b40e8ad7e1205b8f40"],
-  ["0.5.2:prek-x86_64-unknown-linux-musl.tar.gz", "6b4f5c74a621d71f8dba09a9c0669f0d9488207805861c8a7d5f6b15201d4771"]
+  ["0.5.2:prek-x86_64-unknown-linux-musl.tar.gz", "6b4f5c74a621d71f8dba09a9c0669f0d9488207805861c8a7d5f6b15201d4771"],
+  ["0.5.3:prek-aarch64-apple-darwin.tar.gz", "6006cc4e69cfc86d55f4e407ca60ba960a521befa54fece94038639b1f4de381"],
+  ["0.5.3:prek-aarch64-pc-windows-msvc.zip", "394ab47d1c42f2d563a995814291913105a21cccd070501e32052fb5b5cc8b40"],
+  ["0.5.3:prek-aarch64-unknown-linux-gnu.tar.gz", "4cfc936895e8b4e1e2f92daca61bb7c8eb123bac14585ba9f706b599776cdcc8"],
+  ["0.5.3:prek-aarch64-unknown-linux-musl.tar.gz", "ad3fe48802a02ec82286ab842c4a09a4e1db765e402f1fcc016f75b6929ec480"],
+  ["0.5.3:prek-x86_64-apple-darwin.tar.gz", "874f05d12e7cb672758295b5253dfd05aadad3c2bcaa42ae712b917294629b07"],
+  ["0.5.3:prek-x86_64-pc-windows-msvc.zip", "c15a5636bf93a3937507d8da2302b074b0946b3d35882471b002ea93586728d8"],
+  ["0.5.3:prek-x86_64-unknown-linux-gnu.tar.gz", "c1475ddc56df0003c780557d9b52273d9eb19c9ef8d91143f3ce03511182a36e"],
+  ["0.5.3:prek-x86_64-unknown-linux-musl.tar.gz", "d4eae1f31c0817d0a9bfa532d4bb66df60a8b01f121def002021915e826c3d1f"]
 ]);
 
 // src/manifest.ts
