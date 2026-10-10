@@ -27,7 +27,37 @@ vi.mock('@actions/exec', () => ({
   exec: toolkitMocks.exec,
 }))
 
-const { getPrekCacheDir } = await import('../src/prek')
+const { getPrekCacheDir, runPrek } = await import('../src/prek')
+
+describe('runPrek', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('passes require-frozen-revs before extra args when enabled', async () => {
+    toolkitMocks.exec.mockResolvedValue(0)
+
+    await runPrek('/tmp/repo', '--all-files', true)
+
+    expect(toolkitMocks.exec).toHaveBeenCalledWith(
+      'prek',
+      ['run', '--show-diff-on-failure', '--color=always', '--require-frozen-revs', '--all-files'],
+      { cwd: '/tmp/repo', ignoreReturnCode: true },
+    )
+  })
+
+  it('omits require-frozen-revs when disabled', async () => {
+    toolkitMocks.exec.mockResolvedValue(0)
+
+    await runPrek('/tmp/repo', '--all-files', false)
+
+    expect(toolkitMocks.exec).toHaveBeenCalledWith(
+      'prek',
+      ['run', '--show-diff-on-failure', '--color=always', '--all-files'],
+      { cwd: '/tmp/repo', ignoreReturnCode: true },
+    )
+  })
+})
 
 describe('getPrekCacheDir', () => {
   beforeEach(() => {

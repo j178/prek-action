@@ -92,4 +92,13 @@ describe('getInputs', () => {
     ;({ getInputs } = await importInputsModule())
     expect(getInputs().showVerboseLogs).toBe(false)
   })
+
+  it('disables frozen rev enforcement by default and allows opting in', async () => {
+    let { getInputs } = await importInputsModule()
+    expect(getInputs().requireFrozenRevs).toBe(false)
+
+    mockContext.inputs['require-frozen-revs'] = 'true'
+    ;({ getInputs } = await importInputsModule())
+    expect(getInputs().requireFrozenRevs).toBe(true)
+  })
 })

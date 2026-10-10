@@ -19,7 +19,7 @@ jobs:
 `prek` is always invoked as:
 
 ```text
-prek run --show-diff-on-failure --color=always <extra-args>
+prek run --show-diff-on-failure --color=always [--require-frozen-revs] <extra-args>
 ```
 
 ## Version Tags
@@ -34,6 +34,7 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 | `extra_args` | Deprecated alias for `extra-args` | No | |
 | `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
+| `require-frozen-revs` | Pass `--require-frozen-revs` to `prek run` | No | `false` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `cache` | Cache the prek environment between workflow runs | No | `true` |
@@ -105,6 +106,16 @@ steps:
   - uses: j178/prek-action@5337cb91e0fa35a7ff31b9ca345126d8bbbcdf16 # v2.0.6
     with:
       show-verbose-logs: false
+```
+
+Require remote hook repositories to be pinned to commit SHAs:
+
+```yaml
+steps:
+  - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+  - uses: j178/prek-action@0123456789abcdef0123456789abcdef01234567
+    with:
+      require-frozen-revs: true
 ```
 ## Requirements
 
