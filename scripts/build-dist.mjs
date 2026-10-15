@@ -15,6 +15,7 @@ for (const { entry, outfile } of entries) {
     bundle: true,
     entryPoints: [entry],
     format: 'cjs',
+    keepNames: true,
     outfile,
     platform: 'node',
     target: 'node24',
