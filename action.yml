@@ -21,6 +21,9 @@ inputs:
     description: Version or semver range of prek to install (for example `0.2.1`, `0.3.x`, `<=1.0.0`, or `latest`)
     required: false
     default: "latest"
+  checksum:
+    description: SHA-256 checksum of the prek release archive; overrides the bundled checksum
+    required: false
   show-verbose-logs:
     description: Whether to print the prek verbose log after `prek run`
     required: false

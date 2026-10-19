@@ -9,6 +9,7 @@ export type NormalizedVersion = `v${string}`
 
 export type Inputs = {
   cache: boolean
+  checksum: string
   extraArgs: string
   installOnly: boolean
   prekVersion: string

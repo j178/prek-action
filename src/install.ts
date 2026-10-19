@@ -12,10 +12,11 @@ import type { ManifestAsset, ReleaseAsset, Version } from './types'
 export type LinuxLibc = 'gnu' | 'musl'
 
 // Install a specific bare prek version, preferring the GitHub Actions tool cache when available.
-export async function installPrek(version: Version): Promise<string> {
+export async function installPrek(version: Version, checksum?: string): Promise<string> {
   const linuxLibc = process.platform === 'linux' ? detectLinuxLibc() : 'gnu'
   const toolArch = getToolCacheArchFor(process.arch, linuxLibc)
-  const cachedTool = tc.find('prek', version, toolArch)
+  // The tool cache contains binaries, so an explicit archive checksum requires a fresh download.
+  const cachedTool = checksum ? undefined : tc.find('prek', version, toolArch)
 
   core.startGroup(`Installing prek ${version}`)
   try {
@@ -35,7 +36,7 @@ export async function installPrek(version: Version): Promise<string> {
     const archivePath = await tc.downloadTool(manifestAsset.downloadUrl)
     core.info(`Downloaded archive to ${archivePath}`)
 
-    await verifyDownloadChecksum(archivePath, manifestAsset, version)
+    await verifyDownloadChecksum(archivePath, manifestAsset, version, checksum)
 
     const extractedPath = await extractArchive(archivePath, asset)
     core.info(`Extracted ${asset.archiveType} archive to ${extractedPath}`)
@@ -194,8 +195,9 @@ async function verifyDownloadChecksum(
   archivePath: string,
   asset: ManifestAsset,
   version: Version,
+  checksum?: string,
 ): Promise<void> {
-  const result = await validateDownloadedChecksum(archivePath, asset, version)
+  const result = await validateDownloadedChecksum(archivePath, asset, version, checksum)
   if (result === 'missing') {
     core.debug(
       `Checksum is not known for ${buildChecksumKey(version, asset.name)}; skipping verification for prek ${version}`,
@@ -210,9 +212,10 @@ export async function validateDownloadedChecksum(
   archivePath: string,
   asset: ManifestAsset,
   version: Version,
+  checksum?: string,
   checksumMap: ReadonlyMap<string, string> = knownChecksumsByAsset,
 ): Promise<'matched' | 'missing'> {
-  const expectedDigest = checksumMap.get(buildChecksumKey(version, asset.name))
+  const expectedDigest = checksum || checksumMap.get(buildChecksumKey(version, asset.name))
   if (!expectedDigest) {
     return 'missing'
   }

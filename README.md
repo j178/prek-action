@@ -33,6 +33,7 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 | `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
 | `extra_args` | Deprecated alias for `extra-args` | No | |
 | `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
+| `checksum` | SHA-256 checksum of the release archive; overrides the bundled checksum | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
@@ -75,6 +76,22 @@ steps:
     with:
       prek-version: '0.2.30'
 ```
+
+Verify a release archive by setting `checksum` to its SHA-256 digest from the
+[prek releases](https://github.com/j178/prek/releases). Pin `prek-version` and use
+the checksum for your runner's platform, architecture, and libc. For example, for
+`0.5.6` on x86_64 Linux with GNU libc:
+
+```yaml
+with:
+  prek-version: '0.5.6'
+  checksum: 'b0c1a9fdaf0f379c1c2809481a1e1560a4a233777ecd3c38d3e7459d77a59398'
+```
+
+An explicit checksum overrides the bundled value and requires a fresh download,
+even if `prek` is already in the runner's tool cache. A mismatch fails the action
+before extraction. If omitted or empty, the action uses the bundled checksum when
+available and otherwise skips verification.
 
 Resolve a semver range:
 

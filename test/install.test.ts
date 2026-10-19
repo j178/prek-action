@@ -108,6 +108,7 @@ describe('checksum helpers', () => {
           name: 'prek.tar.gz',
         },
         testVersion,
+        undefined,
         new Map([
           ['1.2.3:prek.tar.gz', '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd'],
         ]),
@@ -128,6 +129,7 @@ describe('checksum helpers', () => {
           name: 'prek.tar.gz',
         },
         testVersion,
+        undefined,
         new Map(),
       ),
     ).resolves.toBe('missing')
@@ -146,6 +148,7 @@ describe('checksum helpers', () => {
           name: 'prek.tar.gz',
         },
         testVersion,
+        undefined,
         new Map([['1.2.3:prek.tar.gz', 'deadbeef']]),
       ),
     ).rejects.toThrow(/Checksum mismatch/)
