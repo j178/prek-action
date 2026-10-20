@@ -65570,38 +65570,48 @@ var path13 = __toESM(require("node:path"), 1);
 
 // node_modules/string-argv/index.js
 function parseArgsStringToArgv(value, env, file) {
-  var myRegexp = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi;
-  var myString = value;
-  var myArray = [];
+  const myArray = [];
   if (env) {
     myArray.push(env);
   }
   if (file) {
     myArray.push(file);
   }
-  var match3;
-  do {
-    match3 = myRegexp.exec(myString);
-    if (match3 !== null) {
-      myArray.push(firstString(match3[1], match3[6], match3[0]));
+  let current = "";
+  let inQuote = null;
+  let hasToken = false;
+  let i = 0;
+  while (i < value.length) {
+    const char = value[i];
+    if (inQuote) {
+      if (char === inQuote) {
+        inQuote = null;
+      } else {
+        current += char;
+      }
+    } else {
+      if (char === '"' || char === "'") {
+        inQuote = char;
+        hasToken = true;
+      } else if (/\s/.test(char)) {
+        if (hasToken) {
+          myArray.push(current);
+          current = "";
+          hasToken = false;
+        }
+      } else {
+        current += char;
+        hasToken = true;
+      }
     }
-  } while (match3 !== null);
+    i++;
+  }
+  if (hasToken) {
+    myArray.push(current);
+  }
   return myArray;
 }
 __name(parseArgsStringToArgv, "parseArgsStringToArgv");
-function firstString() {
-  var args = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
-    args[_i] = arguments[_i];
-  }
-  for (var i = 0; i < args.length; i++) {
-    var arg = args[i];
-    if (typeof arg === "string") {
-      return arg;
-    }
-  }
-}
-__name(firstString, "firstString");
 
 // src/prek.ts
 function formatError(error2) {
