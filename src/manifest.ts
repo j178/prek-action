@@ -28,9 +28,11 @@ export async function resolveVersion(versionInput: string): Promise<Version> {
     }
     case 'latest-known': {
       const versions = Array.from(knownChecksumsByAsset.keys(), key => key.split(':')[0])
-      const [version] = versions.sort(semver.rcompare)
+      const [version] = versions
+        .filter(version => semver.prerelease(version) === null)
+        .sort(semver.rcompare)
       if (!version) {
-        throw new Error('No prek version is available in the bundled checksums')
+        throw new Error('No stable prek version is available in the bundled checksums')
       }
       core.info(`Resolved "latest-known" to bundled version ${version}`)
       return toVersion(version)

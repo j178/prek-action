@@ -69,10 +69,10 @@ describe('resolveVersion', () => {
     expect(toolkitMocks.downloadTool).not.toHaveBeenCalled()
   })
 
-  it('selects the highest bundled version without downloading a manifest', async () => {
+  it('selects the highest stable bundled version without downloading a manifest', async () => {
     mockContext.knownChecksums.set('1.9.0:prek-aarch64-apple-darwin.tar.gz', 'checksum')
     mockContext.knownChecksums.set('1.10.0:prek-x86_64-unknown-linux-gnu.tar.gz', 'checksum')
-    mockContext.knownChecksums.set('1.10.0-rc.1:prek-x86_64-unknown-linux-gnu.tar.gz', 'checksum')
+    mockContext.knownChecksums.set('1.11.0-rc.1:prek-x86_64-unknown-linux-gnu.tar.gz', 'checksum')
     mockContext.knownChecksums.set('1.8.0:prek-x86_64-pc-windows-msvc.zip', 'checksum')
     toolkitMocks.downloadTool.mockRejectedValue(new Error('manifest unavailable'))
     const { resolveVersion } = await import('../src/manifest')
@@ -81,12 +81,16 @@ describe('resolveVersion', () => {
     expect(toolkitMocks.downloadTool).not.toHaveBeenCalled()
   })
 
-  it('rejects latest-known when no checksums are bundled', async () => {
+  it.each([
+    { name: 'empty', versions: [] },
+    { name: 'prerelease-only', versions: ['1.11.0-rc.1'] },
+  ])('rejects latest-known for $name checksum tables', async ({ versions }) => {
+    for (const version of versions) {
+      mockContext.knownChecksums.set(`${version}:prek-x86_64-unknown-linux-gnu.tar.gz`, 'checksum')
+    }
     const { resolveVersion } = await import('../src/manifest')
 
-    await expect(resolveVersion('latest-known')).rejects.toThrow(
-      'No prek version is available in the bundled checksums',
-    )
+    await expect(resolveVersion('latest-known')).rejects.toThrow('bundled checksums')
     expect(toolkitMocks.downloadTool).not.toHaveBeenCalled()
   })
 

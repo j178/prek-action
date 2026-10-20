@@ -78,9 +78,9 @@ steps:
 
 ### Install the latest known version
 
-Use `latest-known` to select the newest `prek` version in this action's bundled
-checksum table. The version is resolved locally and only changes when you update
-the action.
+Use `latest-known` to select the newest stable `prek` version in this action's
+bundled checksum table. The version is resolved locally and only changes when you
+update the action.
 
 ```yaml
 with:

@@ -19404,13 +19404,13 @@ var require_semver = __commonJS({
     var { safeRe: re, t } = require_re();
     var parseOptions = require_parse_options();
     var { compareIdentifiers } = require_identifiers();
-    var isPrereleaseIdentifier = /* @__PURE__ */ __name((prerelease, identifier) => {
+    var isPrereleaseIdentifier = /* @__PURE__ */ __name((prerelease2, identifier) => {
       const identifiers = identifier.split(".");
-      if (identifiers.length > prerelease.length) {
+      if (identifiers.length > prerelease2.length) {
         return false;
       }
       for (let i = 0; i < identifiers.length; i++) {
-        if (compareIdentifiers(prerelease[i], identifiers[i]) !== 0) {
+        if (compareIdentifiers(prerelease2[i], identifiers[i]) !== 0) {
           return false;
         }
       }
@@ -19661,17 +19661,17 @@ var require_semver = __commonJS({
               }
             }
             if (identifier) {
-              let prerelease = [identifier, base];
+              let prerelease2 = [identifier, base];
               if (identifierBase === false) {
-                prerelease = [identifier];
+                prerelease2 = [identifier];
               }
               if (isPrereleaseIdentifier(this.prerelease, identifier)) {
                 const prereleaseBase = this.prerelease[identifier.split(".").length];
                 if (isNaN(prereleaseBase)) {
-                  this.prerelease = prerelease;
+                  this.prerelease = prerelease2;
                 }
               } else {
-                this.prerelease = prerelease;
+                this.prerelease = prerelease2;
               }
             }
             break;
@@ -19841,11 +19841,11 @@ var require_prerelease = __commonJS({
   "node_modules/semver/functions/prerelease.js"(exports2, module2) {
     "use strict";
     var parse2 = require_parse2();
-    var prerelease = /* @__PURE__ */ __name((version3, options) => {
+    var prerelease2 = /* @__PURE__ */ __name((version3, options) => {
       const parsed = parse2(version3, options);
       return parsed && parsed.prerelease.length ? parsed.prerelease : null;
     }, "prerelease");
-    module2.exports = prerelease;
+    module2.exports = prerelease2;
   }
 });
 
@@ -20061,9 +20061,9 @@ var require_coerce = __commonJS({
       const major = match3[2];
       const minor = match3[3] || "0";
       const patch = match3[4] || "0";
-      const prerelease = options.includePrerelease && match3[5] ? `-${match3[5]}` : "";
+      const prerelease2 = options.includePrerelease && match3[5] ? `-${match3[5]}` : "";
       const build = options.includePrerelease && match3[6] ? `+${match3[6]}` : "";
-      return parse2(`${major}.${minor}.${patch}${prerelease}${build}`, options);
+      return parse2(`${major}.${minor}.${patch}${prerelease2}${build}`, options);
     }, "coerce");
     module2.exports = coerce;
   }
@@ -21146,7 +21146,7 @@ var require_semver2 = __commonJS({
     var major = require_major();
     var minor = require_minor();
     var patch = require_patch();
-    var prerelease = require_prerelease();
+    var prerelease2 = require_prerelease();
     var compare = require_compare();
     var rcompare2 = require_rcompare();
     var compareLoose = require_compare_loose();
@@ -21185,7 +21185,7 @@ var require_semver2 = __commonJS({
       major,
       minor,
       patch,
-      prerelease,
+      prerelease: prerelease2,
       compare,
       rcompare: rcompare2,
       compareLoose,
@@ -67555,9 +67555,9 @@ async function resolveVersion(versionInput) {
     }
     case "latest-known": {
       const versions = Array.from(knownChecksumsByAsset.keys(), (key) => key.split(":")[0]);
-      const [version3] = versions.sort(semver4.rcompare);
+      const [version3] = versions.filter((version4) => semver4.prerelease(version4) === null).sort(semver4.rcompare);
       if (!version3) {
-        throw new Error("No prek version is available in the bundled checksums");
+        throw new Error("No stable prek version is available in the bundled checksums");
       }
       info(`Resolved "latest-known" to bundled version ${version3}`);
       return toVersion(version3);
