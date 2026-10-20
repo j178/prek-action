@@ -77,9 +77,9 @@ steps:
       prek-version: '0.2.30'
 ```
 
-To verify a specific release archive, set `sha256` to its digest from the
-[prek releases](https://github.com/j178/prek/releases). The checksum must match
-your runner's platform, architecture, and libc:
+Downloaded release archives are automatically verified using checksums bundled
+with this action. For newer versions whose checksums are not yet bundled, you
+can specify a checksum with `sha256`:
 
 ```yaml
 with:
@@ -87,8 +87,9 @@ with:
   sha256: 'b0c1a9fdaf0f379c1c2809481a1e1560a4a233777ecd3c38d3e7459d77a59398'
 ```
 
-This overrides the bundled checksum. Without it, the action uses the bundled
-checksum when available. Cached installations are not reverified.
+SHA-256 hashes are available on the [prek releases page](https://github.com/j178/prek/releases).
+Use the checksum for your runner's platform, architecture, and libc.
+An explicit `sha256` overrides the bundled checksum.
 
 Resolve a semver range:
 
