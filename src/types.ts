@@ -9,10 +9,10 @@ export type NormalizedVersion = `v${string}`
 
 export type Inputs = {
   cache: boolean
-  checksum: string
   extraArgs: string
   installOnly: boolean
   prekVersion: string
+  sha256: string
   showVerboseLogs: boolean
   workingDirectory: string
 }

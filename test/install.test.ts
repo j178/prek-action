@@ -7,8 +7,7 @@ import {
   getReleaseAssetFor,
   getRustTargetFor,
   getToolCacheArchFor,
-  hashFile,
-  validateDownloadedChecksum,
+  verifyDownloadChecksum,
 } from '../src/install'
 import { toVersion } from '../src/manifest'
 
@@ -115,39 +114,33 @@ describe('checksum helpers', () => {
     await fs.rm(rootDir, { force: true, recursive: true })
   })
 
-  it.each([
-    { name: 'bundled checksum', explicit: undefined, bundled: archiveDigest, expected: 'matched' },
-    {
-      name: 'input overrides bundled',
-      explicit: archiveDigest,
-      bundled: '0'.repeat(64),
-      expected: 'matched',
-    },
-    {
-      name: 'GitHub-prefixed input',
-      explicit: `sha256:${archiveDigest}`,
-      bundled: undefined,
-      expected: 'matched',
-    },
-    { name: 'missing checksum', explicit: undefined, bundled: undefined, expected: 'missing' },
-  ])('handles $name', async ({ explicit, bundled, expected }) => {
-    const checksums = new Map(bundled ? [[checksumKey, bundled]] : [])
+  it('uses the bundled checksum when no input is provided', async () => {
+    const checksums = new Map([[checksumKey, archiveDigest]])
     await expect(
-      validateDownloadedChecksum(archivePath, checksumAsset, testVersion, explicit, checksums),
-    ).resolves.toBe(expected)
+      verifyDownloadChecksum(archivePath, checksumAsset, testVersion, undefined, checksums),
+    ).resolves.toBeUndefined()
+  })
+
+  it('lets the input override the bundled checksum', async () => {
+    const checksums = new Map([[checksumKey, '0'.repeat(64)]])
+    await expect(
+      verifyDownloadChecksum(archivePath, checksumAsset, testVersion, archiveDigest, checksums),
+    ).resolves.toBeUndefined()
+  })
+
+  it('skips verification when no checksum is available', async () => {
+    await expect(
+      verifyDownloadChecksum(archivePath, checksumAsset, testVersion, undefined, new Map()),
+    ).resolves.toBeUndefined()
   })
 
   it.each([
-    { name: 'explicit', explicit: '0'.repeat(64), bundled: archiveDigest },
-    { name: 'bundled', explicit: undefined, bundled: '0'.repeat(64) },
+    { bundled: archiveDigest, explicit: '0'.repeat(64), name: 'explicit' },
+    { bundled: '0'.repeat(64), explicit: undefined, name: 'bundled' },
   ])('rejects a mismatched $name checksum', async ({ explicit, bundled }) => {
-    const checksums = new Map(bundled ? [[checksumKey, bundled]] : [])
+    const checksums = new Map([[checksumKey, bundled]])
     await expect(
-      validateDownloadedChecksum(archivePath, checksumAsset, testVersion, explicit, checksums),
+      verifyDownloadChecksum(archivePath, checksumAsset, testVersion, explicit, checksums),
     ).rejects.toThrow(/Checksum mismatch/)
-  })
-
-  it('hashFile returns the sha256 digest for a file', async () => {
-    await expect(hashFile(archivePath)).resolves.toBe(archiveDigest)
   })
 })

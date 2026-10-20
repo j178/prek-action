@@ -33,7 +33,7 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 | `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
 | `extra_args` | Deprecated alias for `extra-args` | No | |
 | `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
-| `checksum` | SHA-256 checksum of the release archive; overrides the bundled checksum | No | |
+| `sha256` | SHA-256 checksum of the release archive; overrides the bundled checksum | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
@@ -77,14 +77,14 @@ steps:
       prek-version: '0.2.30'
 ```
 
-To verify a specific release archive, use its SHA-256 digest from the
+To verify a specific release archive, set `sha256` to its digest from the
 [prek releases](https://github.com/j178/prek/releases). The checksum must match
 your runner's platform, architecture, and libc:
 
 ```yaml
 with:
   prek-version: '0.5.6'
-  checksum: 'sha256:b0c1a9fdaf0f379c1c2809481a1e1560a4a233777ecd3c38d3e7459d77a59398'
+  sha256: 'b0c1a9fdaf0f379c1c2809481a1e1560a4a233777ecd3c38d3e7459d77a59398'
 ```
 
 This overrides the bundled checksum. Without it, the action uses the bundled
