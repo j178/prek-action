@@ -77,22 +77,18 @@ steps:
       prek-version: '0.2.30'
 ```
 
-Verify a release archive by setting `checksum` to its SHA-256 digest from the
-[prek releases](https://github.com/j178/prek/releases). Pin `prek-version` and use
-the checksum for your runner's platform, architecture, and libc. For example, for
-`0.5.6` on x86_64 Linux with GNU libc:
+To verify a specific release archive, use its SHA-256 digest from the
+[prek releases](https://github.com/j178/prek/releases). The checksum must match
+your runner's platform, architecture, and libc:
 
 ```yaml
 with:
   prek-version: '0.5.6'
-  checksum: 'b0c1a9fdaf0f379c1c2809481a1e1560a4a233777ecd3c38d3e7459d77a59398'
+  checksum: 'sha256:b0c1a9fdaf0f379c1c2809481a1e1560a4a233777ecd3c38d3e7459d77a59398'
 ```
 
-An explicit checksum overrides the bundled value when downloading `prek`. A
-mismatch fails the action before extraction. If omitted or empty, the action uses
-the bundled checksum when available and otherwise skips verification. If `prek` is
-already in the runner's tool cache, it is reused without downloading or checking
-the checksum.
+This overrides the bundled checksum. Without it, the action uses the bundled
+checksum when available. Cached installations are not reverified.
 
 Resolve a semver range:
 

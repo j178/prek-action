@@ -69379,9 +69379,7 @@ __name(getBinaryPath, "getBinaryPath");
 async function verifyDownloadChecksum(archivePath, asset, version3, checksum) {
   const result = await validateDownloadedChecksum(archivePath, asset, version3, checksum);
   if (result === "missing") {
-    debug(
-      `Checksum is not known for ${buildChecksumKey(version3, asset.name)}; skipping verification for prek ${version3}`
-    );
+    info(`No SHA-256 checksum available for ${asset.name}; skipping verification`);
     return;
   }
   info(`Verified SHA-256 checksum for ${asset.name} from prek ${version3}`);
@@ -69392,10 +69390,12 @@ async function validateDownloadedChecksum(archivePath, asset, version3, checksum
   if (!expectedDigest) {
     return "missing";
   }
+  const normalizedDigest = expectedDigest.replace(/^sha256:/i, "").toLowerCase();
+  info(`Verifying SHA-256 checksum for ${asset.name} (${checksum ? "input" : "bundled"})`);
   const digest = await hashFile(archivePath);
-  if (digest !== expectedDigest) {
+  if (digest !== normalizedDigest) {
     throw new Error(
-      `Checksum mismatch for ${asset.name}: expected ${expectedDigest}, received ${digest}`
+      `Checksum mismatch for ${asset.name}: expected ${normalizedDigest}, received ${digest}`
     );
   }
   return "matched";

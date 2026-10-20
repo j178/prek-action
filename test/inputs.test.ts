@@ -32,6 +32,13 @@ describe('getInputs', () => {
     mockContext.warnings = []
   })
 
+  it('reads the optional checksum', async () => {
+    mockContext.inputs.checksum = 'sha256:abc'
+    const { getInputs } = await importInputsModule()
+
+    expect(getInputs().checksum).toBe('sha256:abc')
+  })
+
   it('uses the configured extra-args default when no explicit value is provided', async () => {
     mockContext.inputs['extra-args'] = '--all-files'
 

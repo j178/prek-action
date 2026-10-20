@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const mockContext = vi.hoisted(() => ({
   failures: [] as string[],
   inputs: {
+    checksum: '',
     extraArgs: '--all-files',
     installOnly: false,
     prekVersion: 'latest',
@@ -73,6 +74,7 @@ function resetMockContext(): void {
   mockContext.failures = []
   mockContext.inputs = {
     cache: true,
+    checksum: '',
     extraArgs: '--all-files',
     installOnly: false,
     prekVersion: 'latest',
@@ -91,6 +93,15 @@ describe('run', () => {
     vi.resetModules()
     vi.clearAllMocks()
     resetMockContext()
+  })
+
+  it('passes the checksum to installPrek', async () => {
+    mockContext.inputs.checksum = 'sha256:abc'
+    const { run } = await importMainModule()
+
+    await run()
+
+    expect(dependencyMocks.installPrek).toHaveBeenCalledWith('0.3.6', 'sha256:abc')
   })
 
   it('sets cache-hit when the restored cache key matches the primary key', async () => {

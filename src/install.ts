@@ -198,9 +198,7 @@ async function verifyDownloadChecksum(
 ): Promise<void> {
   const result = await validateDownloadedChecksum(archivePath, asset, version, checksum)
   if (result === 'missing') {
-    core.debug(
-      `Checksum is not known for ${buildChecksumKey(version, asset.name)}; skipping verification for prek ${version}`,
-    )
+    core.info(`No SHA-256 checksum available for ${asset.name}; skipping verification`)
     return
   }
 
@@ -219,10 +217,12 @@ export async function validateDownloadedChecksum(
     return 'missing'
   }
 
+  const normalizedDigest = expectedDigest.replace(/^sha256:/i, '').toLowerCase()
+  core.info(`Verifying SHA-256 checksum for ${asset.name} (${checksum ? 'input' : 'bundled'})`)
   const digest = await hashFile(archivePath)
-  if (digest !== expectedDigest) {
+  if (digest !== normalizedDigest) {
     throw new Error(
-      `Checksum mismatch for ${asset.name}: expected ${expectedDigest}, received ${digest}`,
+      `Checksum mismatch for ${asset.name}: expected ${normalizedDigest}, received ${digest}`,
     )
   }
 
