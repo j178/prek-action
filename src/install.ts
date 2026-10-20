@@ -15,8 +15,7 @@ export type LinuxLibc = 'gnu' | 'musl'
 export async function installPrek(version: Version, checksum?: string): Promise<string> {
   const linuxLibc = process.platform === 'linux' ? detectLinuxLibc() : 'gnu'
   const toolArch = getToolCacheArchFor(process.arch, linuxLibc)
-  // The tool cache contains binaries, so an explicit archive checksum requires a fresh download.
-  const cachedTool = checksum ? undefined : tc.find('prek', version, toolArch)
+  const cachedTool = tc.find('prek', version, toolArch)
 
   core.startGroup(`Installing prek ${version}`)
   try {

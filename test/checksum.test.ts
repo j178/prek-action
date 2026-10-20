@@ -83,19 +83,28 @@ describe('checksum input', () => {
     expect(core.addPath).toHaveBeenCalledWith(toolPath)
   })
 
+  it('reuses the tool cache without downloading when a checksum is provided', async () => {
+    knownChecksumsByAsset.set(checksumKey, archiveDigest)
+    vi.stubEnv('INPUT_CHECKSUM', wrongDigest)
+    vi.mocked(tc.find).mockReturnValue(toolPath)
+    const { run } = await import('../src/main')
+
+    await run()
+
+    expect(core.addPath).toHaveBeenCalledWith(toolPath)
+    expect(tc.downloadTool).not.toHaveBeenCalled()
+  })
+
   it.each([
-    { cachedTool: '', checksum: wrongDigest, knownDigest: archiveDigest },
-    { cachedTool: '/cached/prek', checksum: wrongDigest, knownDigest: archiveDigest },
-    { cachedTool: '', checksum: wrongDigest, knownDigest: undefined },
-    { cachedTool: '', checksum: '', knownDigest: wrongDigest },
-  ])('rejects a mismatch before installation (input: $checksum, cache: $cachedTool, bundled: $knownDigest)', async ({
-    cachedTool,
+    { checksum: wrongDigest, knownDigest: archiveDigest },
+    { checksum: wrongDigest, knownDigest: undefined },
+    { checksum: '', knownDigest: wrongDigest },
+  ])('rejects a mismatch before installation (input: $checksum, bundled: $knownDigest)', async ({
     checksum,
     knownDigest,
   }) => {
     if (knownDigest) knownChecksumsByAsset.set(checksumKey, knownDigest)
     vi.stubEnv('INPUT_CHECKSUM', checksum)
-    vi.mocked(tc.find).mockReturnValue(cachedTool)
     const { run } = await import('../src/main')
 
     await expect(run()).rejects.toThrow(`expected ${wrongDigest}, received ${archiveDigest}`)

@@ -88,10 +88,11 @@ with:
   checksum: 'b0c1a9fdaf0f379c1c2809481a1e1560a4a233777ecd3c38d3e7459d77a59398'
 ```
 
-An explicit checksum overrides the bundled value and requires a fresh download,
-even if `prek` is already in the runner's tool cache. A mismatch fails the action
-before extraction. If omitted or empty, the action uses the bundled checksum when
-available and otherwise skips verification.
+An explicit checksum overrides the bundled value when downloading `prek`. A
+mismatch fails the action before extraction. If omitted or empty, the action uses
+the bundled checksum when available and otherwise skips verification. If `prek` is
+already in the runner's tool cache, it is reused without downloading or checking
+the checksum.
 
 Resolve a semver range:
 

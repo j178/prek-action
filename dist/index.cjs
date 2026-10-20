@@ -69226,7 +69226,7 @@ __name(buildReleaseAssetUrl, "buildReleaseAssetUrl");
 async function installPrek(version3, checksum) {
   const linuxLibc = process.platform === "linux" ? detectLinuxLibc() : "gnu";
   const toolArch = getToolCacheArchFor(process.arch, linuxLibc);
-  const cachedTool = checksum ? void 0 : find("prek", version3, toolArch);
+  const cachedTool = find("prek", version3, toolArch);
   startGroup(`Installing prek ${version3}`);
   try {
     if (cachedTool) {
