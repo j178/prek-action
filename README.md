@@ -38,7 +38,6 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `cache` | Cache the prek environment between workflow runs | No | `true` |
-| `token` | Deprecated and unused; retained for backward compatibility | No | `''` |
 
 ## Outputs
 
@@ -49,7 +48,7 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 
 ## Examples
 
-Install and run against all files:
+### Install and run against all files
 
 ```yaml
 steps:
@@ -57,7 +56,7 @@ steps:
   - uses: j178/prek-action@5337cb91e0fa35a7ff31b9ca345126d8bbbcdf16 # v2.0.6
 ```
 
-Pass extra arguments:
+### Pass extra arguments
 
 ```yaml
 steps:
@@ -67,7 +66,7 @@ steps:
       extra-args: '--all-files --directory packages/'
 ```
 
-Pin a specific `prek` version:
+### Pin a specific `prek` version
 
 ```yaml
 steps:
@@ -76,6 +75,8 @@ steps:
     with:
       prek-version: '0.2.30'
 ```
+
+### Specify a checksum
 
 Downloaded release archives are automatically verified using checksums bundled
 with this action. For newer versions whose checksums are not yet bundled, you
@@ -91,7 +92,7 @@ SHA-256 hashes are available on the [prek releases page](https://github.com/j178
 Use the checksum for your runner's platform, architecture, and libc.
 An explicit `sha256` overrides the bundled checksum.
 
-Resolve a semver range:
+### Resolve a semver range
 
 ```yaml
 steps:
@@ -101,7 +102,7 @@ steps:
       prek-version: '0.3.x'
 ```
 
-Install only:
+### Install only
 
 ```yaml
 steps:
@@ -112,7 +113,7 @@ steps:
   - run: prek run --show-diff-on-failure --color=always --all-files
 ```
 
-Disable verbose log output after the run:
+### Disable verbose log output
 
 ```yaml
 steps:
@@ -121,6 +122,7 @@ steps:
     with:
       show-verbose-logs: false
 ```
+
 ## Requirements
 
 The target repository needs a `prek` or pre-commit configuration file:
