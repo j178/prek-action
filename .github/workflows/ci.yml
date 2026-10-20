@@ -100,6 +100,12 @@ jobs:
         with:
           prek-version: "0.3.x"
 
+      - name: Test | ${{ matrix.os }} | latest-known
+        uses: ./
+        with:
+          prek-version: "latest-known"
+          install-only: true
+
   ecosystem-cpython:
     name: "ecosystem | cpython"
     timeout-minutes: 5

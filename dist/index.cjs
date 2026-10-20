@@ -19864,8 +19864,8 @@ var require_rcompare = __commonJS({
   "node_modules/semver/functions/rcompare.js"(exports2, module2) {
     "use strict";
     var compare = require_compare();
-    var rcompare = /* @__PURE__ */ __name((a, b, loose) => compare(b, a, loose), "rcompare");
-    module2.exports = rcompare;
+    var rcompare2 = /* @__PURE__ */ __name((a, b, loose) => compare(b, a, loose), "rcompare");
+    module2.exports = rcompare2;
   }
 });
 
@@ -21148,7 +21148,7 @@ var require_semver2 = __commonJS({
     var patch = require_patch();
     var prerelease = require_prerelease();
     var compare = require_compare();
-    var rcompare = require_rcompare();
+    var rcompare2 = require_rcompare();
     var compareLoose = require_compare_loose();
     var compareBuild = require_compare_build();
     var sort = require_sort();
@@ -21187,7 +21187,7 @@ var require_semver2 = __commonJS({
       patch,
       prerelease,
       compare,
-      rcompare,
+      rcompare: rcompare2,
       compareLoose,
       compareBuild,
       sort,
@@ -67542,13 +67542,46 @@ var prekVersionManifestUrl = "https://raw.githubusercontent.com/j178/prek-action
 var versionManifestPromise;
 async function resolveVersion(versionInput) {
   const normalizedInput = versionInput.trim() || "latest";
+  info(`Resolving prek version from input "${versionInput}"`);
+  switch (normalizedInput) {
+    case "latest": {
+      const manifest2 = await getVersionManifest();
+      const latestRelease = manifest2.find((release) => !release.prerelease);
+      if (!latestRelease) {
+        throw new Error("The prek version manifest does not contain a stable release");
+      }
+      info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`);
+      return latestRelease.version;
+    }
+    case "latest-known": {
+      const versions = Array.from(knownChecksumsByAsset.keys(), (key) => key.split(":")[0]);
+      const [version3] = versions.sort(semver4.rcompare);
+      if (!version3) {
+        throw new Error("No prek version is available in the bundled checksums");
+      }
+      info(`Resolved "latest-known" to bundled version ${version3}`);
+      return toVersion(version3);
+    }
+  }
   const exactVersion = semver4.valid(toVersion(normalizedInput));
   if (exactVersion) {
     const version3 = exactVersion;
     info(`Resolved exact version "${normalizedInput}" to ${version3}`);
     return version3;
   }
-  return resolveVersionFromManifest(versionInput, await getVersionManifest());
+  const range3 = semver4.validRange(normalizedInput);
+  if (!range3) {
+    throw new Error(`Invalid prek-version input: ${versionInput}`);
+  }
+  const manifest = await getVersionManifest();
+  const rangeRelease = manifest.find(
+    (candidate) => !candidate.prerelease && semver4.satisfies(candidate.version, range3)
+  );
+  if (!rangeRelease) {
+    throw new Error(`No prek release satisfies version range: ${versionInput}`);
+  }
+  info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`);
+  return rangeRelease.version;
 }
 __name(resolveVersion, "resolveVersion");
 function normalizeVersion(version3) {
@@ -67595,31 +67628,6 @@ async function getAssetForVersion(version3, archiveName) {
   return buildReleaseAssetUrl(version3, archiveName);
 }
 __name(getAssetForVersion, "getAssetForVersion");
-function resolveVersionFromManifest(versionInput, manifest) {
-  const normalizedInput = versionInput.trim() || "latest";
-  info(`Resolving prek version from input "${versionInput}"`);
-  if (normalizedInput === "latest") {
-    const latestRelease = manifest.find((release) => !release.prerelease);
-    if (!latestRelease) {
-      throw new Error("The prek version manifest does not contain a stable release");
-    }
-    info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`);
-    return latestRelease.version;
-  }
-  const range3 = semver4.validRange(normalizedInput);
-  if (!range3) {
-    throw new Error(`Invalid prek-version input: ${versionInput}`);
-  }
-  const rangeRelease = manifest.find(
-    (candidate) => !candidate.prerelease && semver4.satisfies(candidate.version, range3)
-  );
-  if (!rangeRelease) {
-    throw new Error(`No prek release satisfies version range: ${versionInput}`);
-  }
-  info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`);
-  return rangeRelease.version;
-}
-__name(resolveVersionFromManifest, "resolveVersionFromManifest");
 async function downloadVersionManifest() {
   info(`Downloading version manifest from ${prekVersionManifestUrl}`);
   const downloadedPath = await downloadTool(prekVersionManifestUrl);

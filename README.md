@@ -32,7 +32,7 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 | --- | --- | --- | --- |
 | `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
 | `extra_args` | Deprecated alias for `extra-args` | No | |
-| `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, or `latest` | No | `latest` |
+| `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, `latest`, or `latest-known` | No | `latest` |
 | `sha256` | SHA-256 checksum of the release archive; overrides the bundled checksum | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
@@ -74,6 +74,17 @@ steps:
   - uses: j178/prek-action@1382ad72dea72f9d53832f2bcb65b3e87a947204 # v3.0.1
     with:
       prek-version: '0.2.30'
+```
+
+### Install the latest known version
+
+Use `latest-known` to select the newest `prek` version in this action's bundled
+checksum table. The version is resolved locally and only changes when you update
+the action.
+
+```yaml
+with:
+  prek-version: 'latest-known'
 ```
 
 ### Specify a checksum

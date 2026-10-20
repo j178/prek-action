@@ -18,7 +18,7 @@ inputs:
     required: false
     default: "false"
   prek-version:
-    description: Version or semver range of prek to install (for example `0.2.1`, `0.3.x`, `<=1.0.0`, or `latest`)
+    description: Version or semver range of prek to install (for example `0.2.1`, `0.3.x`, `<=1.0.0`, `latest`, or `latest-known`)
     required: false
     default: "latest"
   sha256:
