@@ -19404,13 +19404,13 @@ var require_semver = __commonJS({
     var { safeRe: re, t } = require_re();
     var parseOptions = require_parse_options();
     var { compareIdentifiers } = require_identifiers();
-    var isPrereleaseIdentifier = /* @__PURE__ */ __name((prerelease, identifier) => {
+    var isPrereleaseIdentifier = /* @__PURE__ */ __name((prerelease2, identifier) => {
       const identifiers = identifier.split(".");
-      if (identifiers.length > prerelease.length) {
+      if (identifiers.length > prerelease2.length) {
         return false;
       }
       for (let i = 0; i < identifiers.length; i++) {
-        if (compareIdentifiers(prerelease[i], identifiers[i]) !== 0) {
+        if (compareIdentifiers(prerelease2[i], identifiers[i]) !== 0) {
           return false;
         }
       }
@@ -19661,17 +19661,17 @@ var require_semver = __commonJS({
               }
             }
             if (identifier) {
-              let prerelease = [identifier, base];
+              let prerelease2 = [identifier, base];
               if (identifierBase === false) {
-                prerelease = [identifier];
+                prerelease2 = [identifier];
               }
               if (isPrereleaseIdentifier(this.prerelease, identifier)) {
                 const prereleaseBase = this.prerelease[identifier.split(".").length];
                 if (isNaN(prereleaseBase)) {
-                  this.prerelease = prerelease;
+                  this.prerelease = prerelease2;
                 }
               } else {
-                this.prerelease = prerelease;
+                this.prerelease = prerelease2;
               }
             }
             break;
@@ -19841,11 +19841,11 @@ var require_prerelease = __commonJS({
   "node_modules/semver/functions/prerelease.js"(exports2, module2) {
     "use strict";
     var parse2 = require_parse2();
-    var prerelease = /* @__PURE__ */ __name((version3, options) => {
+    var prerelease2 = /* @__PURE__ */ __name((version3, options) => {
       const parsed = parse2(version3, options);
       return parsed && parsed.prerelease.length ? parsed.prerelease : null;
     }, "prerelease");
-    module2.exports = prerelease;
+    module2.exports = prerelease2;
   }
 });
 
@@ -19864,8 +19864,8 @@ var require_rcompare = __commonJS({
   "node_modules/semver/functions/rcompare.js"(exports2, module2) {
     "use strict";
     var compare = require_compare();
-    var rcompare = /* @__PURE__ */ __name((a, b, loose) => compare(b, a, loose), "rcompare");
-    module2.exports = rcompare;
+    var rcompare2 = /* @__PURE__ */ __name((a, b, loose) => compare(b, a, loose), "rcompare");
+    module2.exports = rcompare2;
   }
 });
 
@@ -20061,9 +20061,9 @@ var require_coerce = __commonJS({
       const major = match3[2];
       const minor = match3[3] || "0";
       const patch = match3[4] || "0";
-      const prerelease = options.includePrerelease && match3[5] ? `-${match3[5]}` : "";
+      const prerelease2 = options.includePrerelease && match3[5] ? `-${match3[5]}` : "";
       const build = options.includePrerelease && match3[6] ? `+${match3[6]}` : "";
-      return parse2(`${major}.${minor}.${patch}${prerelease}${build}`, options);
+      return parse2(`${major}.${minor}.${patch}${prerelease2}${build}`, options);
     }, "coerce");
     module2.exports = coerce;
   }
@@ -21146,9 +21146,9 @@ var require_semver2 = __commonJS({
     var major = require_major();
     var minor = require_minor();
     var patch = require_patch();
-    var prerelease = require_prerelease();
+    var prerelease2 = require_prerelease();
     var compare = require_compare();
-    var rcompare = require_rcompare();
+    var rcompare2 = require_rcompare();
     var compareLoose = require_compare_loose();
     var compareBuild = require_compare_build();
     var sort = require_sort();
@@ -21185,9 +21185,9 @@ var require_semver2 = __commonJS({
       major,
       minor,
       patch,
-      prerelease,
+      prerelease: prerelease2,
       compare,
-      rcompare,
+      rcompare: rcompare2,
       compareLoose,
       compareBuild,
       sort,
@@ -67542,13 +67542,46 @@ var prekVersionManifestUrl = "https://raw.githubusercontent.com/j178/prek-action
 var versionManifestPromise;
 async function resolveVersion(versionInput) {
   const normalizedInput = versionInput.trim() || "latest";
+  info(`Resolving prek version from input "${versionInput}"`);
+  switch (normalizedInput) {
+    case "latest": {
+      const manifest2 = await getVersionManifest();
+      const latestRelease = manifest2.find((release) => !release.prerelease);
+      if (!latestRelease) {
+        throw new Error("The prek version manifest does not contain a stable release");
+      }
+      info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`);
+      return latestRelease.version;
+    }
+    case "latest-known": {
+      const versions = Array.from(knownChecksumsByAsset.keys(), (key) => key.split(":")[0]);
+      const [version3] = versions.filter((version4) => semver4.prerelease(version4) === null).sort(semver4.rcompare);
+      if (!version3) {
+        throw new Error("No stable prek version is available in the bundled checksums");
+      }
+      info(`Resolved "latest-known" to bundled version ${version3}`);
+      return toVersion(version3);
+    }
+  }
   const exactVersion = semver4.valid(toVersion(normalizedInput));
   if (exactVersion) {
     const version3 = exactVersion;
     info(`Resolved exact version "${normalizedInput}" to ${version3}`);
     return version3;
   }
-  return resolveVersionFromManifest(versionInput, await getVersionManifest());
+  const range3 = semver4.validRange(normalizedInput);
+  if (!range3) {
+    throw new Error(`Invalid prek-version input: ${versionInput}`);
+  }
+  const manifest = await getVersionManifest();
+  const rangeRelease = manifest.find(
+    (candidate) => !candidate.prerelease && semver4.satisfies(candidate.version, range3)
+  );
+  if (!rangeRelease) {
+    throw new Error(`No prek release satisfies version range: ${versionInput}`);
+  }
+  info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`);
+  return rangeRelease.version;
 }
 __name(resolveVersion, "resolveVersion");
 function normalizeVersion(version3) {
@@ -67595,31 +67628,6 @@ async function getAssetForVersion(version3, archiveName) {
   return buildReleaseAssetUrl(version3, archiveName);
 }
 __name(getAssetForVersion, "getAssetForVersion");
-function resolveVersionFromManifest(versionInput, manifest) {
-  const normalizedInput = versionInput.trim() || "latest";
-  info(`Resolving prek version from input "${versionInput}"`);
-  if (normalizedInput === "latest") {
-    const latestRelease = manifest.find((release) => !release.prerelease);
-    if (!latestRelease) {
-      throw new Error("The prek version manifest does not contain a stable release");
-    }
-    info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`);
-    return latestRelease.version;
-  }
-  const range3 = semver4.validRange(normalizedInput);
-  if (!range3) {
-    throw new Error(`Invalid prek-version input: ${versionInput}`);
-  }
-  const rangeRelease = manifest.find(
-    (candidate) => !candidate.prerelease && semver4.satisfies(candidate.version, range3)
-  );
-  if (!rangeRelease) {
-    throw new Error(`No prek release satisfies version range: ${versionInput}`);
-  }
-  info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`);
-  return rangeRelease.version;
-}
-__name(resolveVersionFromManifest, "resolveVersionFromManifest");
 async function downloadVersionManifest() {
   info(`Downloading version manifest from ${prekVersionManifestUrl}`);
   const downloadedPath = await downloadTool(prekVersionManifestUrl);
