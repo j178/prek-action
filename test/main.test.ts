@@ -6,6 +6,7 @@ const mockContext = vi.hoisted(() => ({
     extraArgs: '--all-files',
     installOnly: false,
     prekVersion: 'latest',
+    sha256: '',
     showVerboseLogs: false,
     workingDirectory: '/tmp/repo',
   },
@@ -76,6 +77,7 @@ function resetMockContext(): void {
     extraArgs: '--all-files',
     installOnly: false,
     prekVersion: 'latest',
+    sha256: '',
     showVerboseLogs: false,
     workingDirectory: '/tmp/repo',
   }

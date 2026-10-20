@@ -12,7 +12,7 @@ import type { ManifestAsset, ReleaseAsset, Version } from './types'
 export type LinuxLibc = 'gnu' | 'musl'
 
 // Install a specific bare prek version, preferring the GitHub Actions tool cache when available.
-export async function installPrek(version: Version): Promise<string> {
+export async function installPrek(version: Version, sha256?: string): Promise<string> {
   const linuxLibc = process.platform === 'linux' ? detectLinuxLibc() : 'gnu'
   const toolArch = getToolCacheArchFor(process.arch, linuxLibc)
   const cachedTool = tc.find('prek', version, toolArch)
@@ -35,7 +35,7 @@ export async function installPrek(version: Version): Promise<string> {
     const archivePath = await tc.downloadTool(manifestAsset.downloadUrl)
     core.info(`Downloaded archive to ${archivePath}`)
 
-    await verifyDownloadChecksum(archivePath, manifestAsset, version)
+    await verifyDownloadChecksum(archivePath, manifestAsset, version, sha256)
 
     const extractedPath = await extractArchive(archivePath, asset)
     core.info(`Extracted ${asset.archiveType} archive to ${extractedPath}`)
@@ -190,33 +190,20 @@ export async function getBinaryPath(rootDir: string, asset: ReleaseAsset): Promi
   return binaryPath
 }
 
-async function verifyDownloadChecksum(
+export async function verifyDownloadChecksum(
   archivePath: string,
   asset: ManifestAsset,
   version: Version,
+  sha256?: string,
+  checksumMap: ReadonlyMap<string, string> = knownChecksumsByAsset,
 ): Promise<void> {
-  const result = await validateDownloadedChecksum(archivePath, asset, version)
-  if (result === 'missing') {
-    core.debug(
-      `Checksum is not known for ${buildChecksumKey(version, asset.name)}; skipping verification for prek ${version}`,
-    )
+  const expectedDigest = sha256 || checksumMap.get(buildChecksumKey(version, asset.name))
+  if (!expectedDigest) {
+    core.info(`No SHA-256 checksum available for ${asset.name}; skipping verification`)
     return
   }
 
-  core.info(`Verified SHA-256 checksum for ${asset.name} from prek ${version}`)
-}
-
-export async function validateDownloadedChecksum(
-  archivePath: string,
-  asset: ManifestAsset,
-  version: Version,
-  checksumMap: ReadonlyMap<string, string> = knownChecksumsByAsset,
-): Promise<'matched' | 'missing'> {
-  const expectedDigest = checksumMap.get(buildChecksumKey(version, asset.name))
-  if (!expectedDigest) {
-    return 'missing'
-  }
-
+  core.info(`Verifying SHA-256 checksum for ${asset.name} (${sha256 ? 'input' : 'bundled'})`)
   const digest = await hashFile(archivePath)
   if (digest !== expectedDigest) {
     throw new Error(
@@ -224,7 +211,7 @@ export async function validateDownloadedChecksum(
     )
   }
 
-  return 'matched'
+  core.info(`Verified SHA-256 checksum for ${asset.name} from prek ${version}`)
 }
 
 function buildChecksumKey(version: Version, assetName: string): string {
@@ -232,7 +219,7 @@ function buildChecksumKey(version: Version, assetName: string): string {
 }
 
 // Stream the archive through SHA-256 hashing to avoid loading the whole file into memory.
-export async function hashFile(filePath: string): Promise<string> {
+async function hashFile(filePath: string): Promise<string> {
   const hash = crypto.createHash('sha256')
 
   await new Promise<void>((resolve, reject) => {

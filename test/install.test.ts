@@ -1,14 +1,13 @@
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   getBinaryPath,
   getReleaseAssetFor,
   getRustTargetFor,
   getToolCacheArchFor,
-  hashFile,
-  validateDownloadedChecksum,
+  verifyDownloadChecksum,
 } from '../src/install'
 import { toVersion } from '../src/manifest'
 
@@ -94,70 +93,54 @@ describe('archive handling', () => {
   })
 })
 
+const checksumAsset = {
+  downloadUrl: 'https://example.invalid/prek.tar.gz',
+  name: 'prek.tar.gz',
+}
+const archiveDigest = '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd'
+const checksumKey = '1.2.3:prek.tar.gz'
+
 describe('checksum helpers', () => {
-  it('validateDownloadedChecksum accepts a digest found in the known checksum set', async () => {
-    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-checksum-'))
-    const archivePath = path.join(rootDir, 'prek.tar.gz')
-    await fs.writeFile(archivePath, 'binary')
+  let rootDir: string
+  let archivePath: string
 
-    await expect(
-      validateDownloadedChecksum(
-        archivePath,
-        {
-          downloadUrl: 'https://example.invalid/prek.tar.gz',
-          name: 'prek.tar.gz',
-        },
-        testVersion,
-        new Map([
-          ['1.2.3:prek.tar.gz', '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd'],
-        ]),
-      ),
-    ).resolves.toBe('matched')
+  beforeEach(async () => {
+    rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-checksum-'))
+    archivePath = path.join(rootDir, 'prek.tar.gz')
+    await fs.writeFile(archivePath, 'binary')
   })
 
-  it('validateDownloadedChecksum reports missing when no checksum is known for the asset', async () => {
-    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-checksum-'))
-    const archivePath = path.join(rootDir, 'prek.tar.gz')
-    await fs.writeFile(archivePath, 'binary')
-
-    await expect(
-      validateDownloadedChecksum(
-        archivePath,
-        {
-          downloadUrl: 'https://example.invalid/prek.tar.gz',
-          name: 'prek.tar.gz',
-        },
-        testVersion,
-        new Map(),
-      ),
-    ).resolves.toBe('missing')
+  afterEach(async () => {
+    await fs.rm(rootDir, { force: true, recursive: true })
   })
 
-  it('validateDownloadedChecksum throws on checksum mismatch', async () => {
-    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-checksum-'))
-    const archivePath = path.join(rootDir, 'prek.tar.gz')
-    await fs.writeFile(archivePath, 'binary')
-
+  it('uses the bundled checksum when no input is provided', async () => {
+    const checksums = new Map([[checksumKey, archiveDigest]])
     await expect(
-      validateDownloadedChecksum(
-        archivePath,
-        {
-          downloadUrl: 'https://example.invalid/prek.tar.gz',
-          name: 'prek.tar.gz',
-        },
-        testVersion,
-        new Map([['1.2.3:prek.tar.gz', 'deadbeef']]),
-      ),
+      verifyDownloadChecksum(archivePath, checksumAsset, testVersion, undefined, checksums),
+    ).resolves.toBeUndefined()
+  })
+
+  it('lets the input override the bundled checksum', async () => {
+    const checksums = new Map([[checksumKey, '0'.repeat(64)]])
+    await expect(
+      verifyDownloadChecksum(archivePath, checksumAsset, testVersion, archiveDigest, checksums),
+    ).resolves.toBeUndefined()
+  })
+
+  it('skips verification when no checksum is available', async () => {
+    await expect(
+      verifyDownloadChecksum(archivePath, checksumAsset, testVersion, undefined, new Map()),
+    ).resolves.toBeUndefined()
+  })
+
+  it.each([
+    { bundled: archiveDigest, explicit: '0'.repeat(64), name: 'explicit' },
+    { bundled: '0'.repeat(64), explicit: undefined, name: 'bundled' },
+  ])('rejects a mismatched $name checksum', async ({ explicit, bundled }) => {
+    const checksums = new Map([[checksumKey, bundled]])
+    await expect(
+      verifyDownloadChecksum(archivePath, checksumAsset, testVersion, explicit, checksums),
     ).rejects.toThrow(/Checksum mismatch/)
-  })
-
-  it('hashFile returns the sha256 digest for a file', async () => {
-    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-action-hash-'))
-    const archivePath = path.join(rootDir, 'prek.tar.gz')
-    await fs.writeFile(archivePath, 'binary')
-
-    await expect(hashFile(archivePath)).resolves.toBe(
-      '9a3a45d01531a20e89ac6ae10b0b0beb0492acd7216a368aa062d1a5fecaf9cd',
-    )
   })
 })

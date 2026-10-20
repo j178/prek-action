@@ -12,6 +12,7 @@ export type Inputs = {
   extraArgs: string
   installOnly: boolean
   prekVersion: string
+  sha256: string
   showVerboseLogs: boolean
   workingDirectory: string
 }

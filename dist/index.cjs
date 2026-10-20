@@ -67392,6 +67392,7 @@ function getInputs() {
     extraArgs: legacyExtraArgs || modernExtraArgs,
     installOnly: getBooleanInput("install-only"),
     prekVersion: getInput("prek-version") || "latest",
+    sha256: getInput("sha256"),
     showVerboseLogs: getBooleanInput("show-verbose-logs"),
     workingDirectory: getInput("working-directory") || "."
   };
@@ -69222,7 +69223,7 @@ function buildReleaseAssetUrl(version3, archiveName) {
 __name(buildReleaseAssetUrl, "buildReleaseAssetUrl");
 
 // src/install.ts
-async function installPrek(version3) {
+async function installPrek(version3, sha256) {
   const linuxLibc = process.platform === "linux" ? detectLinuxLibc() : "gnu";
   const toolArch = getToolCacheArchFor(process.arch, linuxLibc);
   const cachedTool = find("prek", version3, toolArch);
@@ -69241,7 +69242,7 @@ async function installPrek(version3) {
     info(`Downloading prek from ${manifestAsset.downloadUrl}`);
     const archivePath = await downloadTool(manifestAsset.downloadUrl);
     info(`Downloaded archive to ${archivePath}`);
-    await verifyDownloadChecksum(archivePath, manifestAsset, version3);
+    await verifyDownloadChecksum(archivePath, manifestAsset, version3, sha256);
     const extractedPath = await extractArchive(archivePath, asset);
     info(`Extracted ${asset.archiveType} archive to ${extractedPath}`);
     const binaryPath = await getBinaryPath(extractedPath, asset);
@@ -69375,31 +69376,22 @@ async function getBinaryPath(rootDir, asset) {
   return binaryPath;
 }
 __name(getBinaryPath, "getBinaryPath");
-async function verifyDownloadChecksum(archivePath, asset, version3) {
-  const result = await validateDownloadedChecksum(archivePath, asset, version3);
-  if (result === "missing") {
-    debug(
-      `Checksum is not known for ${buildChecksumKey(version3, asset.name)}; skipping verification for prek ${version3}`
-    );
+async function verifyDownloadChecksum(archivePath, asset, version3, sha256, checksumMap = knownChecksumsByAsset) {
+  const expectedDigest = sha256 || checksumMap.get(buildChecksumKey(version3, asset.name));
+  if (!expectedDigest) {
+    info(`No SHA-256 checksum available for ${asset.name}; skipping verification`);
     return;
   }
-  info(`Verified SHA-256 checksum for ${asset.name} from prek ${version3}`);
-}
-__name(verifyDownloadChecksum, "verifyDownloadChecksum");
-async function validateDownloadedChecksum(archivePath, asset, version3, checksumMap = knownChecksumsByAsset) {
-  const expectedDigest = checksumMap.get(buildChecksumKey(version3, asset.name));
-  if (!expectedDigest) {
-    return "missing";
-  }
+  info(`Verifying SHA-256 checksum for ${asset.name} (${sha256 ? "input" : "bundled"})`);
   const digest = await hashFile(archivePath);
   if (digest !== expectedDigest) {
     throw new Error(
       `Checksum mismatch for ${asset.name}: expected ${expectedDigest}, received ${digest}`
     );
   }
-  return "matched";
+  info(`Verified SHA-256 checksum for ${asset.name} from prek ${version3}`);
 }
-__name(validateDownloadedChecksum, "validateDownloadedChecksum");
+__name(verifyDownloadChecksum, "verifyDownloadChecksum");
 function buildChecksumKey(version3, assetName) {
   return `${version3}:${assetName}`;
 }
@@ -69426,7 +69418,7 @@ async function run() {
   info(`Using prek ${version3}`);
   endGroup();
   setOutput("prek-version", normalizeVersion(version3));
-  await installPrek(version3);
+  await installPrek(version3, inputs.sha256);
   if (inputs.cache) {
     const { matchedKey, primaryKey } = await restorePrekCache(inputs.workingDirectory);
     setOutput("cache-hit", String(matchedKey === primaryKey));
