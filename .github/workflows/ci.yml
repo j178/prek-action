@@ -24,7 +24,7 @@ jobs:
           node-version: 24
           package-manager-cache: false
       - name: Run prek
-        uses: ./
+        uses: $/
 
   unit-test:
     name: Unit tests
@@ -73,35 +73,35 @@ jobs:
         with:
           persist-credentials: false
       - name: Test | ${{ matrix.os }} | no extra-args
-        uses: ./
+        uses: $/
 
       - name: Test | ${{ matrix.os }} | extra-args
-        uses: ./
+        uses: $/
         with:
           extra-args: "--hook-stage pre-commit --verbose"
 
       - name: Test | ${{ matrix.os }} | extra-args with CJK characters
-        uses: ./
+        uses: $/
         with:
           extra-args: "--files 中文"
 
       - name: Test | ${{ matrix.os }} | extra-args with quoted string (with spaces)
-        uses: ./
+        uses: $/
         with:
           extra-args: '--files "file with spaces.txt"'
 
       - name: Test | ${{ matrix.os }} | pin prek version
-        uses: ./
+        uses: $/
         with:
           prek-version: "0.2.30"
 
       - name: Test | ${{ matrix.os }} | resolve prek semver range
-        uses: ./
+        uses: $/
         with:
           prek-version: "0.3.x"
 
       - name: Test | ${{ matrix.os }} | latest-known
-        uses: ./
+        uses: $/
         with:
           prek-version: "latest-known"
           install-only: true
@@ -125,6 +125,6 @@ jobs:
           persist-credentials: false
 
       - name: Run prek on cpython
-        uses: ./
+        uses: $/
         with:
           working-directory: ./cpython
