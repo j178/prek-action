@@ -8,6 +8,7 @@ const mockContext = vi.hoisted(() => ({
     prekVersion: 'latest',
     sha256: '',
     showVerboseLogs: false,
+    uvVersion: undefined as string | undefined,
     workingDirectory: '/tmp/repo',
   },
   outputs: [] as Array<[string, string]>,
@@ -19,6 +20,7 @@ const mockContext = vi.hoisted(() => ({
 
 const coreMocks = vi.hoisted(() => ({
   endGroup: vi.fn(),
+  exportVariable: vi.fn(),
   getState: vi.fn(() => ''),
   info: vi.fn(),
   saveState: vi.fn(),
@@ -79,6 +81,7 @@ function resetMockContext(): void {
     prekVersion: 'latest',
     sha256: '',
     showVerboseLogs: false,
+    uvVersion: undefined,
     workingDirectory: '/tmp/repo',
   }
   mockContext.outputs = []
@@ -105,6 +108,35 @@ describe('run', () => {
       ['cache-hit', 'true'],
     ])
     expect(mockContext.failures).toEqual([])
+    expect(coreMocks.exportVariable).not.toHaveBeenCalled()
+  })
+
+  it('exports PREK_UV_VERSION before restoring the cache', async () => {
+    mockContext.inputs.uvVersion = '0.9.5'
+    dependencyMocks.resolveVersion.mockResolvedValueOnce('0.5.8')
+
+    const { run } = await importMainModule()
+
+    await run()
+
+    expect(coreMocks.exportVariable).toHaveBeenCalledWith('PREK_UV_VERSION', '0.9.5')
+    expect(coreMocks.exportVariable.mock.invocationCallOrder[0]).toBeLessThan(
+      dependencyMocks.restorePrekCache.mock.invocationCallOrder[0],
+    )
+    expect(coreMocks.warning).not.toHaveBeenCalled()
+  })
+
+  it('warns when the resolved prek version ignores PREK_UV_VERSION', async () => {
+    mockContext.inputs.uvVersion = '0.9.5'
+
+    const { run } = await importMainModule()
+
+    await run()
+
+    expect(coreMocks.exportVariable).toHaveBeenCalledWith('PREK_UV_VERSION', '0.9.5')
+    expect(coreMocks.warning).toHaveBeenCalledWith(
+      'prek 0.3.6 ignores PREK_UV_VERSION; uv 0.9.5 requires a prek release newer than 0.5.7',
+    )
   })
 
   it('skips cache restore and sets cache-hit=false when cache is disabled', async () => {

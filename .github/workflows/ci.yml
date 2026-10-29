@@ -21,7 +21,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version-file: .tool-versions
           package-manager-cache: false
       - name: Run prek
         uses: $/
@@ -35,7 +35,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version-file: .tool-versions
           cache: npm
       - name: Install dependencies
         run: npm ci
@@ -53,7 +53,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version-file: .tool-versions
           cache: npm
       - name: Install dependencies
         run: npm ci
@@ -105,6 +105,41 @@ jobs:
         with:
           prek-version: "latest-known"
           install-only: true
+
+      - name: Test | ${{ matrix.os }} | write prek-version-file
+        shell: bash
+        run: printf 'prek 0.5.6\nuv 0.9.5\n' > "${RUNNER_TEMP}/tool-versions"
+
+      - name: Test | ${{ matrix.os }} | prek-version-file
+        id: version-file
+        uses: $/
+        with:
+          prek-version-file: ${{ runner.temp }}/tool-versions
+          install-only: true
+
+      - name: Test | ${{ matrix.os }} | check prek-version-file
+        shell: bash
+        env:
+          RESOLVED_PREK_VERSION: ${{ steps.version-file.outputs.prek-version }}
+        run: |
+          test "${RESOLVED_PREK_VERSION}" = v0.5.6
+          test "${PREK_UV_VERSION}" = 0.9.5
+
+      - name: Test | ${{ matrix.os }} | uv-version overrides prek-version-file
+        uses: $/
+        with:
+          prek-version-file: ${{ runner.temp }}/tool-versions
+          uv-version: "0.9.4"
+          install-only: true
+
+      - name: Test | ${{ matrix.os }} | check uv-version
+        shell: bash
+        run: test "${PREK_UV_VERSION}" = 0.9.4
+
+      - name: Test | ${{ matrix.os }} | resolve prek semver range
+        uses: $/
+        with:
+          prek-version-file: .tool-versions
 
   ecosystem-cpython:
     name: "ecosystem | cpython"

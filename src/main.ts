@@ -1,10 +1,11 @@
 import * as core from '@actions/core'
+import * as semver from 'semver'
 import { restorePrekCache, savePrekCache } from './cache'
 import { getInputs } from './inputs'
 import { installPrek } from './install'
 import { normalizeVersion, resolveVersion } from './manifest'
 import { pruneCache, runPrek, showVerboseLogs } from './prek'
-import { POST_ACTION_STATE } from './types'
+import { LAST_PREK_VERSION_WITHOUT_UV_VERSION, POST_ACTION_STATE } from './types'
 
 export async function run(): Promise<void> {
   const inputs = getInputs()
@@ -14,6 +15,15 @@ export async function run(): Promise<void> {
   core.info(`Using prek ${version}`)
   core.endGroup()
   core.setOutput('prek-version', normalizeVersion(version))
+
+  if (inputs.uvVersion) {
+    core.exportVariable('PREK_UV_VERSION', inputs.uvVersion)
+    if (semver.lte(version, LAST_PREK_VERSION_WITHOUT_UV_VERSION)) {
+      core.warning(
+        `prek ${version} ignores PREK_UV_VERSION; uv ${inputs.uvVersion} requires a prek release newer than ${LAST_PREK_VERSION_WITHOUT_UV_VERSION}`,
+      )
+    }
+  }
 
   await installPrek(version, inputs.sha256)
 
