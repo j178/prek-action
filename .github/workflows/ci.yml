@@ -113,6 +113,10 @@ jobs:
       - name: Test | ${{ matrix.os }} | prek-version-file
         id: version-file
         uses: $/
+        env:
+          # Earlier steps export PREK_UV_VERSION from the repo's .tool-versions, which would
+          # otherwise take precedence over the uv version in this file.
+          PREK_UV_VERSION: ""
         with:
           prek-version-file: ${{ runner.temp }}/tool-versions
           install-only: true
