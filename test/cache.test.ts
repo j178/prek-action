@@ -88,6 +88,29 @@ describe('restorePrekCache', () => {
     })
   })
 
+  it('includes PREK_UV_VERSION in the cache key only when set', async () => {
+    const originalEnv = { ...process.env }
+    const workingDirectory = await createWorkingDirectory()
+    process.env.RUNNER_OS = 'Linux'
+    process.env.RUNNER_ARCH = 'X64'
+    process.env.pythonLocation = '/opt/python'
+    toolkitMocks.restoreCache.mockResolvedValue(undefined)
+
+    try {
+      delete process.env.PREK_UV_VERSION
+      expect((await restorePrekCache(workingDirectory)).primaryKey).toBe(
+        'prek-v1|Linux|X64|/opt/python|no-config',
+      )
+
+      process.env.PREK_UV_VERSION = '0.9.5'
+      expect((await restorePrekCache(workingDirectory)).primaryKey).toBe(
+        'prek-v1|Linux|X64|/opt/python|uv-0.9.5|no-config',
+      )
+    } finally {
+      process.env = originalEnv
+    }
+  })
+
   it('saves the matched key when restoreCache hits the primary key', async () => {
     const originalEnv = { ...process.env }
     const workingDirectory = await createWorkingDirectory()
