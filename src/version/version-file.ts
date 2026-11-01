@@ -1,6 +1,5 @@
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-import type { DetectedVersion } from './auto'
 import { REQUIREMENTS_FILE_RE, SUPPORTED_VERSION_FILE_NAMES, VERSION_FILE_HINTS } from './constants'
 import { findVersionInPackageJson } from './sources/package-json'
 import { findVersionInRequirements } from './sources/requirements'
@@ -10,6 +9,7 @@ import {
   findVersionInUvLock,
 } from './sources/toml'
 import { findVersionInToolVersions } from './sources/tool-versions'
+import type { DetectedVersion } from './tool-versions'
 
 type FileParser = (filePath: string) => Promise<string | null>
 

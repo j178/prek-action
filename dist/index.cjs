@@ -67934,7 +67934,7 @@ __name(hashFile, "hashFile");
 var path21 = __toESM(require("node:path"), 1);
 var semver5 = __toESM(require_semver2(), 1);
 
-// src/version/auto.ts
+// src/version/tool-versions.ts
 var path18 = __toESM(require("node:path"), 1);
 
 // src/version/sources/shared.ts
@@ -67981,7 +67981,7 @@ async function findVersionInToolVersions(filePath) {
 }
 __name(findVersionInToolVersions, "findVersionInToolVersions");
 
-// src/version/auto.ts
+// src/version/tool-versions.ts
 async function detectVersion(workingDirectory, repoRoot) {
   const searchDirectories = [workingDirectory];
   if (repoRoot && path18.resolve(repoRoot) !== path18.resolve(workingDirectory)) {

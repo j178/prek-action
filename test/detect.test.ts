@@ -3,8 +3,6 @@ import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
 import { it } from 'vitest'
-
-import { detectVersion } from '../src/version/auto'
 import { findVersionInPackageJson } from '../src/version/sources/package-json'
 import { findVersionInRequirements, pep440ToSemver } from '../src/version/sources/requirements'
 import {
@@ -13,6 +11,7 @@ import {
   findVersionInUvLock,
 } from '../src/version/sources/toml'
 import { findVersionInToolVersions } from '../src/version/sources/tool-versions'
+import { detectVersion } from '../src/version/tool-versions'
 import { resolveVersionFile } from '../src/version/version-file'
 
 it('findVersionInToolVersions returns version from prek line', async () => {

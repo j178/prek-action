@@ -4,8 +4,8 @@ import * as semver from 'semver'
 import { knownChecksumsByAsset } from '../known-checksums'
 import { getVersionManifest } from '../manifest'
 import type { Version, VersionManifest } from '../types'
-import { detectVersion } from './auto'
 import { parseConstraint, resolveVersionFromManifest, toVersion } from './constraints'
+import { detectVersion } from './tool-versions'
 import { resolveVersionFile } from './version-file'
 
 type ResolveOptions = {
