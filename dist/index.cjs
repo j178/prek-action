@@ -67937,26 +67937,6 @@ var semver5 = __toESM(require_semver2(), 1);
 // src/version/auto.ts
 var path18 = __toESM(require("node:path"), 1);
 
-// src/version/constants.ts
-var TOOL_VERSIONS_FILENAME = ".tool-versions";
-var PREK_PACKAGE_NAME = "@j178/prek";
-var REQUIREMENTS_FILE_RE = /^requirements.*\.txt$/;
-var PEP508_PREK_RE = /^prek(?:\[.*?\])?\s*((?:~=|==|!=|<=?|>=?)[^;]+)/i;
-var VERSION_FILE_HINTS = {
-  ".tool-versions": 'Expected a "prek <version>" line.',
-  "mise.toml": "Expected [tools].prek or [tools.prek].version.",
-  "package.json": "Expected @j178/prek in dependencies or devDependencies.",
-  "pyproject.toml": "Checked [tool.prek].version, [dependency-groups], and [project.optional-dependencies].",
-  "uv.lock": 'Expected a [[package]] entry with name = "prek".'
-};
-var SUPPORTED_VERSION_FILE_NAMES = [
-  TOOL_VERSIONS_FILENAME,
-  "mise.toml",
-  "uv.lock",
-  "pyproject.toml",
-  "package.json"
-];
-
 // src/version/sources/shared.ts
 var fs13 = __toESM(require("node:fs/promises"), 1);
 var path17 = __toESM(require("node:path"), 1);
@@ -68008,9 +67988,9 @@ async function detectVersion(workingDirectory, repoRoot) {
     searchDirectories.push(repoRoot);
   }
   for (const directory of searchDirectories) {
-    const version3 = await findVersionInToolVersions(path18.join(directory, TOOL_VERSIONS_FILENAME));
+    const version3 = await findVersionInToolVersions(path18.join(directory, ".tool-versions"));
     if (version3) {
-      return { source: TOOL_VERSIONS_FILENAME, version: version3 };
+      return { source: ".tool-versions", version: version3 };
     }
   }
   return null;
@@ -68020,6 +68000,25 @@ __name(detectVersion, "detectVersion");
 // src/version/version-file.ts
 var fs14 = __toESM(require("node:fs/promises"), 1);
 var path20 = __toESM(require("node:path"), 1);
+
+// src/version/constants.ts
+var PREK_PACKAGE_NAME = "@j178/prek";
+var REQUIREMENTS_FILE_RE = /^requirements.*\.txt$/;
+var PEP508_PREK_RE = /^prek(?:\[.*?\])?\s*((?:~=|==|!=|<=?|>=?)[^;]+)/i;
+var VERSION_FILE_HINTS = {
+  ".tool-versions": 'Expected a "prek <version>" line.',
+  "mise.toml": "Expected [tools].prek or [tools.prek].version.",
+  "package.json": "Expected @j178/prek in dependencies or devDependencies.",
+  "pyproject.toml": "Checked [tool.prek].version, [dependency-groups], and [project.optional-dependencies].",
+  "uv.lock": 'Expected a [[package]] entry with name = "prek".'
+};
+var SUPPORTED_VERSION_FILE_NAMES = [
+  ".tool-versions",
+  "mise.toml",
+  "uv.lock",
+  "pyproject.toml",
+  "package.json"
+];
 
 // src/version/sources/package-json.ts
 async function findVersionInPackageJson(filePath) {

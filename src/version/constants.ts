@@ -1,4 +1,3 @@
-export const TOOL_VERSIONS_FILENAME = '.tool-versions'
 export const PREK_PACKAGE_NAME = '@j178/prek'
 export const REQUIREMENTS_FILE_RE = /^requirements.*\.txt$/
 export const PEP508_PREK_RE = /^prek(?:\[.*?\])?\s*((?:~=|==|!=|<=?|>=?)[^;]+)/i
@@ -13,7 +12,7 @@ export const VERSION_FILE_HINTS: Record<string, string> = {
 }
 
 export const SUPPORTED_VERSION_FILE_NAMES = [
-  TOOL_VERSIONS_FILENAME,
+  '.tool-versions',
   'mise.toml',
   'uv.lock',
   'pyproject.toml',

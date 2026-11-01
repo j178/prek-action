@@ -1,5 +1,4 @@
 import * as path from 'node:path'
-import { TOOL_VERSIONS_FILENAME } from './constants'
 import { findVersionInToolVersions } from './sources/tool-versions'
 
 export type DetectedVersion = {
@@ -17,9 +16,9 @@ export async function detectVersion(
   }
 
   for (const directory of searchDirectories) {
-    const version = await findVersionInToolVersions(path.join(directory, TOOL_VERSIONS_FILENAME))
+    const version = await findVersionInToolVersions(path.join(directory, '.tool-versions'))
     if (version) {
-      return { source: TOOL_VERSIONS_FILENAME, version }
+      return { source: '.tool-versions', version }
     }
   }
 
