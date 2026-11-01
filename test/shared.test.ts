@@ -213,30 +213,42 @@ it('resolveVersion resolves version-file relative to working-directory', async (
   assert.equal(result, '0.3.4')
 })
 
-it('resolveVersion checks the GITHUB_WORKSPACE root when working-directory is relative', async () => {
-  const originalWorkspace = process.env.GITHUB_WORKSPACE
-  const workspace = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-workspace-'))
-  const workingDirectory = path.join('packages', 'app')
-  const packageDir = path.join(workspace, workingDirectory)
+it.each([
+  { expectedVersion: '0.3.1', source: 'workspace', workingDirectoryVersion: undefined },
+  { expectedVersion: '0.3.5', source: 'working directory', workingDirectoryVersion: '0.3.5' },
+])(
+  'resolveVersion uses the $source .tool-versions when working-directory is relative',
+  async ({ expectedVersion, workingDirectoryVersion }) => {
+    const originalWorkspace = process.env.GITHUB_WORKSPACE
+    const workspace = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-workspace-'))
+    const workingDirectory = path.join('packages', 'app')
+    const packageDir = path.join(workspace, workingDirectory)
 
-  await fs.mkdir(packageDir, { recursive: true })
-  await fs.writeFile(path.join(workspace, '.tool-versions'), 'prek 0.3.1\n')
-
-  process.env.GITHUB_WORKSPACE = workspace
-  try {
-    const result = await resolveVersion({
-      prekVersion: 'latest',
-      workingDirectory,
-    })
-    assert.equal(result, '0.3.1')
-  } finally {
-    if (originalWorkspace === undefined) {
-      delete process.env.GITHUB_WORKSPACE
-    } else {
-      process.env.GITHUB_WORKSPACE = originalWorkspace
+    await fs.mkdir(packageDir, { recursive: true })
+    await fs.writeFile(path.join(workspace, '.tool-versions'), 'prek 0.3.1\n')
+    if (workingDirectoryVersion) {
+      await fs.writeFile(
+        path.join(packageDir, '.tool-versions'),
+        `prek ${workingDirectoryVersion}\n`,
+      )
     }
-  }
-})
+
+    process.env.GITHUB_WORKSPACE = workspace
+    try {
+      const result = await resolveVersion({
+        prekVersion: 'latest',
+        workingDirectory,
+      })
+      assert.equal(result, expectedVersion)
+    } finally {
+      if (originalWorkspace === undefined) {
+        delete process.env.GITHUB_WORKSPACE
+      } else {
+        process.env.GITHUB_WORKSPACE = originalWorkspace
+      }
+    }
+  },
+)
 
 it('resolveVersion surfaces ambiguous pyproject dependency constraints', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-resolve-'))

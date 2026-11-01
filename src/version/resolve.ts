@@ -3,9 +3,9 @@ import * as core from '@actions/core'
 import * as semver from 'semver'
 import { knownChecksumsByAsset } from '../known-checksums'
 import { getVersionManifest } from '../manifest'
-import type { Version, VersionManifest } from '../types'
+import type { DetectedVersion, Version, VersionManifest } from '../types'
 import { parseConstraint, resolveVersionFromManifest, toVersion } from './constraints'
-import { detectVersion } from './tool-versions'
+import { findVersionInToolVersions } from './sources/tool-versions'
 import { resolveVersionFile } from './version-file'
 
 type ResolveOptions = {
@@ -86,6 +86,25 @@ async function resolveVersionInput(
   }
 
   return resolveVersionFromManifest(versionInput, manifest ?? (await getVersionManifest()))
+}
+
+async function detectVersion(
+  workingDirectory: string,
+  repoRoot?: string,
+): Promise<DetectedVersion | null> {
+  const searchDirectories = [workingDirectory]
+  if (repoRoot && path.resolve(repoRoot) !== path.resolve(workingDirectory)) {
+    searchDirectories.push(repoRoot)
+  }
+
+  for (const directory of searchDirectories) {
+    const version = await findVersionInToolVersions(path.join(directory, '.tool-versions'))
+    if (version) {
+      return { source: '.tool-versions', version }
+    }
+  }
+
+  return null
 }
 
 function resolveRepoRoot(): string | undefined {

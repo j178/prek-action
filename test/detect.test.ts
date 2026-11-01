@@ -11,7 +11,6 @@ import {
   findVersionInUvLock,
 } from '../src/version/sources/toml'
 import { findVersionInToolVersions } from '../src/version/sources/tool-versions'
-import { detectVersion } from '../src/version/tool-versions'
 import { resolveVersionFile } from '../src/version/version-file'
 
 it('findVersionInToolVersions returns version from prek line', async () => {
@@ -491,47 +490,4 @@ it('resolveVersionFile surfaces malformed mise.toml syntax', async () => {
   const fp = path.join(dir, 'mise.toml')
   await fs.writeFile(fp, "[tools\nprek = '0.3.0'\n")
   await assert.rejects(() => resolveVersionFile(fp), /Failed to parse mise\.toml/)
-})
-
-it('detectVersion finds version from .tool-versions', async () => {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-detect-'))
-  await fs.writeFile(path.join(dir, '.tool-versions'), 'prek 0.3.2\n')
-  const result = await detectVersion(dir)
-  assert.deepEqual(result, { source: '.tool-versions', version: '0.3.2' })
-})
-
-it('detectVersion returns null when no .tool-versions exists', async () => {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-detect-'))
-  assert.equal(await detectVersion(dir), null)
-})
-
-it('detectVersion ignores minimum_prek_version files', async () => {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-detect-'))
-  await fs.writeFile(path.join(dir, '.pre-commit-config.yaml'), "minimum_prek_version: '0.3.0'\n")
-  assert.equal(await detectVersion(dir), null)
-})
-
-it('detectVersion ignores prek.toml for action-level version resolution', async () => {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-detect-'))
-  await fs.writeFile(path.join(dir, 'prek.toml'), 'minimum_prek_version = "0.3.0"\n')
-  assert.equal(await detectVersion(dir), null)
-})
-
-it('detectVersion checks repo root when working directory has no .tool-versions', async () => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-detect-'))
-  const subdir = path.join(root, 'packages', 'app')
-  await fs.mkdir(subdir, { recursive: true })
-  await fs.writeFile(path.join(root, '.tool-versions'), 'prek 0.3.1\n')
-  const result = await detectVersion(subdir, root)
-  assert.deepEqual(result, { source: '.tool-versions', version: '0.3.1' })
-})
-
-it('detectVersion prefers working directory .tool-versions over repo root', async () => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-detect-'))
-  const subdir = path.join(root, 'packages', 'app')
-  await fs.mkdir(subdir, { recursive: true })
-  await fs.writeFile(path.join(root, '.tool-versions'), 'prek 0.3.0\n')
-  await fs.writeFile(path.join(subdir, '.tool-versions'), 'prek 0.3.5\n')
-  const result = await detectVersion(subdir, root)
-  assert.deepEqual(result, { source: '.tool-versions', version: '0.3.5' })
 })
