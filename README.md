@@ -53,8 +53,6 @@ Auto-detection checks `working-directory` first, then `GITHUB_WORKSPACE` when it
 
 `version-file` is explicit and fails hard when the file does not exist, is malformed, or does not contain a `prek` version. It cannot be combined with an explicit `prek-version`. Relative `version-file` paths are resolved from `working-directory`.
 
-`minimum_prek_version` in `prek.toml` or pre-commit YAML remains a runtime constraint enforced by `prek` itself. It is not used as an action-level version source.
-
 Supported `version-file` formats:
 
 | File | Extracted value |

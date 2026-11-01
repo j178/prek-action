@@ -4,8 +4,9 @@ import * as os from 'node:os'
 import * as path from 'node:path'
 import { it } from 'vitest'
 
-import { resolveVersion, resolveVersionFromManifest, toVersion } from '../src/manifest'
 import type { VersionManifest } from '../src/types'
+import { resolveVersionFromManifest, toVersion } from '../src/version/constraints'
+import { resolveVersion } from '../src/version/resolve'
 
 function createManifest(versions: string[]): VersionManifest {
   return versions.map((version, index) => ({

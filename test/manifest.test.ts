@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Version, VersionManifest } from '../src/types'
+import { normalizeVersion, toVersion } from '../src/version/constraints'
 
 const mockContext = vi.hoisted(() => ({
   knownChecksums: new Map<string, string>(),
@@ -65,7 +66,7 @@ describe('resolveVersion', () => {
     { input: ' v0.2.30 ', version: '0.2.30' },
     { input: '0.2.100', version: '0.2.100' },
   ])('resolves exact version $input without downloading a manifest', async ({ input, version }) => {
-    const { resolveVersion } = await import('../src/manifest')
+    const { resolveVersion } = await import('../src/version/resolve')
 
     await expect(resolveVersion(input)).resolves.toBe(version)
     expect(toolkitMocks.downloadTool).not.toHaveBeenCalled()
@@ -77,7 +78,7 @@ describe('resolveVersion', () => {
     mockContext.knownChecksums.set('1.11.0-rc.1:prek-x86_64-unknown-linux-gnu.tar.gz', 'checksum')
     mockContext.knownChecksums.set('1.8.0:prek-x86_64-pc-windows-msvc.zip', 'checksum')
     toolkitMocks.downloadTool.mockRejectedValue(new Error('manifest unavailable'))
-    const { resolveVersion } = await import('../src/manifest')
+    const { resolveVersion } = await import('../src/version/resolve')
 
     await expect(resolveVersion(' latest-known ')).resolves.toBe('1.10.0')
     expect(toolkitMocks.downloadTool).not.toHaveBeenCalled()
@@ -90,7 +91,7 @@ describe('resolveVersion', () => {
     for (const version of versions) {
       mockContext.knownChecksums.set(`${version}:prek-x86_64-unknown-linux-gnu.tar.gz`, 'checksum')
     }
-    const { resolveVersion } = await import('../src/manifest')
+    const { resolveVersion } = await import('../src/version/resolve')
 
     await expect(resolveVersion('latest-known')).rejects.toThrow('bundled checksums')
     expect(toolkitMocks.downloadTool).not.toHaveBeenCalled()
@@ -113,21 +114,21 @@ describe('resolveVersion', () => {
       },
       ...stableManifest,
     ]
-    const { resolveVersion } = await import('../src/manifest')
+    const { resolveVersion } = await import('../src/version/resolve')
 
     await expect(resolveVersion(input)).resolves.toBe(version)
   })
 
   it('rejects invalid input before downloading a manifest', async () => {
     toolkitMocks.downloadTool.mockRejectedValue(new Error('manifest unavailable'))
-    const { resolveVersion } = await import('../src/manifest')
+    const { resolveVersion } = await import('../src/version/resolve')
 
     await expect(resolveVersion('hello world')).rejects.toThrow('Invalid prek-version input')
     expect(toolkitMocks.downloadTool).not.toHaveBeenCalled()
   })
 
   it('rejects an unsatisfied version range', async () => {
-    const { resolveVersion } = await import('../src/manifest')
+    const { resolveVersion } = await import('../src/version/resolve')
 
     await expect(resolveVersion('<0.0.1')).rejects.toThrow(
       'No prek release satisfies version range',
@@ -136,7 +137,7 @@ describe('resolveVersion', () => {
 
   it('rejects latest when the manifest contains no stable release', async () => {
     mockContext.manifest = []
-    const { resolveVersion } = await import('../src/manifest')
+    const { resolveVersion } = await import('../src/version/resolve')
 
     await expect(resolveVersion('latest')).rejects.toThrow(
       'The prek version manifest does not contain a stable release',
@@ -146,7 +147,7 @@ describe('resolveVersion', () => {
 
 describe('manifest helpers', () => {
   it('getManifestAssetForVersion returns undefined for missing manifest versions', async () => {
-    const { getManifestAssetForVersion, toVersion } = await import('../src/manifest')
+    const { getManifestAssetForVersion } = await import('../src/manifest')
     const version = toVersion('0.2.100')
 
     expect(
@@ -155,7 +156,7 @@ describe('manifest helpers', () => {
   })
 
   it('getManifestAssetForVersion returns the manifest entry without checksum data', async () => {
-    const { getManifestAssetForVersion, toVersion } = await import('../src/manifest')
+    const { getManifestAssetForVersion } = await import('../src/manifest')
     const version = toVersion('0.2.100')
     const manifest: VersionManifest = [
       {
@@ -185,7 +186,8 @@ describe('manifest helpers', () => {
       name: 'prek-x86_64-unknown-linux-gnu.tar.gz',
     }
     mockContext.manifest = [{ ...stableManifest[0], assets: [asset] }]
-    const { getAssetForVersion, resolveVersion } = await import('../src/manifest')
+    const { getAssetForVersion } = await import('../src/manifest')
+    const { resolveVersion } = await import('../src/version/resolve')
 
     const version = await resolveVersion('latest')
 
@@ -195,7 +197,7 @@ describe('manifest helpers', () => {
 
   it('getAssetForVersion falls back to the release URL pattern when manifest download fails', async () => {
     toolkitMocks.downloadTool.mockRejectedValue(new Error('manifest unavailable'))
-    const { getAssetForVersion, toVersion } = await import('../src/manifest')
+    const { getAssetForVersion } = await import('../src/manifest')
 
     await expect(
       getAssetForVersion(toVersion('0.2.100'), 'prek-x86_64-unknown-linux-gnu.tar.gz'),
@@ -207,13 +209,11 @@ describe('manifest helpers', () => {
   })
 
   it('normalizeVersion adds a v prefix once', async () => {
-    const { normalizeVersion } = await import('../src/manifest')
     expect(normalizeVersion('0.2.30')).toBe('v0.2.30')
     expect(normalizeVersion('v0.2.30')).toBe('v0.2.30')
   })
 
   it('toVersion removes the v prefix', async () => {
-    const { toVersion } = await import('../src/manifest')
     expect(toVersion('v0.2.30')).toBe('0.2.30')
     expect(toVersion('0.2.30')).toBe('0.2.30')
   })

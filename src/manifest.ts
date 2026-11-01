@@ -1,17 +1,8 @@
 import * as fs from 'node:fs/promises'
-import * as path from 'node:path'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
-import * as semver from 'semver'
-import { knownChecksumsByAsset } from './known-checksums'
-import type { ManifestAsset, NormalizedVersion, Version, VersionManifest } from './types'
-import { detectVersion } from './version/auto'
-import {
-  normalizeVersion,
-  parseConstraint,
-  resolveVersionFromManifest as resolveVersionFromManifestWithManifest,
-} from './version/constraints'
-import { resolveVersionFile } from './version/version-file'
+import type { ManifestAsset, Version, VersionManifest } from './types'
+import { normalizeVersion } from './version/constraints'
 
 const prekReleasesBaseUrl = 'https://github.com/j178/prek/releases/download'
 const prekVersionManifestUrl =
@@ -19,106 +10,6 @@ const prekVersionManifestUrl =
 
 // Cache the in-flight manifest download so version resolution and asset lookup share one request per process.
 let versionManifestPromise: Promise<VersionManifest> | undefined
-
-type ResolveOptions = {
-  prekVersion: string
-  versionFile?: string
-  workingDirectory?: string
-}
-
-export async function resolveVersion(
-  options: ResolveOptions | string,
-  manifest?: VersionManifest,
-): Promise<Version> {
-  const normalizedOptions = typeof options === 'string' ? { prekVersion: options } : options
-  const { prekVersion, versionFile, workingDirectory = '.' } = normalizedOptions
-  const normalizedInput = prekVersion.trim() || 'latest'
-
-  if (normalizedInput !== 'latest' && versionFile) {
-    throw new Error(
-      'Cannot specify both `prek-version` and `version-file` inputs. ' +
-        'Use one or the other to avoid ambiguity.',
-    )
-  }
-
-  if (normalizedInput !== 'latest') {
-    return resolveVersionInput(normalizedInput, manifest)
-  }
-
-  const resolvedWorkingDirectory = resolveWorkingDirectory(workingDirectory)
-  if (versionFile) {
-    const resolvedPath = path.isAbsolute(versionFile)
-      ? versionFile
-      : path.resolve(resolvedWorkingDirectory, versionFile)
-    const detected = await resolveVersionFile(resolvedPath)
-    core.info(`Resolved prek version "${detected.version}" from version-file: ${detected.source}`)
-    return resolveVersionInput(detected.version, manifest)
-  }
-
-  const repoRoot = resolveRepoRoot()
-  const detected = await detectVersion(resolvedWorkingDirectory, repoRoot)
-  if (detected) {
-    core.info(`Auto-detected prek version "${detected.version}" from ${detected.source}`)
-    return resolveVersionInput(detected.version, manifest)
-  }
-
-  core.info('No version source found (no version-file or .tool-versions); defaulting to latest')
-  return resolveVersionInput('latest', manifest)
-}
-
-async function resolveVersionInput(
-  versionInput: string,
-  manifest?: VersionManifest,
-): Promise<Version> {
-  const normalizedInput = versionInput.trim() || 'latest'
-  core.info(`Resolving prek version from input "${versionInput}"`)
-
-  if (normalizedInput === 'latest-known') {
-    const versions = Array.from(knownChecksumsByAsset.keys(), key => key.split(':')[0])
-    const [version] = versions
-      .filter(version => semver.prerelease(version) === null)
-      .sort(semver.rcompare)
-    if (!version) {
-      throw new Error('No stable prek version is available in the bundled checksums')
-    }
-    core.info(`Resolved "latest-known" to bundled version ${version}`)
-    return toVersion(version)
-  }
-
-  const exactVersion = semver.valid(toVersion(normalizedInput))
-  if (exactVersion) {
-    const version = exactVersion as Version
-    core.info(`Resolved exact version "${normalizedInput}" to ${version}`)
-    return version
-  }
-
-  // Validate before downloading so network failures cannot mask invalid input.
-  if (normalizedInput !== 'latest') {
-    parseConstraint(normalizedInput)
-  }
-
-  return resolveVersionFromManifest(versionInput, manifest ?? (await getVersionManifest()))
-}
-
-function resolveRepoRoot(): string | undefined {
-  const repoRoot = process.env.GITHUB_WORKSPACE
-  return repoRoot ? path.resolve(repoRoot) : undefined
-}
-
-function resolveWorkingDirectory(workingDirectory: string): string {
-  if (path.isAbsolute(workingDirectory)) {
-    return workingDirectory
-  }
-
-  const repoRoot = resolveRepoRoot()
-  return repoRoot ? path.resolve(repoRoot, workingDirectory) : path.resolve(workingDirectory)
-}
-
-export { normalizeVersion }
-
-export function toVersion(version: string): Version {
-  return version.replace(/^v/, '') as Version
-}
 
 // Return the manifest asset metadata for a version, if that version exists in the manifest.
 // If the version exists but the expected asset is missing, treat that as a manifest error.
@@ -170,13 +61,6 @@ export async function getAssetForVersion(
   return buildReleaseAssetUrl(version, archiveName)
 }
 
-export function resolveVersionFromManifest(
-  versionInput: string,
-  manifest: VersionManifest,
-): Version {
-  return resolveVersionFromManifestWithManifest(versionInput, manifest)
-}
-
 async function downloadVersionManifest(): Promise<VersionManifest> {
   core.info(`Downloading version manifest from ${prekVersionManifestUrl}`)
   const downloadedPath = await tc.downloadTool(prekVersionManifestUrl)
@@ -184,7 +68,7 @@ async function downloadVersionManifest(): Promise<VersionManifest> {
   return JSON.parse(rawManifest) as VersionManifest
 }
 
-async function getVersionManifest(): Promise<VersionManifest> {
+export async function getVersionManifest(): Promise<VersionManifest> {
   versionManifestPromise ??= downloadVersionManifest()
 
   try {
@@ -201,5 +85,3 @@ function buildReleaseAssetUrl(version: Version, archiveName: string): ManifestAs
     name: archiveName,
   }
 }
-
-export type { NormalizedVersion }

@@ -65836,8 +65836,8 @@ __name(getInputs, "getInputs");
 // src/install.ts
 var crypto6 = __toESM(require("node:crypto"), 1);
 var import_node_fs2 = require("node:fs");
-var fs14 = __toESM(require("node:fs/promises"), 1);
-var path21 = __toESM(require("node:path"), 1);
+var fs12 = __toESM(require("node:fs/promises"), 1);
+var path16 = __toESM(require("node:path"), 1);
 
 // node_modules/@actions/tool-cache/lib/tool-cache.js
 var crypto5 = __toESM(require("crypto"), 1);
@@ -67564,92 +67564,7 @@ var knownChecksumsByAsset = /* @__PURE__ */ new Map([
 ]);
 
 // src/manifest.ts
-var fs13 = __toESM(require("node:fs/promises"), 1);
-var path20 = __toESM(require("node:path"), 1);
-var semver5 = __toESM(require_semver2(), 1);
-
-// src/version/auto.ts
-var path17 = __toESM(require("node:path"), 1);
-
-// src/version/constants.ts
-var TOOL_VERSIONS_FILENAME = ".tool-versions";
-var PREK_PACKAGE_NAME = "@j178/prek";
-var REQUIREMENTS_FILE_RE = /^requirements.*\.txt$/;
-var PEP508_PREK_RE = /^prek(?:\[.*?\])?\s*((?:~=|==|!=|<=?|>=?)[^;]+)/i;
-var VERSION_FILE_HINTS = {
-  ".tool-versions": 'Expected a "prek <version>" line.',
-  "mise.toml": "Expected [tools].prek or [tools.prek].version.",
-  "package.json": "Expected @j178/prek in dependencies or devDependencies.",
-  "pyproject.toml": "Checked [tool.prek].version, [dependency-groups], and [project.optional-dependencies].",
-  "uv.lock": 'Expected a [[package]] entry with name = "prek".'
-};
-var SUPPORTED_VERSION_FILE_NAMES = [
-  TOOL_VERSIONS_FILENAME,
-  "mise.toml",
-  "uv.lock",
-  "pyproject.toml",
-  "package.json"
-];
-
-// src/version/sources/shared.ts
 var fs11 = __toESM(require("node:fs/promises"), 1);
-var path16 = __toESM(require("node:path"), 1);
-function stripVPrefix(version3) {
-  return version3.replace(/^v/, "");
-}
-__name(stripVPrefix, "stripVPrefix");
-function stripByteOrderMark(content) {
-  return content.replace(/^\uFEFF/, "");
-}
-__name(stripByteOrderMark, "stripByteOrderMark");
-async function readFileOrNull(filePath) {
-  try {
-    return stripByteOrderMark(await fs11.readFile(filePath, "utf8"));
-  } catch (error2) {
-    if (error2 instanceof Error && "code" in error2 && error2.code === "ENOENT") {
-      return null;
-    }
-    throw error2;
-  }
-}
-__name(readFileOrNull, "readFileOrNull");
-function createParseError(filePath, format, error2) {
-  const message = error2 instanceof Error ? error2.message : String(error2);
-  return new Error(`Failed to parse ${path16.basename(filePath)} as ${format}: ${message}`);
-}
-__name(createParseError, "createParseError");
-
-// src/version/sources/tool-versions.ts
-async function findVersionInToolVersions(filePath) {
-  const content = await readFileOrNull(filePath);
-  if (!content) return null;
-  for (const line of content.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const [tool, version3] = trimmed.split(/\s+/);
-    if (tool === "prek" && version3) {
-      return stripVPrefix(version3);
-    }
-  }
-  return null;
-}
-__name(findVersionInToolVersions, "findVersionInToolVersions");
-
-// src/version/auto.ts
-async function detectVersion(workingDirectory, repoRoot) {
-  const searchDirectories = [workingDirectory];
-  if (repoRoot && path17.resolve(repoRoot) !== path17.resolve(workingDirectory)) {
-    searchDirectories.push(repoRoot);
-  }
-  for (const directory of searchDirectories) {
-    const version3 = await findVersionInToolVersions(path17.join(directory, TOOL_VERSIONS_FILENAME));
-    if (version3) {
-      return { source: TOOL_VERSIONS_FILENAME, version: version3 };
-    }
-  }
-  return null;
-}
-__name(detectVersion, "detectVersion");
 
 // src/version/constraints.ts
 var semver4 = __toESM(require_semver2(), 1);
@@ -67673,6 +67588,10 @@ function normalizeVersion(version3) {
   return `v${version3.replace(/^v/, "")}`;
 }
 __name(normalizeVersion, "normalizeVersion");
+function toVersion(version3) {
+  return version3.replace(/^v/, "");
+}
+__name(toVersion, "toVersion");
 function getStableReleases(manifest) {
   return manifest.filter((release) => !release.prerelease).sort((left, right) => semver4.rcompare(left.version, right.version));
 }
@@ -67758,9 +67677,349 @@ function resolveVersionFromManifest(versionInput, manifest) {
 }
 __name(resolveVersionFromManifest, "resolveVersionFromManifest");
 
+// src/manifest.ts
+var prekReleasesBaseUrl = "https://github.com/j178/prek/releases/download";
+var prekVersionManifestUrl = "https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json";
+var versionManifestPromise;
+function getManifestAssetForVersion(version3, archiveName, manifest) {
+  info(`Looking up asset ${archiveName} for ${version3}`);
+  const release = manifest.find((candidate) => candidate.version === version3);
+  if (!release) {
+    return void 0;
+  }
+  const asset = release.assets.find((candidate) => candidate.name === archiveName);
+  if (!asset) {
+    throw new Error(
+      `prek asset ${archiveName} was not found for ${release.version} in the version manifest`
+    );
+  }
+  return asset;
+}
+__name(getManifestAssetForVersion, "getManifestAssetForVersion");
+async function getAssetForVersion(version3, archiveName) {
+  let manifest;
+  try {
+    manifest = await getVersionManifest();
+  } catch (error2) {
+    const message = error2 instanceof Error ? error2.message : String(error2);
+    warning(
+      `Failed to download version manifest: ${message}. Falling back to the release asset URL pattern for ${version3}`
+    );
+    return buildReleaseAssetUrl(version3, archiveName);
+  }
+  const asset = getManifestAssetForVersion(version3, archiveName, manifest);
+  if (asset) {
+    return asset;
+  }
+  info(
+    `Version ${version3} is not in the version manifest; falling back to the release asset URL pattern`
+  );
+  return buildReleaseAssetUrl(version3, archiveName);
+}
+__name(getAssetForVersion, "getAssetForVersion");
+async function downloadVersionManifest() {
+  info(`Downloading version manifest from ${prekVersionManifestUrl}`);
+  const downloadedPath = await downloadTool(prekVersionManifestUrl);
+  const rawManifest = await fs11.readFile(downloadedPath, "utf8");
+  return JSON.parse(rawManifest);
+}
+__name(downloadVersionManifest, "downloadVersionManifest");
+async function getVersionManifest() {
+  versionManifestPromise ??= downloadVersionManifest();
+  try {
+    return await versionManifestPromise;
+  } catch (error2) {
+    versionManifestPromise = void 0;
+    throw error2;
+  }
+}
+__name(getVersionManifest, "getVersionManifest");
+function buildReleaseAssetUrl(version3, archiveName) {
+  return {
+    downloadUrl: `${prekReleasesBaseUrl}/${normalizeVersion(version3)}/${archiveName}`,
+    name: archiveName
+  };
+}
+__name(buildReleaseAssetUrl, "buildReleaseAssetUrl");
+
+// src/install.ts
+async function installPrek(version3, sha256) {
+  const linuxLibc = process.platform === "linux" ? detectLinuxLibc() : "gnu";
+  const toolArch = getToolCacheArchFor(process.arch, linuxLibc);
+  const cachedTool = find("prek", version3, toolArch);
+  startGroup(`Installing prek ${version3}`);
+  try {
+    if (cachedTool) {
+      info(`Using cached prek from ${cachedTool}`);
+      addPath(cachedTool);
+      return cachedTool;
+    }
+    const asset = getReleaseAssetFor(process.platform, process.arch, linuxLibc);
+    info(
+      `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`
+    );
+    const manifestAsset = await getAssetForVersion(version3, asset.archiveName);
+    info(`Downloading prek from ${manifestAsset.downloadUrl}`);
+    const archivePath = await downloadTool(manifestAsset.downloadUrl);
+    info(`Downloaded archive to ${archivePath}`);
+    await verifyDownloadChecksum(archivePath, manifestAsset, version3, sha256);
+    const extractedPath = await extractArchive(archivePath, asset);
+    info(`Extracted ${asset.archiveType} archive to ${extractedPath}`);
+    const binaryPath = await getBinaryPath(extractedPath, asset);
+    if (process.platform !== "win32") {
+      await fs12.chmod(binaryPath, 493);
+    }
+    const toolPath = await cacheFile(binaryPath, asset.binaryName, "prek", version3, toolArch);
+    info(`Cached prek binary at ${toolPath}`);
+    addPath(toolPath);
+    return toolPath;
+  } finally {
+    endGroup();
+  }
+}
+__name(installPrek, "installPrek");
+async function extractArchive(archivePath, asset) {
+  if (asset.archiveType === "tar.gz") {
+    return extractTar2(archivePath);
+  }
+  if (process.platform === "win32") {
+    return extractWindowsZipArchive(archivePath);
+  }
+  return extractZip(archivePath);
+}
+__name(extractArchive, "extractArchive");
+async function extractWindowsZipArchive(archivePath) {
+  try {
+    return await extractTar2(archivePath, void 0, "x");
+  } catch (error2) {
+    const message = error2 instanceof Error ? error2.message : String(error2);
+    info(`Extracting zip with tar failed, falling back to zip extraction: ${message}`);
+    return extractZip(archivePath);
+  }
+}
+__name(extractWindowsZipArchive, "extractWindowsZipArchive");
+function getReleaseAssetFor(platform2, arch3, linuxLibc) {
+  const binaryName = platform2 === "win32" ? "prek.exe" : "prek";
+  const target = getRustTargetFor(platform2, arch3, linuxLibc);
+  const extension = platform2 === "win32" ? "zip" : "tar.gz";
+  return {
+    archiveName: `prek-${target}.${extension}`,
+    archiveType: extension,
+    binaryName
+  };
+}
+__name(getReleaseAssetFor, "getReleaseAssetFor");
+function getRustTargetFor(platform2, arch3, linuxLibc) {
+  switch (platform2) {
+    case "darwin":
+      switch (arch3) {
+        case "arm64":
+          return "aarch64-apple-darwin";
+        case "x64":
+          return "x86_64-apple-darwin";
+      }
+      break;
+    case "win32":
+      switch (arch3) {
+        case "arm64":
+          return "aarch64-pc-windows-msvc";
+        case "ia32":
+          return "i686-pc-windows-msvc";
+        case "x64":
+          return "x86_64-pc-windows-msvc";
+      }
+      break;
+    case "linux":
+      switch (arch3) {
+        case "arm":
+          return `armv7-unknown-linux-${linuxLibc}eabihf`;
+        case "arm64":
+          return `aarch64-unknown-linux-${linuxLibc}`;
+        case "ia32":
+          return `i686-unknown-linux-${linuxLibc}`;
+        case "riscv64":
+          if (linuxLibc === "gnu") {
+            return "riscv64gc-unknown-linux-gnu";
+          }
+          break;
+        case "s390x":
+          if (linuxLibc === "gnu") {
+            return "s390x-unknown-linux-gnu";
+          }
+          break;
+        case "x64":
+          return `x86_64-unknown-linux-${linuxLibc}`;
+      }
+      break;
+  }
+  const targetDescription = platform2 === "linux" ? `${platform2}/${arch3}/${linuxLibc}` : `${platform2}/${arch3}`;
+  throw new Error(`Unsupported platform/arch combination: ${targetDescription}`);
+}
+__name(getRustTargetFor, "getRustTargetFor");
+function detectLinuxLibc() {
+  return (0, import_detect_libc.isNonGlibcLinuxSync)() ? "musl" : "gnu";
+}
+__name(detectLinuxLibc, "detectLinuxLibc");
+function getToolCacheArchFor(arch3, linuxLibc) {
+  let toolArch;
+  switch (arch3) {
+    case "x64":
+      toolArch = "x64";
+      break;
+    case "arm64":
+      toolArch = "arm64";
+      break;
+    case "ia32":
+      toolArch = "x86";
+      break;
+    case "arm":
+      toolArch = "arm";
+      break;
+    default:
+      toolArch = arch3;
+  }
+  return linuxLibc === "musl" ? `${toolArch}-musl` : toolArch;
+}
+__name(getToolCacheArchFor, "getToolCacheArchFor");
+async function getBinaryPath(rootDir, asset) {
+  if (asset.archiveType === "zip") {
+    const binaryPath2 = path16.join(rootDir, asset.binaryName);
+    info(`Resolved binary path to ${binaryPath2}`);
+    return binaryPath2;
+  }
+  const [entry] = await fs12.readdir(rootDir);
+  if (!entry) {
+    throw new Error(`Extracted archive is empty: ${rootDir}`);
+  }
+  const binaryPath = path16.join(rootDir, entry, asset.binaryName);
+  info(`Resolved binary path to ${binaryPath}`);
+  return binaryPath;
+}
+__name(getBinaryPath, "getBinaryPath");
+async function verifyDownloadChecksum(archivePath, asset, version3, sha256, checksumMap = knownChecksumsByAsset) {
+  const expectedDigest = sha256 || checksumMap.get(buildChecksumKey(version3, asset.name));
+  if (!expectedDigest) {
+    info(`No SHA-256 checksum available for ${asset.name}; skipping verification`);
+    return;
+  }
+  info(`Verifying SHA-256 checksum for ${asset.name} (${sha256 ? "input" : "bundled"})`);
+  const digest = await hashFile(archivePath);
+  if (digest !== expectedDigest) {
+    throw new Error(
+      `Checksum mismatch for ${asset.name}: expected ${expectedDigest}, received ${digest}`
+    );
+  }
+  info(`Verified SHA-256 checksum for ${asset.name} from prek ${version3}`);
+}
+__name(verifyDownloadChecksum, "verifyDownloadChecksum");
+function buildChecksumKey(version3, assetName) {
+  return `${version3}:${assetName}`;
+}
+__name(buildChecksumKey, "buildChecksumKey");
+async function hashFile(filePath) {
+  const hash = crypto6.createHash("sha256");
+  await new Promise((resolve6, reject) => {
+    const stream3 = (0, import_node_fs2.createReadStream)(filePath);
+    stream3.on("data", (chunk) => {
+      hash.update(chunk);
+    });
+    stream3.on("end", resolve6);
+    stream3.on("error", reject);
+  });
+  return hash.digest("hex");
+}
+__name(hashFile, "hashFile");
+
+// src/version/resolve.ts
+var path21 = __toESM(require("node:path"), 1);
+var semver5 = __toESM(require_semver2(), 1);
+
+// src/version/auto.ts
+var path18 = __toESM(require("node:path"), 1);
+
+// src/version/constants.ts
+var TOOL_VERSIONS_FILENAME = ".tool-versions";
+var PREK_PACKAGE_NAME = "@j178/prek";
+var REQUIREMENTS_FILE_RE = /^requirements.*\.txt$/;
+var PEP508_PREK_RE = /^prek(?:\[.*?\])?\s*((?:~=|==|!=|<=?|>=?)[^;]+)/i;
+var VERSION_FILE_HINTS = {
+  ".tool-versions": 'Expected a "prek <version>" line.',
+  "mise.toml": "Expected [tools].prek or [tools.prek].version.",
+  "package.json": "Expected @j178/prek in dependencies or devDependencies.",
+  "pyproject.toml": "Checked [tool.prek].version, [dependency-groups], and [project.optional-dependencies].",
+  "uv.lock": 'Expected a [[package]] entry with name = "prek".'
+};
+var SUPPORTED_VERSION_FILE_NAMES = [
+  TOOL_VERSIONS_FILENAME,
+  "mise.toml",
+  "uv.lock",
+  "pyproject.toml",
+  "package.json"
+];
+
+// src/version/sources/shared.ts
+var fs13 = __toESM(require("node:fs/promises"), 1);
+var path17 = __toESM(require("node:path"), 1);
+function stripVPrefix(version3) {
+  return version3.replace(/^v/, "");
+}
+__name(stripVPrefix, "stripVPrefix");
+function stripByteOrderMark(content) {
+  return content.replace(/^\uFEFF/, "");
+}
+__name(stripByteOrderMark, "stripByteOrderMark");
+async function readFileOrNull(filePath) {
+  try {
+    return stripByteOrderMark(await fs13.readFile(filePath, "utf8"));
+  } catch (error2) {
+    if (error2 instanceof Error && "code" in error2 && error2.code === "ENOENT") {
+      return null;
+    }
+    throw error2;
+  }
+}
+__name(readFileOrNull, "readFileOrNull");
+function createParseError(filePath, format, error2) {
+  const message = error2 instanceof Error ? error2.message : String(error2);
+  return new Error(`Failed to parse ${path17.basename(filePath)} as ${format}: ${message}`);
+}
+__name(createParseError, "createParseError");
+
+// src/version/sources/tool-versions.ts
+async function findVersionInToolVersions(filePath) {
+  const content = await readFileOrNull(filePath);
+  if (!content) return null;
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const [tool, version3] = trimmed.split(/\s+/);
+    if (tool === "prek" && version3) {
+      return stripVPrefix(version3);
+    }
+  }
+  return null;
+}
+__name(findVersionInToolVersions, "findVersionInToolVersions");
+
+// src/version/auto.ts
+async function detectVersion(workingDirectory, repoRoot) {
+  const searchDirectories = [workingDirectory];
+  if (repoRoot && path18.resolve(repoRoot) !== path18.resolve(workingDirectory)) {
+    searchDirectories.push(repoRoot);
+  }
+  for (const directory of searchDirectories) {
+    const version3 = await findVersionInToolVersions(path18.join(directory, TOOL_VERSIONS_FILENAME));
+    if (version3) {
+      return { source: TOOL_VERSIONS_FILENAME, version: version3 };
+    }
+  }
+  return null;
+}
+__name(detectVersion, "detectVersion");
+
 // src/version/version-file.ts
-var fs12 = __toESM(require("node:fs/promises"), 1);
-var path19 = __toESM(require("node:path"), 1);
+var fs14 = __toESM(require("node:fs/promises"), 1);
+var path20 = __toESM(require("node:path"), 1);
 
 // src/version/sources/package-json.ts
 async function findVersionInPackageJson(filePath) {
@@ -67865,7 +68124,7 @@ async function findVersionInRequirements(filePath) {
 __name(findVersionInRequirements, "findVersionInRequirements");
 
 // src/version/sources/toml.ts
-var path18 = __toESM(require("node:path"), 1);
+var path19 = __toESM(require("node:path"), 1);
 
 // node_modules/smol-toml/dist/error.js
 function getLineColFromPtr(string, ptr) {
@@ -68595,7 +68854,7 @@ function getUniqueDependencyVersion(filePath, versions) {
   if (uniqueVersions.length === 0) return null;
   if (uniqueVersions.length === 1) return uniqueVersions[0] ?? null;
   throw new Error(
-    `Ambiguous prek version in ${path18.basename(filePath)}: found multiple distinct constraints (${uniqueVersions.join(", ")}). Set [tool.prek].version to make the version explicit.`
+    `Ambiguous prek version in ${path19.basename(filePath)}: found multiple distinct constraints (${uniqueVersions.join(", ")}). Set [tool.prek].version to make the version explicit.`
   );
 }
 __name(getUniqueDependencyVersion, "getUniqueDependencyVersion");
@@ -68682,11 +68941,11 @@ function getNoVersionHint(filename) {
 __name(getNoVersionHint, "getNoVersionHint");
 async function resolveVersionFile(filePath) {
   try {
-    await fs12.access(filePath);
+    await fs14.access(filePath);
   } catch {
     throw new Error(`version-file "${filePath}" does not exist`);
   }
-  const filename = path19.basename(filePath);
+  const filename = path20.basename(filePath);
   let parser = PARSER_MAP[filename];
   if (!parser && isRequirementsFile(filename)) {
     parser = findVersionInRequirements;
@@ -68705,10 +68964,7 @@ async function resolveVersionFile(filePath) {
 }
 __name(resolveVersionFile, "resolveVersionFile");
 
-// src/manifest.ts
-var prekReleasesBaseUrl = "https://github.com/j178/prek/releases/download";
-var prekVersionManifestUrl = "https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json";
-var versionManifestPromise;
+// src/version/resolve.ts
 async function resolveVersion(options, manifest) {
   const normalizedOptions = typeof options === "string" ? { prekVersion: options } : options;
   const { prekVersion, versionFile, workingDirectory = "." } = normalizedOptions;
@@ -68723,7 +68979,7 @@ async function resolveVersion(options, manifest) {
   }
   const resolvedWorkingDirectory = resolveWorkingDirectory(workingDirectory);
   if (versionFile) {
-    const resolvedPath = path20.isAbsolute(versionFile) ? versionFile : path20.resolve(resolvedWorkingDirectory, versionFile);
+    const resolvedPath = path21.isAbsolute(versionFile) ? versionFile : path21.resolve(resolvedWorkingDirectory, versionFile);
     const detected2 = await resolveVersionFile(resolvedPath);
     info(`Resolved prek version "${detected2.version}" from version-file: ${detected2.source}`);
     return resolveVersionInput(detected2.version, manifest);
@@ -68759,278 +69015,22 @@ async function resolveVersionInput(versionInput, manifest) {
   if (normalizedInput !== "latest") {
     parseConstraint(normalizedInput);
   }
-  return resolveVersionFromManifest2(versionInput, manifest ?? await getVersionManifest());
+  return resolveVersionFromManifest(versionInput, manifest ?? await getVersionManifest());
 }
 __name(resolveVersionInput, "resolveVersionInput");
 function resolveRepoRoot() {
   const repoRoot = process.env.GITHUB_WORKSPACE;
-  return repoRoot ? path20.resolve(repoRoot) : void 0;
+  return repoRoot ? path21.resolve(repoRoot) : void 0;
 }
 __name(resolveRepoRoot, "resolveRepoRoot");
 function resolveWorkingDirectory(workingDirectory) {
-  if (path20.isAbsolute(workingDirectory)) {
+  if (path21.isAbsolute(workingDirectory)) {
     return workingDirectory;
   }
   const repoRoot = resolveRepoRoot();
-  return repoRoot ? path20.resolve(repoRoot, workingDirectory) : path20.resolve(workingDirectory);
+  return repoRoot ? path21.resolve(repoRoot, workingDirectory) : path21.resolve(workingDirectory);
 }
 __name(resolveWorkingDirectory, "resolveWorkingDirectory");
-function toVersion(version3) {
-  return version3.replace(/^v/, "");
-}
-__name(toVersion, "toVersion");
-function getManifestAssetForVersion(version3, archiveName, manifest) {
-  info(`Looking up asset ${archiveName} for ${version3}`);
-  const release = manifest.find((candidate) => candidate.version === version3);
-  if (!release) {
-    return void 0;
-  }
-  const asset = release.assets.find((candidate) => candidate.name === archiveName);
-  if (!asset) {
-    throw new Error(
-      `prek asset ${archiveName} was not found for ${release.version} in the version manifest`
-    );
-  }
-  return asset;
-}
-__name(getManifestAssetForVersion, "getManifestAssetForVersion");
-async function getAssetForVersion(version3, archiveName) {
-  let manifest;
-  try {
-    manifest = await getVersionManifest();
-  } catch (error2) {
-    const message = error2 instanceof Error ? error2.message : String(error2);
-    warning(
-      `Failed to download version manifest: ${message}. Falling back to the release asset URL pattern for ${version3}`
-    );
-    return buildReleaseAssetUrl(version3, archiveName);
-  }
-  const asset = getManifestAssetForVersion(version3, archiveName, manifest);
-  if (asset) {
-    return asset;
-  }
-  info(
-    `Version ${version3} is not in the version manifest; falling back to the release asset URL pattern`
-  );
-  return buildReleaseAssetUrl(version3, archiveName);
-}
-__name(getAssetForVersion, "getAssetForVersion");
-function resolveVersionFromManifest2(versionInput, manifest) {
-  return resolveVersionFromManifest(versionInput, manifest);
-}
-__name(resolveVersionFromManifest2, "resolveVersionFromManifest");
-async function downloadVersionManifest() {
-  info(`Downloading version manifest from ${prekVersionManifestUrl}`);
-  const downloadedPath = await downloadTool(prekVersionManifestUrl);
-  const rawManifest = await fs13.readFile(downloadedPath, "utf8");
-  return JSON.parse(rawManifest);
-}
-__name(downloadVersionManifest, "downloadVersionManifest");
-async function getVersionManifest() {
-  versionManifestPromise ??= downloadVersionManifest();
-  try {
-    return await versionManifestPromise;
-  } catch (error2) {
-    versionManifestPromise = void 0;
-    throw error2;
-  }
-}
-__name(getVersionManifest, "getVersionManifest");
-function buildReleaseAssetUrl(version3, archiveName) {
-  return {
-    downloadUrl: `${prekReleasesBaseUrl}/${normalizeVersion(version3)}/${archiveName}`,
-    name: archiveName
-  };
-}
-__name(buildReleaseAssetUrl, "buildReleaseAssetUrl");
-
-// src/install.ts
-async function installPrek(version3, sha256) {
-  const linuxLibc = process.platform === "linux" ? detectLinuxLibc() : "gnu";
-  const toolArch = getToolCacheArchFor(process.arch, linuxLibc);
-  const cachedTool = find("prek", version3, toolArch);
-  startGroup(`Installing prek ${version3}`);
-  try {
-    if (cachedTool) {
-      info(`Using cached prek from ${cachedTool}`);
-      addPath(cachedTool);
-      return cachedTool;
-    }
-    const asset = getReleaseAssetFor(process.platform, process.arch, linuxLibc);
-    info(
-      `Selected release asset ${asset.archiveName} for runner ${process.platform}/${process.arch} (tool-cache arch ${toolArch})`
-    );
-    const manifestAsset = await getAssetForVersion(version3, asset.archiveName);
-    info(`Downloading prek from ${manifestAsset.downloadUrl}`);
-    const archivePath = await downloadTool(manifestAsset.downloadUrl);
-    info(`Downloaded archive to ${archivePath}`);
-    await verifyDownloadChecksum(archivePath, manifestAsset, version3, sha256);
-    const extractedPath = await extractArchive(archivePath, asset);
-    info(`Extracted ${asset.archiveType} archive to ${extractedPath}`);
-    const binaryPath = await getBinaryPath(extractedPath, asset);
-    if (process.platform !== "win32") {
-      await fs14.chmod(binaryPath, 493);
-    }
-    const toolPath = await cacheFile(binaryPath, asset.binaryName, "prek", version3, toolArch);
-    info(`Cached prek binary at ${toolPath}`);
-    addPath(toolPath);
-    return toolPath;
-  } finally {
-    endGroup();
-  }
-}
-__name(installPrek, "installPrek");
-async function extractArchive(archivePath, asset) {
-  if (asset.archiveType === "tar.gz") {
-    return extractTar2(archivePath);
-  }
-  if (process.platform === "win32") {
-    return extractWindowsZipArchive(archivePath);
-  }
-  return extractZip(archivePath);
-}
-__name(extractArchive, "extractArchive");
-async function extractWindowsZipArchive(archivePath) {
-  try {
-    return await extractTar2(archivePath, void 0, "x");
-  } catch (error2) {
-    const message = error2 instanceof Error ? error2.message : String(error2);
-    info(`Extracting zip with tar failed, falling back to zip extraction: ${message}`);
-    return extractZip(archivePath);
-  }
-}
-__name(extractWindowsZipArchive, "extractWindowsZipArchive");
-function getReleaseAssetFor(platform2, arch3, linuxLibc) {
-  const binaryName = platform2 === "win32" ? "prek.exe" : "prek";
-  const target = getRustTargetFor(platform2, arch3, linuxLibc);
-  const extension = platform2 === "win32" ? "zip" : "tar.gz";
-  return {
-    archiveName: `prek-${target}.${extension}`,
-    archiveType: extension,
-    binaryName
-  };
-}
-__name(getReleaseAssetFor, "getReleaseAssetFor");
-function getRustTargetFor(platform2, arch3, linuxLibc) {
-  switch (platform2) {
-    case "darwin":
-      switch (arch3) {
-        case "arm64":
-          return "aarch64-apple-darwin";
-        case "x64":
-          return "x86_64-apple-darwin";
-      }
-      break;
-    case "win32":
-      switch (arch3) {
-        case "arm64":
-          return "aarch64-pc-windows-msvc";
-        case "ia32":
-          return "i686-pc-windows-msvc";
-        case "x64":
-          return "x86_64-pc-windows-msvc";
-      }
-      break;
-    case "linux":
-      switch (arch3) {
-        case "arm":
-          return `armv7-unknown-linux-${linuxLibc}eabihf`;
-        case "arm64":
-          return `aarch64-unknown-linux-${linuxLibc}`;
-        case "ia32":
-          return `i686-unknown-linux-${linuxLibc}`;
-        case "riscv64":
-          if (linuxLibc === "gnu") {
-            return "riscv64gc-unknown-linux-gnu";
-          }
-          break;
-        case "s390x":
-          if (linuxLibc === "gnu") {
-            return "s390x-unknown-linux-gnu";
-          }
-          break;
-        case "x64":
-          return `x86_64-unknown-linux-${linuxLibc}`;
-      }
-      break;
-  }
-  const targetDescription = platform2 === "linux" ? `${platform2}/${arch3}/${linuxLibc}` : `${platform2}/${arch3}`;
-  throw new Error(`Unsupported platform/arch combination: ${targetDescription}`);
-}
-__name(getRustTargetFor, "getRustTargetFor");
-function detectLinuxLibc() {
-  return (0, import_detect_libc.isNonGlibcLinuxSync)() ? "musl" : "gnu";
-}
-__name(detectLinuxLibc, "detectLinuxLibc");
-function getToolCacheArchFor(arch3, linuxLibc) {
-  let toolArch;
-  switch (arch3) {
-    case "x64":
-      toolArch = "x64";
-      break;
-    case "arm64":
-      toolArch = "arm64";
-      break;
-    case "ia32":
-      toolArch = "x86";
-      break;
-    case "arm":
-      toolArch = "arm";
-      break;
-    default:
-      toolArch = arch3;
-  }
-  return linuxLibc === "musl" ? `${toolArch}-musl` : toolArch;
-}
-__name(getToolCacheArchFor, "getToolCacheArchFor");
-async function getBinaryPath(rootDir, asset) {
-  if (asset.archiveType === "zip") {
-    const binaryPath2 = path21.join(rootDir, asset.binaryName);
-    info(`Resolved binary path to ${binaryPath2}`);
-    return binaryPath2;
-  }
-  const [entry] = await fs14.readdir(rootDir);
-  if (!entry) {
-    throw new Error(`Extracted archive is empty: ${rootDir}`);
-  }
-  const binaryPath = path21.join(rootDir, entry, asset.binaryName);
-  info(`Resolved binary path to ${binaryPath}`);
-  return binaryPath;
-}
-__name(getBinaryPath, "getBinaryPath");
-async function verifyDownloadChecksum(archivePath, asset, version3, sha256, checksumMap = knownChecksumsByAsset) {
-  const expectedDigest = sha256 || checksumMap.get(buildChecksumKey(version3, asset.name));
-  if (!expectedDigest) {
-    info(`No SHA-256 checksum available for ${asset.name}; skipping verification`);
-    return;
-  }
-  info(`Verifying SHA-256 checksum for ${asset.name} (${sha256 ? "input" : "bundled"})`);
-  const digest = await hashFile(archivePath);
-  if (digest !== expectedDigest) {
-    throw new Error(
-      `Checksum mismatch for ${asset.name}: expected ${expectedDigest}, received ${digest}`
-    );
-  }
-  info(`Verified SHA-256 checksum for ${asset.name} from prek ${version3}`);
-}
-__name(verifyDownloadChecksum, "verifyDownloadChecksum");
-function buildChecksumKey(version3, assetName) {
-  return `${version3}:${assetName}`;
-}
-__name(buildChecksumKey, "buildChecksumKey");
-async function hashFile(filePath) {
-  const hash = crypto6.createHash("sha256");
-  await new Promise((resolve6, reject) => {
-    const stream3 = (0, import_node_fs2.createReadStream)(filePath);
-    stream3.on("data", (chunk) => {
-      hash.update(chunk);
-    });
-    stream3.on("end", resolve6);
-    stream3.on("error", reject);
-  });
-  return hash.digest("hex");
-}
-__name(hashFile, "hashFile");
 
 // src/main.ts
 async function run() {

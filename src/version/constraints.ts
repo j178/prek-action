@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as semver from 'semver'
-import type { ManifestRelease, Version, VersionManifest } from '../types'
+import type { ManifestRelease, NormalizedVersion, Version, VersionManifest } from '../types'
 
 type ParsedConstraint = {
   exactExclusions: string[]
@@ -27,8 +27,12 @@ function createUnsatisfiedRangeError(versionInput: string): Error {
   )
 }
 
-export function normalizeVersion(version: string): `v${string}` {
+export function normalizeVersion(version: string): NormalizedVersion {
   return `v${version.replace(/^v/, '')}`
+}
+
+export function toVersion(version: string): Version {
+  return version.replace(/^v/, '') as Version
 }
 
 function getStableReleases(manifest: VersionManifest): ManifestRelease[] {
