@@ -36,7 +36,7 @@ export async function resolveVersion(
 
   if (normalizedInput !== 'latest' && versionFile) {
     throw new Error(
-      'Cannot specify both prek-version and version-file inputs. ' +
+      'Cannot specify both `prek-version` and `version-file` inputs. ' +
         'Use one or the other to avoid ambiguity.',
     )
   }

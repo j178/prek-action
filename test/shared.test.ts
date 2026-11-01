@@ -165,7 +165,7 @@ it('resolveVersion throws when both prek-version and version-file provided', asy
         versionFile: path.join(dir, 'uv.lock'),
         workingDirectory: dir,
       }),
-    /Cannot specify both prek-version and version-file/,
+    /Cannot specify both `prek-version` and `version-file`/,
   )
 })
 

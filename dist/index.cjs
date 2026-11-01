@@ -68715,7 +68715,7 @@ async function resolveVersion(options, manifest) {
   const normalizedInput = prekVersion.trim() || "latest";
   if (normalizedInput !== "latest" && versionFile) {
     throw new Error(
-      "Cannot specify both prek-version and version-file inputs. Use one or the other to avoid ambiguity."
+      "Cannot specify both `prek-version` and `version-file` inputs. Use one or the other to avoid ambiguity."
     );
   }
   if (normalizedInput !== "latest") {
