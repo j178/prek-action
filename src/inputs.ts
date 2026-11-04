@@ -12,6 +12,7 @@ export function getInputs(): Inputs {
     prekVersion: core.getInput('prek-version') || 'latest',
     sha256: core.getInput('sha256'),
     showVerboseLogs: core.getBooleanInput('show-verbose-logs'),
+    versionFile: core.getInput('version-file') || undefined,
     workingDirectory: core.getInput('working-directory') || '.',
   }
 }
