@@ -32,7 +32,9 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 | --- | --- | --- | --- |
 | `extra-args` | Additional arguments appended to `prek run --show-diff-on-failure --color=always` | No | `--all-files` |
 | `extra_args` | Deprecated alias for `extra-args` | No | |
-| `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, `latest`, or `latest-known` | No | `latest` |
+| `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, `latest`, or `latest-known`. Takes precedence over `prek-version-file` | No | `prek-version-file`, then `latest` |
+| `prek-version-file` | `.tool-versions` file, relative to `working-directory`, to [read the prek and uv versions from](#read-versions-from-tool-versions) when `prek-version` is unset | No | `.tool-versions` |
+| `uv-version` | Exact uv version for prek to install, exported as [`PREK_UV_VERSION`](#pin-the-uv-version). Overrides the `uv` entry from `prek-version-file` | No | `prek-version-file` |
 | `sha256` | SHA-256 checksum of the release archive; overrides the bundled checksum | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
@@ -75,6 +77,52 @@ steps:
     with:
       prek-version: '0.2.30'
 ```
+
+### Read versions from `.tool-versions`
+
+If `prek-version` is not set, the action reads the version from `prek-version-file`,
+a [`.tool-versions`](https://asdf-vm.com/manage/configuration.html#tool-versions)
+file as used by asdf and mise. The path is relative to `working-directory` and
+defaults to `.tool-versions`. The first version on the `prek` line is used:
+
+```text
+prek 0.5.7
+uv 0.9.5
+```
+
+Any value accepted by `prek-version` works, including semver ranges and `latest`.
+
+If the file also has a `uv` line with an exact version, the action exports
+`PREK_UV_VERSION` so prek installs that uv version (see
+[Pin the uv version](#pin-the-uv-version)). The `uv-version` input or a
+`PREK_UV_VERSION` already set in the environment takes precedence.
+
+```yaml
+with:
+  prek-version-file: tools/.tool-versions
+```
+
+The default `.tool-versions` is optional: without it, or without a `prek` line,
+the latest release is installed. A custom `prek-version-file` must exist and
+declare `prek`. An explicit `prek-version` always takes precedence, and the file
+is then not read at all.
+
+### Pin the uv version
+
+prek uses [uv](https://docs.astral.sh/uv/) to set up Python hooks. Set `uv-version`
+to an exact version to have the action export
+[`PREK_UV_VERSION`](https://prek.j178.dev/reference/environment-variables/#prek_uv_version)
+for the prek run and later steps:
+
+```yaml
+with:
+  uv-version: '0.9.5'
+```
+
+`uv-version` works with or without `prek-version`. It overrides the `uv` entry from
+`prek-version-file` and any `PREK_UV_VERSION` already set. This needs a prek release
+newer than 0.5.7. prek still prefers a compatible `uv` it finds on `PATH`, so the
+pinned version only applies when prek installs uv itself.
 
 ### Install the latest known version
 

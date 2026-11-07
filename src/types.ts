@@ -3,6 +3,8 @@ export const CACHE_MATCHED_KEY_STATE = 'prek-cache-matched-key'
 export const CACHE_PATHS_STATE = 'prek-cache-paths'
 export const POST_ACTION_STATE = 'prek-action-post'
 export const PREK_CACHE_KEY_PREFIX = 'prek-v1'
+// The first prek release after 0.5.7 reads PREK_UV_VERSION.
+export const LAST_PREK_VERSION_WITHOUT_UV_VERSION = '0.5.7'
 
 export type Version = string & { readonly __brand: 'Version' }
 export type NormalizedVersion = `v${string}`
@@ -14,6 +16,7 @@ export type Inputs = {
   prekVersion: string
   sha256: string
   showVerboseLogs: boolean
+  uvVersion?: string
   workingDirectory: string
 }
 
