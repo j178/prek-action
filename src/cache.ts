@@ -89,7 +89,9 @@ async function buildCacheKey(workingDirectory: string): Promise<string> {
   const pythonLocation = process.env.pythonLocation || ''
   const runnerOs = process.env.RUNNER_OS || process.platform
   const runnerArch = process.env.RUNNER_ARCH || process.arch
-  return `${PREK_CACHE_KEY_PREFIX}|${runnerOs}|${runnerArch}|${pythonLocation}|${hash}`
+  // prek reuses a cached uv even when PREK_UV_VERSION differs, so key the cache on it.
+  const uvVersion = process.env.PREK_UV_VERSION ? `|uv-${process.env.PREK_UV_VERSION}` : ''
+  return `${PREK_CACHE_KEY_PREFIX}|${runnerOs}|${runnerArch}|${pythonLocation}${uvVersion}|${hash}`
 }
 
 async function hashConfigFiles(workingDirectory: string): Promise<string> {

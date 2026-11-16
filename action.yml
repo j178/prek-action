@@ -18,9 +18,17 @@ inputs:
     required: false
     default: "false"
   prek-version:
-    description: Version or semver range of prek to install (for example `0.2.1`, `0.3.x`, `<=1.0.0`, `latest`, or `latest-known`)
+    description: Version or semver range of prek to install (for example `0.2.1`, `0.3.x`, `<=1.0.0`, `latest`, or `latest-known`). Takes precedence over `prek-version-file`. When unset, the version is read from `prek-version-file`, otherwise `latest`
     required: false
-    default: "latest"
+    default: ""
+  prek-version-file:
+    description: Path, relative to `working-directory`, to a `.tool-versions` file to read the prek version from when `prek-version` is unset. Its `uv` entry, if present, sets `PREK_UV_VERSION` so prek installs that uv version, unless `uv-version` is set. The default file is optional; any other path must exist and declare `prek`
+    required: false
+    default: ".tool-versions"
+  uv-version:
+    description: Exact uv version for prek to install for Python hooks (for example `0.9.5`), exported as `PREK_UV_VERSION`. Overrides the `uv` entry from `prek-version-file` and an existing `PREK_UV_VERSION`, and applies even when `prek-version` is set
+    required: false
+    default: ""
   sha256:
     description: SHA-256 checksum of the prek release archive; overrides the bundled checksum
     required: false
