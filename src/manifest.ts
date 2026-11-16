@@ -1,76 +1,15 @@
 import * as fs from 'node:fs/promises'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
-import * as semver from 'semver'
-import { knownChecksumsByAsset } from './known-checksums'
-import type { ManifestAsset, NormalizedVersion, Version, VersionManifest } from './types'
+import type { ManifestAsset, Version, VersionManifest } from './types'
+import { normalizeVersion } from './version/constraints'
 
 const prekReleasesBaseUrl = 'https://github.com/j178/prek/releases/download'
 const prekVersionManifestUrl =
   'https://raw.githubusercontent.com/j178/prek-action/main/version-manifest.json'
+
 // Cache the in-flight manifest download so version resolution and asset lookup share one request per process.
 let versionManifestPromise: Promise<VersionManifest> | undefined
-
-// Resolve a bare version, fetching the manifest only for `latest` and semver ranges.
-export async function resolveVersion(versionInput: string): Promise<Version> {
-  const normalizedInput = versionInput.trim() || 'latest'
-  core.info(`Resolving prek version from input "${versionInput}"`)
-
-  switch (normalizedInput) {
-    case 'latest': {
-      const manifest = await getVersionManifest()
-      const latestRelease = manifest.find(release => !release.prerelease)
-      if (!latestRelease) {
-        throw new Error('The prek version manifest does not contain a stable release')
-      }
-      core.info(`Resolved "${normalizedInput}" to latest stable release ${latestRelease.version}`)
-      return latestRelease.version
-    }
-    case 'latest-known': {
-      const versions = Array.from(knownChecksumsByAsset.keys(), key => key.split(':')[0])
-      const [version] = versions
-        .filter(version => semver.prerelease(version) === null)
-        .sort(semver.rcompare)
-      if (!version) {
-        throw new Error('No stable prek version is available in the bundled checksums')
-      }
-      core.info(`Resolved "latest-known" to bundled version ${version}`)
-      return toVersion(version)
-    }
-  }
-
-  const exactVersion = semver.valid(toVersion(normalizedInput))
-  if (exactVersion) {
-    const version = exactVersion as Version
-    core.info(`Resolved exact version "${normalizedInput}" to ${version}`)
-    return version
-  }
-
-  const range = semver.validRange(normalizedInput)
-  if (!range) {
-    throw new Error(`Invalid prek-version input: ${versionInput}`)
-  }
-
-  const manifest = await getVersionManifest()
-  const rangeRelease = manifest.find(
-    candidate => !candidate.prerelease && semver.satisfies(candidate.version, range),
-  )
-  if (!rangeRelease) {
-    throw new Error(`No prek release satisfies version range: ${versionInput}`)
-  }
-
-  core.info(`Resolved version range "${normalizedInput}" to ${rangeRelease.version}`)
-  return rangeRelease.version
-}
-
-// Internal code uses bare semver strings; GitHub-facing tags still need a leading v.
-export function normalizeVersion(version: string | Version | NormalizedVersion): NormalizedVersion {
-  return `v${version.replace(/^v/, '')}` as NormalizedVersion
-}
-
-export function toVersion(version: string): Version {
-  return version.replace(/^v/, '') as Version
-}
 
 // Return the manifest asset metadata for a version, if that version exists in the manifest.
 // If the version exists but the expected asset is missing, treat that as a manifest error.
@@ -129,7 +68,7 @@ async function downloadVersionManifest(): Promise<VersionManifest> {
   return JSON.parse(rawManifest) as VersionManifest
 }
 
-async function getVersionManifest(): Promise<VersionManifest> {
+export async function getVersionManifest(): Promise<VersionManifest> {
   versionManifestPromise ??= downloadVersionManifest()
 
   try {
