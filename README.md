@@ -62,6 +62,13 @@ Supported `version-file` formats:
 | `requirements*.txt` | `prek==X.Y.Z` or other supported PEP 508 specifiers |
 | `package.json` | `dependencies["@j178/prek"]` or `devDependencies["@j178/prek"]` |
 
+When using version files:
+
+- Leave `prek-version` at its default (`latest`) when setting `version-file`; other values cannot be combined with `version-file`.
+- Relative `version-file` paths are resolved from `working-directory`.
+- Auto-detection checks `.tool-versions` in `working-directory` first, then in `GITHUB_WORKSPACE`.
+- The action fails if an explicit `version-file` is missing, malformed, or does not contain a `prek` version.
+
 ## Outputs
 
 | Output | Description |
