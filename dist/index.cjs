@@ -65721,7 +65721,7 @@ var CACHE_KEY_STATE = "prek-cache-primary-key";
 var CACHE_MATCHED_KEY_STATE = "prek-cache-matched-key";
 var CACHE_PATHS_STATE = "prek-cache-paths";
 var POST_ACTION_STATE = "prek-action-post";
-var PREK_CACHE_KEY_PREFIX = "prek-v1";
+var PREK_CACHE_KEY_PREFIX = "prek-v2";
 
 // src/cache.ts
 function formatError2(error2) {
@@ -65731,13 +65731,19 @@ __name(formatError2, "formatError");
 async function restorePrekCache(workingDirectory) {
   startGroup("Restore prek cache");
   const cacheDir = await getPrekCacheDir();
-  const paths = [cacheDir];
-  const primaryKey = await buildCacheKey(workingDirectory);
+  const toolCaches = path14.join(cacheDir, "cache");
+  const paths = [
+    path14.join(cacheDir, "*"),
+    `!${toolCaches}`,
+    path14.join(toolCaches, "*"),
+    `!${path14.join(toolCaches, "prek")}`
+  ];
+  const { primaryKey, restoreKeys } = await buildCacheKeys(workingDirectory);
   saveState(CACHE_KEY_STATE, primaryKey);
   saveState(CACHE_PATHS_STATE, JSON.stringify(paths));
   let matchedKey;
   try {
-    const restoredKey = await restoreCache(paths, primaryKey);
+    const restoredKey = await restoreCache(paths, primaryKey, restoreKeys);
     if (restoredKey) {
       info(`Restored prek cache with key ${restoredKey}`);
       saveState(CACHE_MATCHED_KEY_STATE, restoredKey);
@@ -65781,15 +65787,22 @@ async function savePrekCache() {
   }
 }
 __name(savePrekCache, "savePrekCache");
-async function buildCacheKey(workingDirectory) {
-  const normalizedWorkingDirectory = path14.resolve(workingDirectory);
-  const hash = await hashConfigFiles(normalizedWorkingDirectory);
-  const pythonLocation = process.env.pythonLocation || "";
-  const runnerOs = process.env.RUNNER_OS || process.platform;
-  const runnerArch = process.env.RUNNER_ARCH || process.arch;
-  return `${PREK_CACHE_KEY_PREFIX}|${runnerOs}|${runnerArch}|${pythonLocation}|${hash}`;
+async function buildCacheKeys(workingDirectory) {
+  const { ImageOS: imageOs, ImageVersion: imageVersion, pythonLocation } = process.env;
+  const environmentKey = [
+    PREK_CACHE_KEY_PREFIX,
+    process.env.RUNNER_OS || process.platform,
+    process.env.RUNNER_ARCH || process.arch,
+    imageOs,
+    imageVersion,
+    pythonLocation
+  ].join("|");
+  const configHash = await hashConfigFiles(path14.resolve(workingDirectory));
+  const primaryKey = `${environmentKey}|${configHash}`;
+  const restoreKeys = imageOs && imageVersion ? [`${environmentKey}|`] : [];
+  return { primaryKey, restoreKeys };
 }
-__name(buildCacheKey, "buildCacheKey");
+__name(buildCacheKeys, "buildCacheKeys");
 async function hashConfigFiles(workingDirectory) {
   const matcher = await create(getConfigPatterns(workingDirectory).join("\n"));
   const files = await matcher.glob();

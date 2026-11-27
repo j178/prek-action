@@ -1,12 +1,12 @@
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import * as glob from '@actions/glob'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CACHE_KEY_STATE, CACHE_MATCHED_KEY_STATE, CACHE_PATHS_STATE } from '../src/types'
 
 const mockContext = vi.hoisted(() => ({
   cacheDir: '',
-  globFiles: [] as string[],
   state: {} as Record<string, string>,
   telemetry: {
     infos: [] as string[],
@@ -23,7 +23,7 @@ const toolkitMocks = vi.hoisted(() => ({
       options?: { listeners?: { stdout?: (data: Buffer) => void } },
     ) => Promise<number>
   >(),
-  restoreCache: vi.fn<(paths: string[], primaryKey: string) => Promise<string | undefined>>(),
+  restoreCache: vi.fn<typeof import('@actions/cache').restoreCache>(),
   saveCache: vi.fn<(paths: string[], primaryKey: string) => Promise<number>>(),
 }))
 
@@ -52,12 +52,6 @@ vi.mock('@actions/exec', () => ({
   exec: toolkitMocks.exec,
 }))
 
-vi.mock('@actions/glob', () => ({
-  create: vi.fn(async () => ({
-    glob: async () => mockContext.globFiles,
-  })),
-}))
-
 const { restorePrekCache, savePrekCache } = await import('../src/cache')
 
 async function createWorkingDirectory(): Promise<string> {
@@ -68,7 +62,6 @@ async function createWorkingDirectory(): Promise<string> {
 
 function resetMockContext(): void {
   mockContext.cacheDir = path.join(os.homedir(), '.cache', 'prek')
-  mockContext.globFiles = []
   mockContext.state = {}
   mockContext.telemetry.infos = []
   mockContext.telemetry.savedStateEntries = []
@@ -76,6 +69,8 @@ function resetMockContext(): void {
 }
 
 describe('restorePrekCache', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
   beforeEach(() => {
     resetMockContext()
     vi.clearAllMocks()
@@ -89,30 +84,15 @@ describe('restorePrekCache', () => {
   })
 
   it('saves the matched key when restoreCache hits the primary key', async () => {
-    const originalEnv = { ...process.env }
     const workingDirectory = await createWorkingDirectory()
-    mockContext.globFiles = [path.join(workingDirectory, 'prek.toml')]
+    toolkitMocks.restoreCache.mockImplementation(async (_paths, primaryKey) => primaryKey)
 
-    process.env.RUNNER_OS = 'Linux'
-    process.env.RUNNER_ARCH = 'X64'
-    process.env.pythonLocation = '/opt/python'
+    await restorePrekCache(workingDirectory)
 
-    let restoreCall: { paths: string[]; primaryKey: string } | undefined
-    toolkitMocks.restoreCache.mockImplementation(async (paths: string[], primaryKey: string) => {
-      restoreCall = { paths, primaryKey }
-      return primaryKey
-    })
-
-    try {
-      await restorePrekCache(workingDirectory)
-    } finally {
-      process.env = originalEnv
-    }
-
-    expect(restoreCall?.paths).toEqual([mockContext.cacheDir])
-    expect(restoreCall?.primaryKey).toBe(mockContext.state[CACHE_KEY_STATE])
+    const [paths, primaryKey] = toolkitMocks.restoreCache.mock.calls[0]
+    expect(primaryKey).toBe(mockContext.state[CACHE_KEY_STATE])
     expect(mockContext.state[CACHE_MATCHED_KEY_STATE]).toBe(mockContext.state[CACHE_KEY_STATE])
-    expect(mockContext.state[CACHE_PATHS_STATE]).toBe(JSON.stringify([mockContext.cacheDir]))
+    expect(JSON.parse(mockContext.state[CACHE_PATHS_STATE])).toEqual(paths)
     expect(mockContext.telemetry.savedStateEntries.map(([name]) => name)).toEqual([
       CACHE_KEY_STATE,
       CACHE_PATHS_STATE,
@@ -125,9 +105,41 @@ describe('restorePrekCache', () => {
     expect(mockContext.telemetry.warnings).toEqual([])
   })
 
+  it('can reuse a previous config only within the same identified runner image and Python location', async () => {
+    const workingDirectory = await createWorkingDirectory()
+    const config = path.join(workingDirectory, 'prek.toml')
+    vi.stubEnv('ImageOS', 'ubuntu24')
+    vi.stubEnv('ImageVersion', '20261122.1')
+    vi.stubEnv('pythonLocation', '/opt/python')
+
+    const previous = await restorePrekCache(workingDirectory)
+    await fs.appendFile(config, '# new revision\n')
+    const current = await restorePrekCache(workingDirectory)
+    const restoreKeys = toolkitMocks.restoreCache.mock.lastCall?.[2] ?? []
+    expect(current.primaryKey).not.toBe(previous.primaryKey)
+    expect(restoreKeys.some(prefix => previous.primaryKey.startsWith(prefix))).toBe(true)
+
+    for (const [name, value] of [
+      ['ImageVersion', '20261129.1'],
+      ['ImageOS', 'ubuntu26'],
+      ['pythonLocation', '/opt/another-python'],
+    ]) {
+      const original = process.env[name]
+      vi.stubEnv(name, value)
+      const other = await restorePrekCache(workingDirectory)
+      expect(other.primaryKey).not.toBe(current.primaryKey)
+      const otherKeys = toolkitMocks.restoreCache.mock.lastCall?.[2] ?? []
+      expect(otherKeys.some(prefix => current.primaryKey.startsWith(prefix))).toBe(false)
+      vi.stubEnv(name, original)
+    }
+
+    vi.stubEnv('ImageVersion', undefined)
+    await restorePrekCache(workingDirectory)
+    expect(toolkitMocks.restoreCache.mock.lastCall?.[2] ?? []).toEqual([])
+  })
+
   it('logs a cache miss without saving a matched key', async () => {
     const workingDirectory = await createWorkingDirectory()
-    mockContext.globFiles = [path.join(workingDirectory, 'prek.toml')]
 
     await restorePrekCache(workingDirectory)
 
@@ -137,6 +149,29 @@ describe('restorePrekCache', () => {
       `No cache found for key ${mockContext.state[CACHE_KEY_STATE]}`,
     ])
     expect(mockContext.telemetry.warnings).toEqual([])
+  })
+
+  it('archives hook environments and tool caches while excluding workspace discovery', async () => {
+    const workingDirectory = await createWorkingDirectory()
+    const cacheDir = path.join(workingDirectory, 'prek home')
+    mockContext.cacheDir = cacheDir
+    const files = ['hooks/env/tool', 'cache/deno/module', 'cache/prek/workspace/project']
+    for (const file of files) {
+      const target = path.join(cacheDir, file)
+      await fs.mkdir(path.dirname(target), { recursive: true })
+      await fs.writeFile(target, '')
+    }
+
+    await restorePrekCache(workingDirectory)
+    const paths = JSON.parse(mockContext.state[CACHE_PATHS_STATE]) as string[]
+    const matcher = await glob.create(paths.join('\n'), { implicitDescendants: false })
+    const roots = await matcher.glob()
+    // The cache toolkit passes matched directories to tar, which includes their descendants.
+    const archived = files.filter(file => {
+      const target = path.join(cacheDir, file)
+      return roots.some(root => target === root || target.startsWith(root + path.sep))
+    })
+    expect(archived).toEqual(['hooks/env/tool', 'cache/deno/module'])
   })
 })
 
