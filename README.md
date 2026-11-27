@@ -49,9 +49,7 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 3. Auto-detected `.tool-versions`
 4. Latest stable release from the version manifest
 
-If you already manage `prek` through `.tool-versions`, the action can use that version automatically. It looks in `working-directory` first, then in `GITHUB_WORKSPACE`.
-
-To use a version already recorded in `uv.lock`, `pyproject.toml`, or another supported file, point `version-file` at that file and leave `prek-version` at its default (`latest`). Relative paths are based on `working-directory`. If the file is missing or cannot provide a `prek` version, the action reports an error.
+You can reuse the `prek` version already recorded in your project. The action reads `.tool-versions` automatically, or you can point `version-file` at another supported file such as `uv.lock` or `pyproject.toml`.
 
 Supported `version-file` formats:
 
