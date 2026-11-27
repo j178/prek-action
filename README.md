@@ -42,16 +42,16 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 
 ## Version Resolution
 
-`prek-action` resolves the version to install in this order:
+`prek-action` selects the version of `prek` to install in this order:
 
 1. `prek-version` when it is set to anything other than `latest`
 2. `version-file`
 3. Auto-detected `.tool-versions`
 4. Latest stable release from the version manifest
 
-Auto-detection checks `working-directory` first, then `GITHUB_WORKSPACE` when it is different.
+If you already manage `prek` through `.tool-versions`, the action can use that version automatically. It looks in `working-directory` first, then in `GITHUB_WORKSPACE`.
 
-`version-file` is explicit and fails hard when the file does not exist, is malformed, or does not contain a `prek` version. It cannot be combined with an explicit `prek-version`. Relative `version-file` paths are resolved from `working-directory`.
+To use a version already recorded in `uv.lock`, `pyproject.toml`, or another supported file, point `version-file` at that file and leave `prek-version` at its default (`latest`). Relative paths are based on `working-directory`. If the file is missing or cannot provide a `prek` version, the action reports an error.
 
 Supported `version-file` formats:
 
