@@ -35,7 +35,6 @@ const coreMocks = vi.hoisted(() => ({
 const dependencyMocks = vi.hoisted(() => ({
   getInputs: vi.fn(() => mockContext.inputs),
   installPrek: vi.fn(async () => '/tmp/prek'),
-  normalizeVersion: vi.fn((version: string) => `v${version.replace(/^v/, '')}`),
   pruneCache: vi.fn(async () => {}),
   resolveVersion: vi.fn(async () => '0.3.6'),
   restorePrekCache: vi.fn(async () => mockContext.restoreResult),
@@ -55,8 +54,7 @@ vi.mock('../src/inputs', () => ({
 vi.mock('../src/install', () => ({
   installPrek: dependencyMocks.installPrek,
 }))
-vi.mock('../src/manifest', () => ({
-  normalizeVersion: dependencyMocks.normalizeVersion,
+vi.mock('../src/version/resolve', () => ({
   resolveVersion: dependencyMocks.resolveVersion,
 }))
 vi.mock('../src/prek', () => ({

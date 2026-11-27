@@ -35,9 +35,39 @@ For v2 and earlier releases, major and minor tags such as `v2` and `v2.0` are mo
 | `prek-version` | Version or semver range to install, for example `0.2.30`, `0.3.x`, `<=1.0.0`, `latest`, or `latest-known` | No | `latest` |
 | `sha256` | SHA-256 checksum of the release archive; overrides the bundled checksum | No | |
 | `install-only` | Install `prek` but skip `prek run` | No | `false` |
+| `version-file` | Path to a file containing the `prek` version to install. Supports `.tool-versions`, `mise.toml`, `uv.lock`, `pyproject.toml`, `requirements*.txt`, and `package.json` | No | |
 | `working-directory` | Directory where `prek run` is executed | No | `.` |
 | `show-verbose-logs` | Print the `prek` verbose log after `prek run` completes | No | `true` |
 | `cache` | Cache the prek environment between workflow runs | No | `true` |
+
+## Version Resolution
+
+`prek-action` selects the version of `prek` to install in this order:
+
+1. `prek-version` when it is set to anything other than `latest`
+2. `version-file`
+3. Auto-detected `.tool-versions`
+4. Latest stable release from the version manifest
+
+You can reuse the `prek` version already recorded in your project. The action reads `.tool-versions` automatically, or you can point `version-file` at another supported file such as `uv.lock` or `pyproject.toml`.
+
+Supported `version-file` formats:
+
+| File | Extracted value |
+| --- | --- |
+| `.tool-versions` | `prek <version>` |
+| `mise.toml` | `[tools].prek` or `[tools.prek].version` |
+| `uv.lock` | `[[package]] name = "prek"` version |
+| `pyproject.toml` | `[tool.prek].version`, `[dependency-groups]`, or `[project.optional-dependencies]` |
+| `requirements*.txt` | `prek==X.Y.Z` or other supported PEP 508 specifiers |
+| `package.json` | `dependencies["@j178/prek"]` or `devDependencies["@j178/prek"]` |
+
+When using version files:
+
+- Leave `prek-version` at its default (`latest`) when setting `version-file`; other values cannot be combined with `version-file`.
+- Relative `version-file` paths are resolved from `working-directory`.
+- Auto-detection checks `.tool-versions` in `working-directory` first, then in `GITHUB_WORKSPACE`.
+- The action fails if an explicit `version-file` is missing, malformed, or does not contain a `prek` version.
 
 ## Outputs
 
@@ -111,6 +141,30 @@ steps:
   - uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
     with:
       prek-version: '0.3.x'
+```
+
+### Auto-detect from `.tool-versions`
+
+```yaml
+steps:
+  - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+  - uses: j178/prek-action@7b101f8338a08d2bd6fdb3625e4e7692428763a3 # v3.1.1
+```
+
+With a repository `.tool-versions` entry such as:
+
+```text
+prek 0.3.5
+```
+
+### Use an explicit `version-file`
+
+```yaml
+steps:
+  - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+  - uses: j178/prek-action@7b101f8338a08d2bd6fdb3625e4e7692428763a3 # v3.1.1
+    with:
+      version-file: uv.lock
 ```
 
 ### Install only

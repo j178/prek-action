@@ -9,7 +9,7 @@ import {
   getToolCacheArchFor,
   verifyDownloadChecksum,
 } from '../src/install'
-import { toVersion } from '../src/manifest'
+import { toVersion } from '../src/version/constraints'
 
 const testVersion = toVersion('1.2.3')
 

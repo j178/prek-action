@@ -7,6 +7,11 @@ export const PREK_CACHE_KEY_PREFIX = 'prek-v1'
 export type Version = string & { readonly __brand: 'Version' }
 export type NormalizedVersion = `v${string}`
 
+export type DetectedVersion = {
+  version: string
+  source: string
+}
+
 export type Inputs = {
   cache: boolean
   extraArgs: string
@@ -14,6 +19,7 @@ export type Inputs = {
   prekVersion: string
   sha256: string
   showVerboseLogs: boolean
+  versionFile?: string
   workingDirectory: string
 }
 
