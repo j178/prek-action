@@ -94,6 +94,10 @@ export async function savePrekCache(): Promise<void> {
 
 async function buildCacheKeys(workingDirectory: string) {
   const { ImageOS: imageOs, ImageVersion: imageVersion, pythonLocation } = process.env
+  // Group archives by format and by the environment that can run their hooks.
+  // Native binaries depend on OS and architecture. Each runner image build ships
+  // its own libraries and runtimes, and setup-python can select a different
+  // interpreter on the same image.
   const environmentKey = [
     PREK_CACHE_KEY_PREFIX,
     process.env.RUNNER_OS || process.platform,
@@ -102,12 +106,12 @@ async function buildCacheKeys(workingDirectory: string) {
     imageVersion,
     pythonLocation,
   ].join('|')
+  // A changed config needs a new primary key so the job can save newly installed hooks.
   const configHash = await hashConfigFiles(path.resolve(workingDirectory))
   const primaryKey = `${environmentKey}|${configHash}`
 
-  // If the exact key misses, try a cache from another config on the same runner
-  // image and Python installation. Require both image identifiers for this fallback
-  // because cached native binaries and virtualenvs can depend on the image build.
+  // On an exact miss, try a cache from another config in the same environment.
+  // Without both image identifiers this prefix could match a different runner build.
   const restoreKeys = imageOs && imageVersion ? [`${environmentKey}|`] : []
   return { primaryKey, restoreKeys }
 }
