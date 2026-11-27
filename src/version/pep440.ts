@@ -36,7 +36,7 @@ export function translatePep440Specifier(specifier: string): string | null {
       return expandCompatibleRelease(version)
     }
 
-    // PEP 440 compares omitted release components as zero, not as wildcards.
+    // PEP 440 pads omitted release components with zeros: 0.3 -> 0.3.0.
     const release = version.match(/^(\d+)(?:\.(\d+))?$/)
     const normalizedVersion = release ? `${release[1]}.${release[2] ?? '0'}.0` : version
     return `${operator === '==' ? '' : operator}${normalizedVersion}`
