@@ -25,14 +25,23 @@ export async function restorePrekCache(workingDirectory: string): Promise<Restor
   core.startGroup('Restore prek cache')
 
   const cacheDir = await getPrekCacheDir()
-  const paths = [cacheDir]
-  const primaryKey = await buildCacheKey(workingDirectory)
+  const toolCaches = path.join(cacheDir, 'cache')
+  // Archive the prek store except cache/prek, which contains the list of projects
+  // discovered in a previous checkout. Select the children of cache individually
+  // because tar would include the excluded directory if given its parent.
+  const paths = [
+    path.join(cacheDir, '*'),
+    `!${toolCaches}`,
+    path.join(toolCaches, '*'),
+    `!${path.join(toolCaches, 'prek')}`,
+  ]
+  const { primaryKey, restoreKeys } = await buildCacheKeys(workingDirectory)
   core.saveState(CACHE_KEY_STATE, primaryKey)
   core.saveState(CACHE_PATHS_STATE, JSON.stringify(paths))
 
   let matchedKey: string | undefined
   try {
-    const restoredKey = await cache.restoreCache(paths, primaryKey)
+    const restoredKey = await cache.restoreCache(paths, primaryKey, restoreKeys)
     if (restoredKey) {
       core.info(`Restored prek cache with key ${restoredKey}`)
       core.saveState(CACHE_MATCHED_KEY_STATE, restoredKey)
@@ -83,13 +92,23 @@ export async function savePrekCache(): Promise<void> {
   }
 }
 
-async function buildCacheKey(workingDirectory: string): Promise<string> {
-  const normalizedWorkingDirectory = path.resolve(workingDirectory)
-  const hash = await hashConfigFiles(normalizedWorkingDirectory)
-  const pythonLocation = process.env.pythonLocation || ''
-  const runnerOs = process.env.RUNNER_OS || process.platform
-  const runnerArch = process.env.RUNNER_ARCH || process.arch
-  return `${PREK_CACHE_KEY_PREFIX}|${runnerOs}|${runnerArch}|${pythonLocation}|${hash}`
+async function buildCacheKeys(workingDirectory: string) {
+  const { ImageOS: imageOs, ImageVersion: imageVersion, pythonLocation } = process.env
+  const environmentKey = [
+    PREK_CACHE_KEY_PREFIX, // Keep prek caches separate from other actions' caches.
+    process.env.RUNNER_OS || process.platform, // Hook executables depend on the OS.
+    process.env.RUNNER_ARCH || process.arch, // Native binaries target a CPU architecture.
+    imageOs, // Ubuntu 24.04 and 26.04 both report Linux but ship different libraries.
+    pythonLocation, // setup-python can select a different interpreter on the same image.
+  ].join('|')
+  const configHash = await hashConfigFiles(path.resolve(workingDirectory))
+  const configKey = `${environmentKey}|${configHash}` // Prefer hooks installed for this configuration.
+  const primaryKey = `${configKey}|${imageVersion || 'unknown'}` // Each build can save repaired environments.
+
+  // Try the same config from another image build, then any config in this environment.
+  // Runners with incomplete image metadata use exact matches only.
+  const restoreKeys = imageOs && imageVersion ? [`${configKey}|`, `${environmentKey}|`] : []
+  return { primaryKey, restoreKeys }
 }
 
 async function hashConfigFiles(workingDirectory: string): Promise<string> {
