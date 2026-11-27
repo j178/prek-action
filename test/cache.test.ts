@@ -105,22 +105,26 @@ describe('restorePrekCache', () => {
     expect(mockContext.telemetry.warnings).toEqual([])
   })
 
-  it('can reuse a previous config only within the same identified runner image and Python location', async () => {
+  it('prefers the same config across image builds before falling back to another config', async () => {
     const workingDirectory = await createWorkingDirectory()
     const config = path.join(workingDirectory, 'prek.toml')
     vi.stubEnv('ImageOS', 'ubuntu24')
     vi.stubEnv('ImageVersion', '20261122.1')
     vi.stubEnv('pythonLocation', '/opt/python')
 
-    const previous = await restorePrekCache(workingDirectory)
+    const olderConfig = await restorePrekCache(workingDirectory)
     await fs.appendFile(config, '# new revision\n')
+    const previousBuild = await restorePrekCache(workingDirectory)
+    vi.stubEnv('ImageVersion', '20261129.1')
     const current = await restorePrekCache(workingDirectory)
-    const restoreKeys = toolkitMocks.restoreCache.mock.lastCall?.[2] ?? []
-    expect(current.primaryKey).not.toBe(previous.primaryKey)
-    expect(restoreKeys.some(prefix => previous.primaryKey.startsWith(prefix))).toBe(true)
+    const [sameConfig, anyConfig] = toolkitMocks.restoreCache.mock.lastCall?.[2] ?? []
+    expect(previousBuild.primaryKey).not.toBe(olderConfig.primaryKey)
+    expect(current.primaryKey).not.toBe(previousBuild.primaryKey)
+    expect(previousBuild.primaryKey.startsWith(sameConfig)).toBe(true)
+    expect(olderConfig.primaryKey.startsWith(sameConfig)).toBe(false)
+    expect(olderConfig.primaryKey.startsWith(anyConfig)).toBe(true)
 
     for (const [name, value] of [
-      ['ImageVersion', '20261129.1'],
       ['ImageOS', 'ubuntu26'],
       ['pythonLocation', '/opt/another-python'],
     ]) {

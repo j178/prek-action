@@ -65721,7 +65721,7 @@ var CACHE_KEY_STATE = "prek-cache-primary-key";
 var CACHE_MATCHED_KEY_STATE = "prek-cache-matched-key";
 var CACHE_PATHS_STATE = "prek-cache-paths";
 var POST_ACTION_STATE = "prek-action-post";
-var PREK_CACHE_KEY_PREFIX = "prek-v2";
+var PREK_CACHE_KEY_PREFIX = "prek-v1";
 
 // src/cache.ts
 function formatError2(error2) {
@@ -65791,21 +65791,20 @@ async function buildCacheKeys(workingDirectory) {
   const { ImageOS: imageOs, ImageVersion: imageVersion, pythonLocation } = process.env;
   const environmentKey = [
     PREK_CACHE_KEY_PREFIX,
-    // Bump when the archive format changes.
+    // Keep prek caches separate from other actions' caches.
     process.env.RUNNER_OS || process.platform,
     // Hook executables depend on the OS.
     process.env.RUNNER_ARCH || process.arch,
     // Native binaries target a CPU architecture.
     imageOs,
     // Ubuntu 24.04 and 26.04 both report Linux but ship different libraries.
-    imageVersion,
-    // Rebuilds of the same image can update system Python and other runtimes.
     pythonLocation
     // setup-python can select a different interpreter on the same image.
   ].join("|");
   const configHash = await hashConfigFiles(path14.resolve(workingDirectory));
-  const primaryKey = `${environmentKey}|${configHash}`;
-  const restoreKeys = imageOs && imageVersion ? [`${environmentKey}|`] : [];
+  const configKey = `${environmentKey}|${configHash}`;
+  const primaryKey = `${configKey}|${imageVersion || "unknown"}`;
+  const restoreKeys = imageOs && imageVersion ? [`${configKey}|`, `${environmentKey}|`] : [];
   return { primaryKey, restoreKeys };
 }
 __name(buildCacheKeys, "buildCacheKeys");

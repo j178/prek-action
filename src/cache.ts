@@ -95,19 +95,19 @@ export async function savePrekCache(): Promise<void> {
 async function buildCacheKeys(workingDirectory: string) {
   const { ImageOS: imageOs, ImageVersion: imageVersion, pythonLocation } = process.env
   const environmentKey = [
-    PREK_CACHE_KEY_PREFIX, // Bump when the archive format changes.
+    PREK_CACHE_KEY_PREFIX, // Keep prek caches separate from other actions' caches.
     process.env.RUNNER_OS || process.platform, // Hook executables depend on the OS.
     process.env.RUNNER_ARCH || process.arch, // Native binaries target a CPU architecture.
     imageOs, // Ubuntu 24.04 and 26.04 both report Linux but ship different libraries.
-    imageVersion, // Rebuilds of the same image can update system Python and other runtimes.
     pythonLocation, // setup-python can select a different interpreter on the same image.
   ].join('|')
   const configHash = await hashConfigFiles(path.resolve(workingDirectory))
-  const primaryKey = `${environmentKey}|${configHash}` // Each config can save its own hook environments.
+  const configKey = `${environmentKey}|${configHash}` // Prefer hooks installed for this configuration.
+  const primaryKey = `${configKey}|${imageVersion || 'unknown'}` // Each build can save repaired environments.
 
-  // On an exact miss, try a cache from another config in the same environment.
-  // Without both image identifiers this prefix could match a different runner build.
-  const restoreKeys = imageOs && imageVersion ? [`${environmentKey}|`] : []
+  // Try the same config from another image build, then any config in this environment.
+  // Runners with incomplete image metadata use exact matches only.
+  const restoreKeys = imageOs && imageVersion ? [`${configKey}|`, `${environmentKey}|`] : []
   return { primaryKey, restoreKeys }
 }
 
