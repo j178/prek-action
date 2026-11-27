@@ -48,8 +48,6 @@ export async function run(): Promise<void> {
 }
 
 export async function runPost(): Promise<void> {
-  // GitHub always runs the post step; savePrekCache() decides whether the main
-  // step initialized any cache state worth persisting.
   await savePrekCache()
 }
 
