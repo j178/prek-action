@@ -42,12 +42,9 @@ function getStableReleases(manifest: VersionManifest): ManifestRelease[] {
 }
 
 function parsePrefixExclusion(versionInput: string): number[] | null {
-  const match = versionInput.match(/^(\d+)\.(\d+)(?:\.(\d+))?\.\*$/)
+  const match = versionInput.match(/^(\d+(?:\.\d+){0,2})\.\*$/)
   if (!match) return null
-  return match
-    .slice(1)
-    .filter((segment): segment is string => typeof segment === 'string')
-    .map(segment => Number(segment))
+  return match[1].split('.').map(Number)
 }
 
 function matchesExcludedPrefix(version: string, prefix: number[]): boolean {

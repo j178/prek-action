@@ -67597,9 +67597,9 @@ function getStableReleases(manifest) {
 }
 __name(getStableReleases, "getStableReleases");
 function parsePrefixExclusion(versionInput) {
-  const match3 = versionInput.match(/^(\d+)\.(\d+)(?:\.(\d+))?\.\*$/);
+  const match3 = versionInput.match(/^(\d+(?:\.\d+){0,2})\.\*$/);
   if (!match3) return null;
-  return match3.slice(1).filter((segment) => typeof segment === "string").map((segment) => Number(segment));
+  return match3[1].split(".").map(Number);
 }
 __name(parsePrefixExclusion, "parsePrefixExclusion");
 function matchesExcludedPrefix(version3, prefix2) {

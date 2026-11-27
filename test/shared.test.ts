@@ -80,6 +80,7 @@ it.each([
   { expectedVersion: '0.3.0', specifier: '<=0.3', versions: ['0.3.0', '0.3.5'] },
   { expectedVersion: '0.3.5', specifier: '>0.3', versions: ['0.3.0', '0.3.5'] },
   { expectedVersion: '0.3.5', specifier: '!=0.3', versions: ['0.3.0', '0.3.5'] },
+  { expectedVersion: '0.3.5', specifier: '>=0.3.0,!=1.*', versions: ['0.3.5', '1.0.0', '1.2.3'] },
   { expectedVersion: '1.0.0', specifier: '==1', versions: ['1.0.0', '1.1.0'] },
   { expectedVersion: '0.3.5', specifier: '==0.3.*', versions: ['0.3.0', '0.3.5', '0.4.0'] },
   { expectedVersion: '0.3.5', specifier: '~= 0.3.5', versions: ['0.3.5', '0.4.0'] },

@@ -148,7 +148,7 @@ steps:
 ```yaml
 steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-  - uses: j178/prek-action@e8afd000d96b53932d9d42211d3c7aa111b955f6 # unreleased
+  - uses: j178/prek-action@7b101f8338a08d2bd6fdb3625e4e7692428763a3 # v3.1.1
 ```
 
 With a repository `.tool-versions` entry such as:
@@ -162,7 +162,7 @@ prek 0.3.5
 ```yaml
 steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-  - uses: j178/prek-action@e8afd000d96b53932d9d42211d3c7aa111b955f6 # unreleased
+  - uses: j178/prek-action@7b101f8338a08d2bd6fdb3625e4e7692428763a3 # v3.1.1
     with:
       version-file: uv.lock
 ```
