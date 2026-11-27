@@ -94,21 +94,16 @@ export async function savePrekCache(): Promise<void> {
 
 async function buildCacheKeys(workingDirectory: string) {
   const { ImageOS: imageOs, ImageVersion: imageVersion, pythonLocation } = process.env
-  // Group archives by format and by the environment that can run their hooks.
-  // Native binaries depend on OS and architecture. Each runner image build ships
-  // its own libraries and runtimes, and setup-python can select a different
-  // interpreter on the same image.
   const environmentKey = [
-    PREK_CACHE_KEY_PREFIX,
-    process.env.RUNNER_OS || process.platform,
-    process.env.RUNNER_ARCH || process.arch,
-    imageOs,
-    imageVersion,
-    pythonLocation,
+    PREK_CACHE_KEY_PREFIX, // Bump when the archive format changes.
+    process.env.RUNNER_OS || process.platform, // Hook executables depend on the OS.
+    process.env.RUNNER_ARCH || process.arch, // Native binaries target a CPU architecture.
+    imageOs, // Ubuntu 24.04 and 26.04 both report Linux but ship different libraries.
+    imageVersion, // Rebuilds of the same image can update system Python and other runtimes.
+    pythonLocation, // setup-python can select a different interpreter on the same image.
   ].join('|')
-  // A changed config needs a new primary key so the job can save newly installed hooks.
   const configHash = await hashConfigFiles(path.resolve(workingDirectory))
-  const primaryKey = `${environmentKey}|${configHash}`
+  const primaryKey = `${environmentKey}|${configHash}` // Each config can save its own hook environments.
 
   // On an exact miss, try a cache from another config in the same environment.
   // Without both image identifiers this prefix could match a different runner build.
