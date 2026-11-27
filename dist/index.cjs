@@ -68043,13 +68043,15 @@ function translatePep440Specifier(specifier) {
   const parts = specifier.split(",").map((part) => part.trim()).filter(Boolean);
   if (parts.length === 0) return null;
   const translated = parts.map((part) => {
-    if (part.startsWith("==")) {
-      return part.slice(2);
+    const match3 = part.match(/^(~=|==|!=|<=?|>=?)\s*(.+)$/);
+    if (!match3) return part;
+    const [, operator, version3] = match3;
+    if (operator === "~=") {
+      return expandCompatibleRelease(version3);
     }
-    if (part.startsWith("~=")) {
-      return expandCompatibleRelease(part.slice(2));
-    }
-    return part;
+    const release = version3.match(/^(\d+)(?:\.(\d+))?$/);
+    const normalizedVersion = release ? `${release[1]}.${release[2] ?? "0"}.0` : version3;
+    return `${operator === "==" ? "" : operator}${normalizedVersion}`;
   });
   return translated.join(" ");
 }
@@ -68093,13 +68095,20 @@ __name(pep440ToSemver, "pep440ToSemver");
 async function findVersionInRequirements(filePath) {
   const content = await readFileOrNull(filePath);
   if (!content) return null;
+  let detectedVersion = null;
   for (const line of getLogicalRequirementLines(content)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("-")) continue;
     const version3 = extractPep508PrekVersion(trimmed);
-    if (version3) return version3;
+    if (!version3) continue;
+    if (detectedVersion && detectedVersion !== version3) {
+      throw new Error(
+        `Ambiguous prek version in ${filePath}: found multiple distinct constraints. Use a single prek requirement.`
+      );
+    }
+    detectedVersion = version3;
   }
-  return null;
+  return detectedVersion;
 }
 __name(findVersionInRequirements, "findVersionInRequirements");
 

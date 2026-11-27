@@ -28,13 +28,18 @@ export function translatePep440Specifier(specifier: string): string | null {
   if (parts.length === 0) return null
 
   const translated = parts.map(part => {
-    if (part.startsWith('==')) {
-      return part.slice(2)
+    const match = part.match(/^(~=|==|!=|<=?|>=?)\s*(.+)$/)
+    if (!match) return part
+
+    const [, operator, version] = match
+    if (operator === '~=') {
+      return expandCompatibleRelease(version)
     }
-    if (part.startsWith('~=')) {
-      return expandCompatibleRelease(part.slice(2))
-    }
-    return part
+
+    // PEP 440 compares omitted release components as zero, not as wildcards.
+    const release = version.match(/^(\d+)(?:\.(\d+))?$/)
+    const normalizedVersion = release ? `${release[1]}.${release[2] ?? '0'}.0` : version
+    return `${operator === '==' ? '' : operator}${normalizedVersion}`
   })
 
   return translated.join(' ')

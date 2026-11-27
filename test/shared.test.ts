@@ -74,25 +74,39 @@ it('resolveVersion uses version-file when provided', async () => {
   assert.equal(result, '0.3.4')
 })
 
-it('resolveVersion resolves requirements compatible releases against the highest matching manifest version', async () => {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-resolve-'))
-  const manifest = createManifest(['0.3.5', '0.9.0', '1.0.0'])
-  await fs.writeFile(path.join(dir, 'requirements.txt'), 'prek~=0.3\n')
-  const result = await resolveVersion(
-    {
-      prekVersion: 'latest',
-      versionFile: path.join(dir, 'requirements.txt'),
-      workingDirectory: dir,
-    },
-    manifest,
-  )
-  assert.equal(result, '0.9.0')
-})
+it.each([
+  { expectedVersion: '0.9.0', specifier: '~=0.3', versions: ['0.3.5', '0.9.0', '1.0.0'] },
+  { expectedVersion: '0.3.0', specifier: '==0.3', versions: ['0.3.0', '0.3.5'] },
+  { expectedVersion: '0.3.0', specifier: '<=0.3', versions: ['0.3.0', '0.3.5'] },
+  { expectedVersion: '0.3.5', specifier: '>0.3', versions: ['0.3.0', '0.3.5'] },
+  { expectedVersion: '0.3.5', specifier: '!=0.3', versions: ['0.3.0', '0.3.5'] },
+  { expectedVersion: '1.0.0', specifier: '==1', versions: ['1.0.0', '1.1.0'] },
+  { expectedVersion: '0.3.5', specifier: '==0.3.*', versions: ['0.3.0', '0.3.5', '0.4.0'] },
+  { expectedVersion: '0.3.5', specifier: '~= 0.3.5', versions: ['0.3.5', '0.4.0'] },
+])(
+  'resolveVersion preserves Python specifier "$specifier" from requirements',
+  async ({ specifier, versions, expectedVersion }) => {
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-resolve-'))
+    await fs.writeFile(path.join(dir, 'requirements.txt'), `prek${specifier}\n`)
+    const result = await resolveVersion(
+      {
+        prekVersion: 'latest',
+        versionFile: path.join(dir, 'requirements.txt'),
+        workingDirectory: dir,
+      },
+      createManifest(versions),
+    )
+    assert.equal(result, expectedVersion)
+  },
+)
 
 it('resolveVersion resolves pyproject compatible releases against the highest matching manifest version', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-resolve-'))
   const manifest = createManifest(['0.3.5', '0.9.0', '1.0.0'])
-  await fs.writeFile(path.join(dir, 'pyproject.toml'), `[dependency-groups]\ndev = ["prek~=0.3"]\n`)
+  await fs.writeFile(
+    path.join(dir, 'pyproject.toml'),
+    `[dependency-groups]\ndev = ["prek~= 0.3"]\n`,
+  )
   const result = await resolveVersion(
     {
       prekVersion: 'latest',
@@ -106,7 +120,7 @@ it('resolveVersion resolves pyproject compatible releases against the highest ma
 
 it('resolveVersion honors exclusions from version-file constraints', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-resolve-'))
-  await fs.writeFile(path.join(dir, 'requirements.txt'), 'prek>=0.3.0,!=0.3.5\n')
+  await fs.writeFile(path.join(dir, 'requirements.txt'), 'prek>= 0.3.0, != 0.3.5\n')
   const result = await resolveVersion(
     {
       prekVersion: 'latest',
@@ -132,9 +146,12 @@ it('resolveVersion handles pip-compile style hashed requirements files', async (
   assert.equal(result, '0.3.0')
 })
 
-it('resolveVersion handles requirements files with inline comments', async () => {
+it.each([
+  { content: 'prek==0.3.0 # pinned by team\n', description: 'inline comments' },
+  { content: 'prek==0.3.0\nprek==0.3.0\n', description: 'repeated identical declarations' },
+])('resolveVersion handles requirements files with $description', async ({ content }) => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-resolve-'))
-  await fs.writeFile(path.join(dir, 'requirements.txt'), 'prek==0.3.0 # pinned by team\n')
+  await fs.writeFile(path.join(dir, 'requirements.txt'), content)
   const result = await resolveVersion({
     prekVersion: 'latest',
     versionFile: path.join(dir, 'requirements.txt'),
@@ -264,6 +281,23 @@ it('resolveVersion surfaces ambiguous pyproject dependency constraints', async (
         workingDirectory: dir,
       }),
     /\[tool\.prek\]\.version/,
+  )
+})
+
+it('resolveVersion rejects distinct prek declarations in requirements', async () => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'prek-resolve-'))
+  await fs.writeFile(path.join(dir, 'requirements.txt'), 'prek>=0.3.0\nprek<0.4.0\n')
+  await assert.rejects(
+    () =>
+      resolveVersion(
+        {
+          prekVersion: 'latest',
+          versionFile: path.join(dir, 'requirements.txt'),
+          workingDirectory: dir,
+        },
+        createManifest(['0.3.5', '0.4.0']),
+      ),
+    /Ambiguous prek version/,
   )
 })
 

@@ -48,12 +48,19 @@ export async function findVersionInRequirements(filePath: string): Promise<strin
   const content = await readFileOrNull(filePath)
   if (!content) return null
 
+  let detectedVersion: string | null = null
   for (const line of getLogicalRequirementLines(content)) {
     const trimmed = line.trim()
     if (!trimmed || trimmed.startsWith('-')) continue
     const version = extractPep508PrekVersion(trimmed)
-    if (version) return version
+    if (!version) continue
+    if (detectedVersion && detectedVersion !== version) {
+      throw new Error(
+        `Ambiguous prek version in ${filePath}: found multiple distinct constraints. Use a single prek requirement.`,
+      )
+    }
+    detectedVersion = version
   }
 
-  return null
+  return detectedVersion
 }
